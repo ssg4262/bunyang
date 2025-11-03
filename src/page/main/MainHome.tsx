@@ -9,6 +9,7 @@ import mainCarousel2 from "@/assets/main/carousel/mainCarousel2.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import {SalesIntroSection} from "@/components/sections/SalesIntroSection.tsx";
 import {PromoFooter} from "@/components/PromoFooter.tsx";
+import {HouseTypeSelector} from "@/components/sections/HouseTypeSelector.tsx";
 
 
 export const MainHome: React.FC = () => {
@@ -84,6 +85,7 @@ export const MainHome: React.FC = () => {
                 rightImageSrc={yeoksae}
                 rightImageAlt="주변시설 비주얼"
             />
+            <HouseTypeSelector/>
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
                 tagline="동대구 최중심 라이프"
