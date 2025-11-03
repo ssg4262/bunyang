@@ -118,3 +118,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.font-gowoon-dodum {
+  font-family: 'GowoonDodum', sans-serif;
+}
+@font-face {
+  font-family: 'GMarketSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: 500;
+  font-display: swap;
+}
