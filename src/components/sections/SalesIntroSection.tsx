@@ -6,43 +6,66 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Share2, Star } from "lucide-react"
 
+type Align = "center" | "left"
+
 export type SalesIntroSectionProps = {
-    /** 오른쪽 배경 패턴 이미지 URL (반복) */
-    patternUrl?: string
-    /** 하단 메인 이미지(건물) */
+    /** (왼쪽) 하단 메인 이미지(건물) */
     heroImage: string
-    /** 상단 좌측 작은 문구 */
+    /** (왼쪽) 상단 좌측 작은 문구 */
     eyebrow?: string
-    /** 메인 타이틀 */
+    /** (왼쪽) 메인 타이틀 */
     title: string
-    /** 배지들 (예: 분양중, 공사완료) */
+    /** (왼쪽) 배지들 */
     badges?: string[]
-    /** 전화번호 (예: "053.754.3600") */
+    /** (왼쪽) 분양문의 전화번호 */
     phone?: string
     /** 섹션 className 확장 */
     className?: string
+
+    /* --------- 우측 헤드라인 영역 --------- */
+    /** 우측 메인 헤드라인 */
+    rightTitle?: string
+    /** 우측 서브 문구 */
+    rightSubtitle?: string
+    /** 우측 정렬 */
+    rightAlign?: Align
+    /** 우측 하단 이미지(선택) */
+    rightImageSrc?: string
+    rightImageAlt?: string
+
+    /** (선택) 우측 배경에 패턴을 깔고 싶을 때 */
+    patternUrl?: string
 }
 
 export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
-                                                                        patternUrl,
-                                                                        heroImage,
+                                                                        // 왼쪽(기존) 기본값
                                                                         eyebrow = "동대구역을 품은 센트럴 라이프",
                                                                         title = "e편한세상 동대구역 센텀스퀘어",
                                                                         badges = ["분양중", "공사완료"],
                                                                         phone = "053.754.3600",
+                                                                        heroImage,
                                                                         className,
+
+                                                                        // 우측 기본값 (캡처 톤)
+                                                                        rightTitle = "복합환승센터와 더블 초역세권을 품은 완벽한 일상",
+                                                                        rightSubtitle = "동대구역 바로 앞 입지를 누리는 프리미엄 라이프",
+                                                                        rightAlign = "center",
+                                                                        rightImageSrc,
+                                                                        rightImageAlt = "",
+
+                                                                        patternUrl,
                                                                     }) => {
+    const rightAlignCls =
+        rightAlign === "left" ? "items-start text-left" : "items-center text-center"
+
     return (
         <section
             id="intro"
-            className={cn(
-                "relative w-full",
-                "bg-background text-foreground",
-                className
-            )}
+            className={cn("relative w-full bg-background text-foreground", className)}
         >
+            {/* 모바일 1컬럼, 데스크탑 2컬럼 / 양쪽 동일한 px/py로 간격 일치 */}
             <div className="grid grid-cols-1 lg:grid-cols-2">
-                {/* 좌측: 텍스트 & 액션 & 이미지 */}
+                {/* ============== 왼쪽: 기존 인트로 (구현/비율 그대로 유지) ============== */}
                 <div className="container mx-auto w-full max-w-5xl px-6 py-10 md:py-14 lg:py-16">
                     {/* 배지들 */}
                     <div className="flex flex-wrap gap-2">
@@ -95,30 +118,66 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                     </div>
                 </div>
 
-                {/* 우측: 패턴 배경 (데스크탑에서만 표시, 고정 스티키) */}
-                <div className="relative hidden lg:block">
-                    <div
-                        className={cn(
-                            "sticky",
-                            // 네브바 고정 높이를 고려해 상단에 붙임
-                            "top-[var(--nav-h,64px)]",
-                            // 화면 남은 높이만큼만
-                            "h-[calc(100vh-var(--nav-h,64px))]"
+                {/* ============== 오른쪽: 따옴표 + 헤드라인 + 서브 (+선택 이미지) ============== */}
+                {/* sticky 제거 → 왼쪽과 함께 자연스럽게 스크롤 */}
+                <div
+                    className={cn(
+                        "px-6 py-10 md:py-14 lg:py-16", // ← 왼쪽과 같은 세팅으로 간격 일치
+                        patternUrl ? "relative" : ""
+                    )}
+                    style={
+                        patternUrl
+                            ? ({
+                                backgroundImage: `url("${patternUrl}")`,
+                                backgroundRepeat: "repeat",
+                                backgroundSize: "560px auto",
+                                backgroundPosition: "center",
+                            } as React.CSSProperties)
+                            : undefined
+                    }
+                >
+                    <div className={cn("w-full max-w-[980px] mx-auto flex flex-col gap-4", rightAlignCls)}>
+                        {/* 작은 따옴표 */}
+                        <span
+                            aria-hidden
+                            className="select-none text-[28px] md:text-[32px] leading-none text-neutral-400"
+                        >
+              &ldquo;
+            </span>
+
+                        {/* 메인 헤드라인 */}
+                        <h2
+                            className={cn(
+                                "whitespace-pre-line font-extrabold tracking-tight",
+                                "text-[22px] sm:text-[28px] md:text-[34px] lg:text-[38px]",
+                                "leading-[1.35] text-neutral-800"
+                            )}
+                        >
+                            {rightTitle}
+                        </h2>
+
+                        {/* 서브 카피 */}
+                        {rightSubtitle && (
+                            <p className="text-neutral-500 text-[14px] md:text-[16px] mt-1">
+                                {rightSubtitle}
+                            </p>
                         )}
-                        style={
-                            patternUrl
-                                ? ({
-                                    backgroundImage: `url("${patternUrl}")`,
-                                    backgroundRepeat: "repeat",
-                                    backgroundSize: "560px auto",
-                                    backgroundPosition: "center",
-                                } as React.CSSProperties)
-                                : undefined
-                        }
-                    >
-                        {/* 패턴 밝기/톤 조절용 살짝의 오버레이 (원하면 지워도 됨) */}
-                        <div className="absolute inset-0 bg-white/0" />
+
+                        {/* (선택) 하단 이미지 */}
+                        {rightImageSrc && (
+                            <div className={cn("w-full mt-6", rightAlign === "center" ? "mx-auto" : "")}>
+                                <img
+                                    src={rightImageSrc as any}
+                                    alt={rightImageAlt}
+                                    className="w-full h-auto object-cover rounded-none select-none"
+                                    draggable={false}
+                                />
+                            </div>
+                        )}
                     </div>
+
+                    {/* 필요하면 밝기/톤 오버레이 */}
+                    {/* <div className="pointer-events-none absolute inset-0 bg-white/0" /> */}
                 </div>
             </div>
         </section>

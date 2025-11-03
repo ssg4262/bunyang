@@ -6,8 +6,9 @@ import { PromoNavbar } from "@/components/nav/PromoNavbar.tsx"
 import { PromoCarousel } from "@/components/carousel/PromoCarousel.tsx"
 import mainCarousel from "@/assets/main/carousel/mainCarousel.png"
 import mainCarousel2 from "@/assets/main/carousel/mainCarousel2.png"
-import pattern from "@/assets/main/section/pattern.png"
+import yeoksae from "@/assets/main/section/yeoksae.png"
 import {SalesIntroSection} from "@/components/sections/SalesIntroSection.tsx";
+
 
 export const MainHome: React.FC = () => {
     // 네브바 실제 높이 측정 (오버레이 상단 패딩에 사용: 겹침 방지)
@@ -73,12 +74,15 @@ export const MainHome: React.FC = () => {
                 </div>
             </header>
             <SalesIntroSection
-            patternUrl={pattern} // 패턴 없으면 이 prop 생략해도 동작
-            heroImage={mainCarousel} // 하단 큰 이미지
-            eyebrow="동대구역을 품은 센트럴 라이프"
-            title="e편한세상 동대구역 센텀스퀘어"
-            badges={["분양중", "공사완료"]}
-            phone="053-760-4818"/>
+                heroImage={mainCarousel as any}
+                eyebrow="동대구 최중심을 누리는 특별한 삶"
+                title="e편한세상 동대구역 센텀스퀘어"
+                badges={["분양중", "공사완료"]}
+                phone="053.754.3600"
+                // 우측(따옴표+헤드라인+서브)은 기본값 그대로 쓰거나 아래처럼 교체 가능
+                rightImageSrc={yeoksae}
+                rightImageAlt="주변시설 비주얼"
+            />
         </>
     )
 }
