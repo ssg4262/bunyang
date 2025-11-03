@@ -6,7 +6,7 @@
 import {PromoNavbar} from "@/components/nav/PromoNavbar.tsx";
 import {PromoCarousel} from "@/components/carousel/PromoCarousel.tsx";
 import mainCarousel from "@/assets/main/carousel/mainCarousel.png"
-
+import mainCarousel2 from "@/assets/main/carousel/mainCarousel2.png"
 export const MainHome = () => {
     return (
         <>
@@ -18,7 +18,7 @@ export const MainHome = () => {
                     { label: "입지", badge: "HOT" },
                     { label: "오시는길" },
                 ]}
-                contactLabel="상담 053-760-4818"
+                contactLabel="분양문의 053-760-4818"
                 onItemClick={(item, idx) => console.log("clicked", item, idx)}
             />
            <PromoCarousel
@@ -34,7 +34,7 @@ export const MainHome = () => {
                         ctaLabel: "사업개요 보기",
                     },
                     {
-                        image: "/images/apt-02.jpg",
+                        image: mainCarousel2,
                         headline: "3년 거주 후 매도시 분양가를 보장받는 대구 최초 안심보호단지",
                         sub: "발코니 확장 및 화장대,냉장고장,가스쿡탑,현관팬트리 시스템선반 무상제공",
                         ctaLabel: "단지안내 보기",
