@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { Menu, Phone } from "lucide-react"
+import {smartDial} from "@/lib/smartDial.ts";
 
 export type NavItem = {
     label: string
@@ -194,7 +195,12 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                             <Button
                                 type="button"
                                 variant={isMobile && overHeroMobile ? "outline" : "default"}
-                                className={cn("hidden sm:inline-flex rounded-xl", isMobile && overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20")}
+                                className={cn("hidden sm:inline-flex cursor-pointer rounded-xl", isMobile && overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20")}
+                                onClick={() =>
+                                    smartDial("053-760-4818", {
+                                            desktopApp: "facetime",
+                                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                        })}
                             >
                                 <Phone className="mr-2 h-4 w-4" /> {contactLabel}
                             </Button>
@@ -274,7 +280,13 @@ const MobileMenu: React.FC<{
             {contactLabel && (
                 <div className="mt-6">
                     <SheetClose asChild>
-                        <Button type="button" className="w-full rounded-xl">
+                        <Button type="button" className="w-full rounded-xl"
+                                onClick={() =>
+                                    smartDial("053-760-4818", {
+                                        desktopApp: "facetime",
+                                        onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                    })}
+                        >
                             <Phone className="mr-2 h-4 w-4" /> {contactLabel}
                         </Button>
                     </SheetClose>

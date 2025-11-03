@@ -5,6 +5,7 @@ import React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Phone, MapPin, ArrowUp, Building2 } from "lucide-react"
+import {smartDial} from "@/lib/smartDial.ts";
 
 export type FooterNavGroup = {
     title: string
@@ -79,7 +80,13 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                         </div>
 
                         <div className="mt-2 grid gap-2">
-                            <Button type="button" variant="default" className="rounded-xl justify-start">
+                            <Button type="button" variant="default" className="rounded-xl justify-start cursor-pointer"
+                                    onClick={() =>
+                                        smartDial("053-760-4818", {
+                                            desktopApp: "facetime",
+                                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                        })}
+                            >
                                 <Phone className="mr-2 h-4 w-4" />
                                 분양문의 {phone}
                             </Button>

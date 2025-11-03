@@ -5,6 +5,7 @@ import React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import {smartDial} from "@/lib/smartDial.ts";
 
 export type CarouselSlide = {
     image: string // 배경 이미지 URL
@@ -203,11 +204,16 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                 {s.ctaLabel && (
                                     <div className="pt-2">
                                         <Button
+                                            onClick={() =>
+                                                smartDial("053-760-4818", {
+                                                    desktopApp: "facetime",
+                                                    onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                                })}
                                             type="button"
                                             size="lg"
-                                            className="rounded-xl"
+                                            className="rounded-xl cursor-pointer"
                                             data-carousel-interactive="true"
-                                            onClick={() => showControls(2000)}
+                                            // onClick={() => showControls(2000)}
                                         >
                                             {s.ctaLabel}
                                         </Button>
