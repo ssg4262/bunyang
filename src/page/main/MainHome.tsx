@@ -8,6 +8,7 @@ import mainCarousel from "@/assets/main/carousel/mainCarousel.png"
 import mainCarousel2 from "@/assets/main/carousel/mainCarousel2.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import {SalesIntroSection} from "@/components/sections/SalesIntroSection.tsx";
+import {PromoFooter} from "@/components/PromoFooter.tsx";
 
 
 export const MainHome: React.FC = () => {
@@ -82,6 +83,23 @@ export const MainHome: React.FC = () => {
                 // 우측(따옴표+헤드라인+서브)은 기본값 그대로 쓰거나 아래처럼 교체 가능
                 rightImageSrc={yeoksae}
                 rightImageAlt="주변시설 비주얼"
+            />
+            <PromoFooter
+                brand="e편한세상 동대구역 센텀스퀘어"
+                tagline="동대구 최중심 라이프"
+                phone="053-760-4818"
+                addressLines={[
+                    "대구 동구 신천동 325-1",
+                    "e편한세상 동대구역 센텀스퀘어 분양홍보관"
+                ]}
+                bizName="시행 · 시공: (주)건설"
+                bizRep="대표: 이광탁"
+                bizRegNo="사업자등록번호: 123-45-67890"
+                navGroups={[
+                    { title: "안내", items: ["사업개요", "단지정보", "입지", "오시는길"] },
+                    { title: "고객지원", items: ["상담문의", "관심고객 등록", "홍보자료"] },
+                    { title: "정책", items: ["개인정보 처리방침", "이용약관"] },
+                ]}
             />
         </>
     )
