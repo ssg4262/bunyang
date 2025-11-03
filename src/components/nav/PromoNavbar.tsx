@@ -34,6 +34,14 @@ export type PromoNavbarProps = {
     onBrandClick?: () => void
 }
 
+// 전화번호 텍스트에서 숫자(+ 포함)만 뽑아 tel: 링크 생성
+const toTelHref = (label?: string) => {
+    if (!label) return "tel:"
+    const m = label.match(/[+]?[0-9][0-9\\- ]{5,}/)
+    const raw = m ? m[0] : label
+    return `tel:${raw.replace(/[^+\\d]/g, "")}`
+}
+
 export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                                                             brand = "분양홍보",
                                                             nav,
@@ -50,7 +58,9 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
         const root = document.documentElement
         const isDark = root.classList.contains("dark")
         root.classList.toggle("dark", !isDark)
-        try { localStorage.setItem("theme", !isDark ? "dark" : "light") } catch {}
+        try {
+            localStorage.setItem("theme", !isDark ? "dark" : "light")
+        } catch { /* empty */ }
     }, [])
 
     React.useEffect(() => {
@@ -87,7 +97,10 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                                 type="button"
                                 variant="ghost"
                                 disabled={item.disabled}
-                                onClick={() => { setActive(idx); onItemClick?.(item, idx) }}
+                                onClick={() => {
+                                    setActive(idx)
+                                    onItemClick?.(item, idx)
+                                }}
                                 className={cn(
                                     "rounded-xl px-3 py-2 text-sm transition-colors",
                                     active === idx
@@ -109,8 +122,11 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                 {/* 우측: 액션들 */}
                 <div className="flex items-center gap-2">
                     {contactLabel && (
-                        <Button type="button" variant="default" className="hidden sm:inline-flex rounded-xl">
-                            <Phone className="mr-2 h-4 w-4" /> {contactLabel}
+                        // 데스크톱: tel: 링크 (shadcn Button asChild)
+                        <Button asChild variant="default" className="hidden sm:inline-flex rounded-xl">
+                            <a href={toTelHref(contactLabel)} aria-label={`${contactLabel}로 전화하기`}>
+                                <Phone className="mr-2 h-4 w-4" /> {contactLabel}
+                            </a>
                         </Button>
                     )}
 
@@ -133,7 +149,10 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                         brand={brand}
                         nav={nav}
                         contactLabel={contactLabel}
-                        onItemClick={(item, idx) => { setActive(idx); onItemClick?.(item, idx) }}
+                        onItemClick={(item, idx) => {
+                            setActive(idx)
+                            onItemClick?.(item, idx)
+                        }}
                     />
                 </div>
             </div>
@@ -183,9 +202,12 @@ const MobileMenu: React.FC<{
 
             {contactLabel && (
                 <div className="mt-6">
+                    {/* 모바일: 시트 닫히면서 tel: 링크로 이동 (SheetClose + Button asChild + a) */}
                     <SheetClose asChild>
-                        <Button type="button" className="w-full rounded-xl">
-                            <Phone className="mr-2 h-4 w-4" /> {contactLabel}
+                        <Button asChild className="w-full rounded-xl">
+                            <a href={toTelHref(contactLabel)} aria-label={`${contactLabel}로 전화하기`}>
+                                <Phone className="mr-2 h-4 w-4" /> {contactLabel}
+                            </a>
                         </Button>
                     </SheetClose>
                 </div>
@@ -193,17 +215,3 @@ const MobileMenu: React.FC<{
         </SheetContent>
     </Sheet>
 )
-
-/* ----------------------------- 사용 예시 (참고) ----------------------------
-<PromoNavbar
-  brand="e편한세상 동대구역 센텀스퀘어"
-  nav={[
-    { label: "분양안내" },
-    { label: "단지정보" },
-    { label: "입지", badge: "HOT" },
-    { label: "오시는길" },
-  ]}
-  contactLabel="상담 053-760-4818"
-  onItemClick={(item, idx) => console.log("clicked", item, idx)}
-/>
-*/
