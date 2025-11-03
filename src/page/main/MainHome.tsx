@@ -79,7 +79,7 @@ export const MainHome: React.FC = () => {
                 eyebrow="동대구 최중심을 누리는 특별한 삶"
                 title="e편한세상 동대구역 센텀스퀘어"
                 badges={["분양중", "공사완료"]}
-                phone="053.754.3600"
+                phone="053-760-4818"
                 // 우측(따옴표+헤드라인+서브)은 기본값 그대로 쓰거나 아래처럼 교체 가능
                 rightImageSrc={yeoksae}
                 rightImageAlt="주변시설 비주얼"
