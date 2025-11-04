@@ -7,6 +7,13 @@ import { PromoCarousel } from "@/components/carousel/PromoCarousel.tsx"
 import mainCarousel from "@/assets/main/carousel/mainCarousel.png"
 import mainCarousel2 from "@/assets/main/carousel/mainCarousel2.png"
 import mainCarousel3 from "@/assets/main/carousel/mainCarousel3.png"
+import room1 from "@/assets/gallery/room1.jpg"
+import room2 from "@/assets/gallery/room2.jpg"
+import room3 from "@/assets/gallery/room3.jpg"
+import living1 from "@/assets/gallery/living1.jpg"
+import living2 from "@/assets/gallery/living2.jpg"
+import living3 from "@/assets/gallery/living3.jpg"
+
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
@@ -18,6 +25,8 @@ import {
     type SpecItem,
     type UnitRow,
 } from "@/components/sections/ProjectOverviewTabs.tsx"
+import {HousePhotoGallery} from "@/components/sections/HousePhotoGallery"
+
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
@@ -79,7 +88,7 @@ export const MainHome: React.FC = () => {
                             { label: "세대안내" },
                             { label: "단지정보" },
                             { label: "프리미엄" },
-                            { label: "오시는길" },
+                            // { label: "오시는길" },
                         ]}
                         contactLabel="분양문의 053-760-4818"
                         // ✅ 헤더 실제 높이 콜백으로 받아서 오프셋에 사용
@@ -93,6 +102,8 @@ export const MainHome: React.FC = () => {
                                 scrollToEl(houseTypeRef.current)
                             } else if (key.includes("단지정보")) {
                                 navigate("/bunyang/ci")          // ✅ 여기서 라우팅
+                            } else if (key.includes("프리미엄")) {
+                                navigate("/bunyang/pr")          // ✅ 여기서 라우팅
                             }
                             // 필요하면 여기서 다른 섹션도 추가
                         }}
@@ -154,6 +165,17 @@ export const MainHome: React.FC = () => {
             <div ref={houseTypeRef}>
                 <HouseTypeSelector />
             </div>
+
+            <HousePhotoGallery
+                photos={[
+                    { id: 1, src: room1, alt: "방1", room: "침실", caption: "방 전경" },
+                    { id: 2, src: room2, alt: "방2", room: "침실", caption: "방 전경" },
+                    { id: 3, src: room3, alt: "방3", room: "침실", caption: "방 전경" },
+                    { id: 4, src: living1, alt: "거실1", room: "거실", caption: "거실 전경" },
+                    { id: 5, src: living2, alt: "거실2", room: "거실", caption: "거실 전경" },
+                    { id: 6, src: living3, alt: "거실3", room: "거실", caption: "거실 전경" },
+                // ...
+            ]} defaultFilter="전체" />
 
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
