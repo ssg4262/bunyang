@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import h79A from "@/assets/main/houseType/79A.png"
+import h79B from "@/assets/main/houseType/79B.png"
 
 type HouseType = {
     label: string
@@ -26,12 +27,15 @@ export const HouseTypeSelector: React.FC = () => {
     const [usePyung, setUsePyung] = React.useState(false)
     const scrollRef = useRef<HTMLDivElement>(null)
 
+    // 정확한 평 변환 상수
+    const SQM_PER_PYUNG = 3.305785
+
     const types: HouseType[] = [
         {
             label: "79m²A형",
             areaM2: 79.774,
             units: 1,
-            image: h79A,
+            image: (h79A as unknown as string),
             details: {
                 전용: 79.774,
                 주거공용: 23.1942,
@@ -44,7 +48,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "79m²B형",
             areaM2: 79.8927,
             units: 1,
-            image: "/images/type-79b.png",
+            image: (h79B as unknown as string),
             details: {
                 전용: 79.8927,
                 주거공용: 23.0455,
@@ -68,13 +72,13 @@ export const HouseTypeSelector: React.FC = () => {
         },
         {
             label: "84m²B형",
-            areaM2:  84.9165,
+            areaM2: 84.9165,
             units: 18,
             image: "/images/type-84b.png",
             details: {
-                전용:  84.9165,
+                전용: 84.9165,
                 주거공용: 24.3610,
-                공급:  109.2775,
+                공급: 109.2775,
                 기타공용: 55.1856,
                 계약: 164.4632,
             },
@@ -98,9 +102,9 @@ export const HouseTypeSelector: React.FC = () => {
             units: 18,
             image: "/images/type-107a.png",
             details: {
-                전용:  107.8806,
-                주거공용:  30.2790,
-                공급:  138.1596,
+                전용: 107.8806,
+                주거공용: 30.2790,
+                공급: 138.1596,
                 기타공용: 70.1096,
                 계약: 208.2692,
             },
@@ -113,7 +117,7 @@ export const HouseTypeSelector: React.FC = () => {
             details: {
                 전용: 107.6682,
                 주거공용: 30.0035,
-                공급:  137.6717,
+                공급: 137.6717,
                 기타공용: 69.9715,
                 계약: 207.6433,
             },
@@ -126,8 +130,8 @@ export const HouseTypeSelector: React.FC = () => {
             details: {
                 전용: 125.7263,
                 주거공용: 35.7885,
-                공급: 161.51483,
-                기타공용:81.7072,
+                공급: 161.5148,
+                기타공용: 81.7072,
                 계약: 243.2220,
             },
         },
@@ -135,12 +139,12 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²B형",
             areaM2: 125.9086,
             units: 18,
-            image: "/images/type-125a.png",
+            image: "/images/type-125b.png",
             details: {
-                전용:  125.9086,
+                전용: 125.9086,
                 주거공용: 36.2387,
-                공급:  162.1473,
-                기타공용:81.8256,
+                공급: 162.1473,
+                기타공용: 81.8256,
                 계약: 243.9729,
             },
         },
@@ -148,7 +152,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²C형",
             areaM2: 125.7459,
             units: 18,
-            image: "/images/type-125a.png",
+            image: "/images/type-125c.png",
             details: {
                 전용: 125.7459,
                 주거공용: 36.2975,
@@ -159,22 +163,32 @@ export const HouseTypeSelector: React.FC = () => {
         },
         {
             label: "125m²D형",
-            areaM2:  125.8938,
+            areaM2: 125.8938,
             units: 20,
-            image: "/images/type-125a.png",
+            image: "/images/type-125d.png",
             details: {
-                전용:  125.8938,
-                주거공용:35.7621,
-                공급:  161.6559,
+                전용: 125.8938,
+                주거공용: 35.7621,
+                공급: 161.6559,
                 기타공용: 81.8160,
-                계약:  243.4719,
+                계약: 243.4719,
             },
         },
     ]
 
     const active = types[selected]
-    const ratio = 3.3058
-    const convert = (v: number) => (usePyung ? (v / ratio).toFixed(2) + "평" : v.toFixed(4) + "m²")
+
+    // 현재 선택 타입의 "A형/B형…" 접미어
+    const typeSuffix = React.useMemo(() => {
+        const m = active.label.match(/[A-Z]형/)
+        return m ? m[0] : ""
+    }, [active.label])
+
+    // 표 셀 표시용 공통 변환
+    const convert = (v: number) => {
+        if (usePyung) return `${(v / SQM_PER_PYUNG).toFixed(2)}평`
+        return `${v.toFixed(3)}m²`
+    }
 
     const scrollBy = (dir: "left" | "right") => {
         if (!scrollRef.current) return
@@ -183,16 +197,21 @@ export const HouseTypeSelector: React.FC = () => {
         container.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" })
     }
 
+    // 헤드라인: 공급 기준으로 ㎡/평 전환 + A형/B형 접미어
+    const headlineText = usePyung
+        ? `${Math.round(active.details.공급 / SQM_PER_PYUNG)}평${typeSuffix}`
+        : `${active.details.공급.toFixed(1)}m²${typeSuffix}`
+
     return (
         <section className="w-full bg-white py-12 md:py-16 text-center">
             <div className="container mx-auto px-6 max-w-6xl flex flex-col items-center">
                 {/* 헤드라인 */}
-                <div className="mb-10">
-                    <div className="text-gray-400 text-3xl mb-2">“</div>
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-gray-800">
-                        트렌디한 주거문화를 선도하는 혁신 주거평면 C2 House
-                    </h2>
-                    <div className="text-gray-400 text-3xl">”</div>
+                <div className="text-center mb-8 md:mb-10">
+                    <p className="text-sm md:text-base text-muted-foreground">
+                        동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어.
+                        중·대형 평면으로 구성된 총 322세대 일반분양 공동주택
+                    </p>
+                    <h2 className="mt-2 text-2xl md:text-4xl font-extrabold tracking-tight">세대안내</h2>
                 </div>
 
                 {/* 탭 바 */}
@@ -200,18 +219,17 @@ export const HouseTypeSelector: React.FC = () => {
                     <button
                         onClick={() => scrollBy("left")}
                         className="absolute left-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-r from-gray-50 to-transparent h-full flex items-center"
+                        aria-label="이전 타입들 보기"
                     >
                         <ChevronLeft className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
                     </button>
 
                     <div
                         ref={scrollRef}
-                        className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth
-                              overflow-auto
-                              [scrollbar-width:none]         
-                              [-ms-overflow-style:none]    
-                              [&::-webkit-scrollbar]:hidden
-                        "
+                        className={cn(
+                            "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+                            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                        )}
                     >
                         {types.map((t, i) => (
                             <button
@@ -221,7 +239,7 @@ export const HouseTypeSelector: React.FC = () => {
                                     "flex-shrink-0 px-6 py-3 text-sm md:text-base font-medium transition-all snap-start whitespace-nowrap",
                                     i === selected
                                         ? "bg-[#FF5A1F] text-white"
-                                        : "text-gray-500 hover:text-gray-700"
+                                        : "text-gray-600 hover:text-gray-800"
                                 )}
                             >
                                 {t.label}
@@ -232,24 +250,21 @@ export const HouseTypeSelector: React.FC = () => {
                     <button
                         onClick={() => scrollBy("right")}
                         className="absolute right-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-l from-gray-50 to-transparent h-full flex items-center"
+                        aria-label="다음 타입들 보기"
                     >
                         <ChevronRight className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
                     </button>
                 </div>
 
-                {/* 선택 정보 */}
+                {/* 선택 정보 (공급 기준) */}
                 <div className="mt-12 flex flex-col items-center gap-3">
-                    <h3 className="text-4xl md:text-5xl font-extrabold text-gray-800">
-                        {usePyung
-                            ? (active.areaM2 / ratio).toFixed(1) + "평형"
-                            : active.areaM2 + "m²형"}
-                    </h3>
+                    <h3 className="text-4xl md:text-5xl font-extrabold text-gray-800">{headlineText}</h3>
                     <p className="text-gray-500 text-lg">{active.units}세대</p>
                 </div>
 
-                {/* 단위 토글 */}
+                {/* 단위 토글 (공급 기준으로 표기 안내) */}
                 <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
-                    <span>㎡ (전용면적)</span>
+                    <span>㎡ (공급면적)</span>
                     <Switch checked={usePyung} onCheckedChange={setUsePyung} />
                     <span>평 (공급면적)</span>
                 </div>
@@ -260,6 +275,7 @@ export const HouseTypeSelector: React.FC = () => {
                         src={active.image}
                         alt={active.label}
                         className="w-full max-w-3xl mx-auto rounded-md"
+                        draggable={false}
                     />
                 </div>
 
@@ -274,7 +290,7 @@ export const HouseTypeSelector: React.FC = () => {
                     </div>
                 </div>
 
-                {/* 하단 유의사항 */}
+                {/* 유의사항 */}
                 <div className="mt-8 w-full max-w-4xl border-t border-gray-200 pt-5 text-left text-gray-500 text-[13px] leading-relaxed space-y-1">
                     <p>* 유니트 및 면적은 소비자의 이해를 돕기 위한 것으로 건축설계변경 및 그 이외의 사유로 변경될 수 있습니다.</p>
                     <p>* 본 홈페이지에 사용된 아이소메트릭 및 평면도는 소비자의 이해를 돕기 위한 것으로 건축설계변경 또는 그 외의 사유로 인해 변경될 수 있습니다.</p>
