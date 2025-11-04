@@ -40,7 +40,7 @@ export const MainHome: React.FC = () => {
                     <PromoNavbar
                         brand="e편한세상 동대구역 센텀스퀘어"
                         nav={[
-                            {label: "사업개요", badge: "HOT"},
+                            {label: "사업개요", badge: "분양중"},
                             {label: "단지정보"},
                             {label: "입지안내",},
                             {label: "단지안내",},
