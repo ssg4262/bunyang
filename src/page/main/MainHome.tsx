@@ -39,21 +39,17 @@ export const MainHome: React.FC = () => {
                 >
                     <PromoNavbar
                         brand="e편한세상 동대구역 센텀스퀘어"
-                        contactLabel="분양문의 053-760-4818"
                         nav={[
-                            {
-                                label: "브랜드",
-                                children: [
-                                    { label: "브랜드 스토리" },
-                                    { label: "상품" },
-                                    { label: "기술" },
-                                    { label: "브랜드 뉴스" },
-                                ],
-                            },
-                            { label: "분양" },     // children 없이 단일 항목
-                            { label: "마이홈" },   // children 없이 단일 항목
+                            {label: "사업개요", badge: "HOT"},
+                            {label: "단지정보"},
+                            {label: "입지안내",},
+                            {label: "단지안내",},
+                            {label: "세대안내",},
+                            {label: "프리미엄",},
+                            {label: "오시는길"},
                         ]}
-                        onItemClick={(item) => console.log("clicked:", item.label)}
+                        contactLabel="분양문의 053-760-4818"
+                        onItemClick={(item, idx) => console.log("clicked", item, idx)}
                     />
                     </div>
 
