@@ -53,9 +53,9 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
   heroSelector = "#hero",
   onHeightChange,
   mobileFooterLinks = [
-    { label: "공지사항" },
-    { label: "이벤트" },
-    { label: "고객문의" },
+    // { label: "공지사항" },
+    // { label: "이벤트" },
+    // { label: "고객문의" },
   ],
 }) => {
   const [active, setActive] = React.useState(0)
