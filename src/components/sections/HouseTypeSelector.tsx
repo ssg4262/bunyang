@@ -206,7 +206,12 @@ export const HouseTypeSelector: React.FC = () => {
 
                     <div
                         ref={scrollRef}
-                        className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth"
+                        className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth
+                              overflow-auto
+                              [scrollbar-width:none]         
+                              [-ms-overflow-style:none]    
+                              [&::-webkit-scrollbar]:hidden
+                        "
                     >
                         {types.map((t, i) => (
                             <button
