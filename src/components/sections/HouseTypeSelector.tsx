@@ -30,7 +30,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "79m²A형",
             areaM2: 79.774,
-            units: 132,
+            units: 1,
             image: h79A,
             details: {
                 전용: 79.774,
@@ -43,7 +43,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "79m²B형",
             areaM2: 79.8927,
-            units: 120,
+            units: 1,
             image: "/images/type-79b.png",
             details: {
                 전용: 79.8927,
@@ -56,7 +56,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "84m²A형",
             areaM2: 84.7113,
-            units: 130,
+            units: 132,
             image: "/images/type-84a.png",
             details: {
                 전용: 84.7113,
@@ -69,7 +69,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "84m²B형",
             areaM2:  84.9165,
-            units: 98,
+            units: 18,
             image: "/images/type-84b.png",
             details: {
                 전용:  84.9165,
@@ -82,7 +82,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "84m²C형",
             areaM2: 84.9463,
-            units: 90,
+            units: 18,
             image: "/images/type-84c.png",
             details: {
                 전용: 84.9463,
@@ -95,7 +95,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "107m²A형",
             areaM2: 107.8806,
-            units: 70,
+            units: 18,
             image: "/images/type-107a.png",
             details: {
                 전용:  107.8806,
@@ -108,7 +108,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "107m²B형",
             areaM2: 107.6682,
-            units: 60,
+            units: 20,
             image: "/images/type-107b.png",
             details: {
                 전용: 107.6682,
@@ -121,7 +121,7 @@ export const HouseTypeSelector: React.FC = () => {
         {
             label: "125m²A형",
             areaM2: 125.7263,
-            units: 45,
+            units: 38,
             image: "/images/type-125a.png",
             details: {
                 전용: 125.7263,
@@ -129,6 +129,45 @@ export const HouseTypeSelector: React.FC = () => {
                 공급: 161.51483,
                 기타공용:81.7072,
                 계약: 243.2220,
+            },
+        },
+        {
+            label: "125m²B형",
+            areaM2: 125.9086,
+            units: 18,
+            image: "/images/type-125a.png",
+            details: {
+                전용:  125.9086,
+                주거공용: 36.2387,
+                공급:  162.1473,
+                기타공용:81.8256,
+                계약: 243.9729,
+            },
+        },
+        {
+            label: "125m²C형",
+            areaM2: 125.7459,
+            units: 18,
+            image: "/images/type-125a.png",
+            details: {
+                전용: 125.7459,
+                주거공용: 36.2975,
+                공급: 162.0434,
+                기타공용: 81.7199,
+                계약: 243.7633,
+            },
+        },
+        {
+            label: "125m²D형",
+            areaM2:  125.8938,
+            units: 20,
+            image: "/images/type-125a.png",
+            details: {
+                전용:  125.8938,
+                주거공용:35.7621,
+                공급:  161.6559,
+                기타공용: 81.8160,
+                계약:  243.4719,
             },
         },
     ]
