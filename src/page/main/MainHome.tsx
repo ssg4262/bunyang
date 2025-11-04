@@ -42,7 +42,10 @@ export const MainHome: React.FC = () => {
                         nav={[
                             {label: "사업개요", badge: "HOT"},
                             {label: "단지정보"},
-                            {label: "입지", badge: "HOT"},
+                            {label: "입지안내",},
+                            {label: "단지안내",},
+                            {label: "세대안내",},
+                            {label: "프리미엄",},
                             {label: "오시는길"},
                         ]}
                         contactLabel="분양문의 053-760-4818"
