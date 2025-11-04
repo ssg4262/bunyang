@@ -34,7 +34,8 @@ import pr1 from "@/assets/pr/pr1.png"
 import pr2 from "@/assets/pr/pr2.png"
 import pr3 from "@/assets/pr/pr3.png"
 import pr4 from "@/assets/pr/pr4.png"
-
+import pr5 from "@/assets/pr/pr5.png"
+import pr6 from "@/assets/pr/pr6.png"
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
@@ -208,7 +209,23 @@ export const MainHome: React.FC = () => {
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
                 <SitePlanSection
-                    title="프리미엄"
+                    title="프리미엄 혜택"
+                    image={pr5}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+                <SitePlanSection
+                    title="프리미엄 무상제공 품목"
+                    image={pr6}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+                <SitePlanSection
+                    title="프리미엄 브랜드 가치"
                     image={pr1}
                     alt="e편한세상 동대구역 센텀스퀘어 PR"
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
