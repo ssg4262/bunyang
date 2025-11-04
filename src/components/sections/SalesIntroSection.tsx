@@ -2,9 +2,9 @@
 "use client"
 
 import React from "react"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Share2, Star } from "lucide-react"
+// import { Share2, Star } from "lucide-react"
 
 type Align = "center" | "left"
 
@@ -89,14 +89,14 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
 
                     {/* 액션 */}
                     <div className="mt-6 flex flex-wrap items-center gap-3">
-                        <Button type="button" variant="outline" className="rounded-xl">
-                            <Star className="mr-2 h-4 w-4" />
-                            관심고객 등록
-                        </Button>
-                        <Button type="button" variant="ghost" className="rounded-xl">
-                            <Share2 className="mr-2 h-4 w-4" />
-                            SNS 공유
-                        </Button>
+                        {/*<Button type="button" variant="outline" className="rounded-xl">*/}
+                        {/*    <Star className="mr-2 h-4 w-4" />*/}
+                        {/*    관심고객 등록*/}
+                        {/*</Button>*/}
+                        {/*<Button type="button" variant="ghost" className="rounded-xl">*/}
+                        {/*    <Share2 className="mr-2 h-4 w-4" />*/}
+                        {/*    SNS 공유*/}
+                        {/*</Button>*/}
                     </div>
 
                     {/* 전화 */}

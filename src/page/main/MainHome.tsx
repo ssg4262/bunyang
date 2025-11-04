@@ -12,6 +12,7 @@ import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
 import { PromoFooter } from "@/components/PromoFooter.tsx"
 import { HouseTypeSelector } from "@/components/sections/HouseTypeSelector.tsx"
+import { useNavigate } from "react-router-dom"   // ✅ 1) 임포트
 import {
     ProjectOverviewTabs,
     type SpecItem,
@@ -21,7 +22,7 @@ import {
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
     const [navH, setNavH] = React.useState(64)
-
+    const navigate = useNavigate();
     // ── 스크롤 타깃 ref들
     const overviewRef = React.useRef<HTMLDivElement>(null)      // ProjectOverviewTabs
     const houseTypeRef = React.useRef<HTMLDivElement>(null)     // HouseTypeSelector 등 필요 시 추가
@@ -72,6 +73,7 @@ export const MainHome: React.FC = () => {
                 <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/35 to-transparent">
                     <PromoNavbar
                         brand="e편한세상 동대구역 센텀스퀘어"
+                        brandHref="/bunyang"
                         nav={[
                             { label: "사업개요", badge: "분양중" },
                             { label: "세대안내" },
@@ -90,6 +92,8 @@ export const MainHome: React.FC = () => {
                                 scrollToEl(overviewRef.current)
                             } else if (key.includes("세대안내")) {
                                 scrollToEl(houseTypeRef.current)
+                            } else if (key.includes("단지정보")) {
+                                navigate("/bunyang/ci")          // ✅ 여기서 라우팅
                             }
                             // 필요하면 여기서 다른 섹션도 추가
                         }}
