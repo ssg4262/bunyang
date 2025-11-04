@@ -51,14 +51,14 @@ export type HousePhotoRailProps = {
 
 /* ======================== Component ======================== */
 export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
-                                                                  photos,
-                                                                  className,
-                                                                  defaultFilter = "전체",
-                                                                  cardHeight = 260,
-                                                                  thumbHeight = 68,
-                                                                  subtleBorder = true,
-                                                                  disableLightbox = false,
-                                                              }) => {
+                                                                     photos,
+                                                                     className,
+                                                                     defaultFilter = "전체",
+                                                                     cardHeight = 260,
+                                                                     thumbHeight = 68,
+                                                                     subtleBorder = true,
+                                                                     disableLightbox = false,
+                                                                 }) => {
     const [filter, setFilter] = React.useState<RoomKind | "전체">(defaultFilter)
     const [open, setOpen] = React.useState(false)
     const [lightIdx, setLightIdx] = React.useState(0)
@@ -218,7 +218,8 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                         className={cn(
                             "group relative flex gap-4 overflow-x-auto overflow-y-hidden",
                             "scroll-smooth snap-x snap-mandatory",
-                            "px-0 py-1 select-none cursor-grab"
+                            "px-0 py-1 select-none cursor-grab",
+                            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                         onMouseDown={onMouseDown}
                         onMouseMove={onMouseMove}
@@ -236,7 +237,6 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                 style={{
                                     height: `clamp(200px, ${cardHeight}px, 50vh)`,
                                     aspectRatio: "3 / 2",
-                                    // 3:2 카드 비율. 필요 시 바꿔도 됨.
                                 }}
                             >
                                 <button
@@ -275,7 +275,8 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
             {!disableLightbox && (
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent
-                        className="max-w-5xl w-[96vw] p-0 overflow-hidden"
+                        // 기본 shadcn Close(X) 버튼 숨김 + 커스텀 X만 사용
+                        className="max-w-5xl w-[96vw] p-0 overflow-hidden [&>button]:hidden"
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
                     >
@@ -293,7 +294,13 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                         <Maximize2 className="h-4 w-4" />
                                     </a>
                                 </Button>
-                                <Button size="icon" variant="ghost" className="rounded-lg" onClick={() => setOpen(false)} title="닫기">
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="rounded-lg"
+                                    onClick={() => setOpen(false)}
+                                    title="닫기"
+                                >
                                     <X className="h-4 w-4" />
                                 </Button>
                             </div>

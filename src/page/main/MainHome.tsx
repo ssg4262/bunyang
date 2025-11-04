@@ -19,22 +19,32 @@ import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
 import { PromoFooter } from "@/components/PromoFooter.tsx"
 import { HouseTypeSelector } from "@/components/sections/HouseTypeSelector.tsx"
-import { useNavigate } from "react-router-dom"   // ✅ 1) 임포트
 import {
     ProjectOverviewTabs,
     type SpecItem,
     type UnitRow,
 } from "@/components/sections/ProjectOverviewTabs.tsx"
-import {HousePhotoGallery} from "@/components/sections/HousePhotoGallery"
+import { HousePhotoGallery } from "@/components/sections/HousePhotoGallery"
+import { SitePlanSection } from "@/components/sections/SitePlanSection.tsx"
+import dangebatch from "@/assets/ci/dangebatch.png"
+import jomang from "@/assets/ci/jomang.png"
+import dong from "@/assets/ci/donghosu.png"
+import comu from "@/assets/ci/comunity.png"
+import pr1 from "@/assets/pr/pr1.png"
+import pr2 from "@/assets/pr/pr2.png"
+import pr3 from "@/assets/pr/pr3.png"
+import pr4 from "@/assets/pr/pr4.png"
 
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
     const [navH, setNavH] = React.useState(64)
-    const navigate = useNavigate();
+
     // ── 스크롤 타깃 ref들
-    const overviewRef = React.useRef<HTMLDivElement>(null)      // ProjectOverviewTabs
-    const houseTypeRef = React.useRef<HTMLDivElement>(null)     // HouseTypeSelector 등 필요 시 추가
+    const overviewRef = React.useRef<HTMLDivElement>(null)      // 사업개요
+    const houseTypeRef = React.useRef<HTMLDivElement>(null)     // 세대안내
+    const complexInfoRef = React.useRef<HTMLDivElement>(null)   // 단지정보(단지 배치도 섹션)
+    const premiumRef = React.useRef<HTMLDivElement>(null)       // 프리미엄(PR 섹션)
 
     // 스무스 스크롤 도우미(헤더 높이만큼 여유)
     const scrollToEl = React.useCallback(
@@ -91,21 +101,21 @@ export const MainHome: React.FC = () => {
                             // { label: "오시는길" },
                         ]}
                         contactLabel="분양문의 053-760-4818"
-                        // ✅ 헤더 실제 높이 콜백으로 받아서 오프셋에 사용
                         onHeightChange={(h) => setNavH(h)}
-                        // ✅ 메뉴 클릭 시 각 섹션으로 스크롤
+                        // ✅ 메뉴 클릭 시 각 섹션으로 스크롤 (같은 페이지 내)
                         onItemClick={(item) => {
-                            const key = item.label.replace(/\s/g, "") // 공백 제거 매칭
+                            const key = item.label.replace(/\s/g, "")
                             if (key.includes("사업개요")) {
                                 scrollToEl(overviewRef.current)
                             } else if (key.includes("세대안내")) {
                                 scrollToEl(houseTypeRef.current)
                             } else if (key.includes("단지정보")) {
-                                navigate("/bunyang/ci")          // ✅ 여기서 라우팅
+                                // 첫 번째 단지정보 섹션(단지 배치도)로 포커싱
+                                scrollToEl(complexInfoRef.current)
                             } else if (key.includes("프리미엄")) {
-                                navigate("/bunyang/pr")          // ✅ 여기서 라우팅
+                                // PR 섹션으로 포커싱
+                                scrollToEl(premiumRef.current)
                             }
-                            // 필요하면 여기서 다른 섹션도 추가
                         }}
                     />
                 </div>
@@ -156,16 +166,12 @@ export const MainHome: React.FC = () => {
                     overviewHero={mainCarousel}
                     unitRows={rows}
                     specList={specs}
-                    perspectiveImages={[mainCarousel,mainCarousel3]}
+                    perspectiveImages={[mainCarousel, mainCarousel3]}
                     brandImages={[brand]}
                 />
             </div>
 
-            {/* ✅ 스크롤 타깃: 세대안내 */}
-            <div ref={houseTypeRef}>
-                <HouseTypeSelector />
-            </div>
-
+            {/* 사진 갤러리 */}
             <HousePhotoGallery
                 photos={[
                     { id: 1, src: room1, alt: "방1", room: "침실", caption: "방 전경" },
@@ -174,8 +180,67 @@ export const MainHome: React.FC = () => {
                     { id: 4, src: living1, alt: "거실1", room: "거실", caption: "거실 전경" },
                     { id: 5, src: living2, alt: "거실2", room: "거실", caption: "거실 전경" },
                     { id: 6, src: living3, alt: "거실3", room: "거실", caption: "거실 전경" },
-                // ...
-            ]} defaultFilter="전체" />
+                ]}
+                defaultFilter="전체"
+            />
+
+            {/* ✅ 스크롤 타깃: 세대안내 */}
+            <div ref={houseTypeRef}>
+                <HouseTypeSelector />
+            </div>
+
+            {/* ✅ 스크롤 타깃: 단지정보(첫 섹션으로 점프) */}
+            <div ref={complexInfoRef}>
+                <SitePlanSection
+                    title="단지 배치도"
+                    image={dangebatch}
+                    alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+            </div>
+
+            {/* 단지정보의 나머지 섹션들(연속 배치) */}
+            <SitePlanSection title="조망경관" image={jomang} alt="조망경관" className="pt-0" />
+            <SitePlanSection title="동호수표" image={dong} alt="동호수표" className="pt-0" />
+            <SitePlanSection title="커뮤니티" image={comu} alt="커뮤니티" className="pt-0" />
+
+            {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
+            <div ref={premiumRef}>
+                <SitePlanSection
+                    title="프리미엄"
+                    image={pr1}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+                <SitePlanSection
+                    title="프리미엄 슬세권"
+                    image={pr3}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+                <SitePlanSection
+                    title="프리미엄 백세권"
+                    image={pr4}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+                <SitePlanSection
+                    title="영남일보 기사"
+                    image={pr2}
+                    alt="e편한세상 동대구역 센텀스퀘어 PR"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+
+
+            </div>
 
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
@@ -188,21 +253,7 @@ export const MainHome: React.FC = () => {
                 bizName="시행 · 시공: (주)건설"
                 bizRep="대표: 이광탁"
                 bizRegNo="사업자등록번호: 123-45-67890"
-                navGroups={[
-                    // {
-                    //     title: "안내",
-                    //     items: [
-                    //         "사업개요",
-                    //         "단지정보",
-                    //         "단지안내",
-                    //         "세대안내",
-                    //         "프리미엄",
-                    //         "오시는길",
-                    //     ],
-                    // },
-                    // { title: "고객지원", items: ["상담문의", "관심고객 등록", "홍보자료"] },
-                    // { title: "정책", items: ["개인정보 처리방침", "이용약관"] },
-                ]}
+                navGroups={[]}
             />
         </>
     )

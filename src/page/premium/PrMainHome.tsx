@@ -62,6 +62,13 @@ export const PrMainHome: React.FC = () => {
                 note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
                 className="pt-0"
             />
+            <SitePlanSection
+                title="e 편한세상"
+                image={pr1}
+                alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
+                note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                className="pt-0"
+            />
 
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
