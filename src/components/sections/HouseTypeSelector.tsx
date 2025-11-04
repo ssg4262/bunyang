@@ -8,6 +8,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import h79A from "@/assets/main/houseType/79A.png"
 import h79B from "@/assets/main/houseType/79B.png"
 
+import h84A from "@/assets/main/houseType/84A.png"
+import h84B from "@/assets/main/houseType/84B.png"
+import h84C from "@/assets/main/houseType/84C.png"
+
+import h107A from "@/assets/main/houseType/107A.png"
+import h107B from "@/assets/main/houseType/107B.png"
+
+import h125A from "@/assets/main/houseType/125A.png"
+import h125B from "@/assets/main/houseType/125B.png"
+import h125C from "@/assets/main/houseType/125C.png"
+import h125D from "@/assets/main/houseType/125D.png"
+import h125E from "@/assets/main/houseType/125E.png"
+
 type HouseType = {
     label: string
     areaM2: number
@@ -24,7 +37,7 @@ type HouseType = {
 
 export const HouseTypeSelector: React.FC = () => {
     const [selected, setSelected] = React.useState(0)
-    const [usePyung, setUsePyung] = React.useState(false)
+    const [usePyung, setUsePyung] = React.useState(true)
     const scrollRef = useRef<HTMLDivElement>(null)
 
     // 정확한 평 변환 상수
@@ -61,7 +74,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "84m²A형",
             areaM2: 84.7113,
             units: 132,
-            image: "/images/type-84a.png",
+            image: (h84A as unknown as string),
             details: {
                 전용: 84.7113,
                 주거공용: 24.6465,
@@ -74,7 +87,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "84m²B형",
             areaM2: 84.9165,
             units: 18,
-            image: "/images/type-84b.png",
+            image: (h84B as unknown as string),
             details: {
                 전용: 84.9165,
                 주거공용: 24.3610,
@@ -87,7 +100,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "84m²C형",
             areaM2: 84.9463,
             units: 18,
-            image: "/images/type-84c.png",
+            image: (h84C as unknown as string),
             details: {
                 전용: 84.9463,
                 주거공용: 24.3398,
@@ -100,7 +113,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "107m²A형",
             areaM2: 107.8806,
             units: 18,
-            image: "/images/type-107a.png",
+            image: (h107A as unknown as string),
             details: {
                 전용: 107.8806,
                 주거공용: 30.2790,
@@ -113,7 +126,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "107m²B형",
             areaM2: 107.6682,
             units: 20,
-            image: "/images/type-107b.png",
+            image: (h107B as unknown as string),
             details: {
                 전용: 107.6682,
                 주거공용: 30.0035,
@@ -126,7 +139,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²A형",
             areaM2: 125.7263,
             units: 38,
-            image: "/images/type-125a.png",
+            image: (h125A as unknown as string),
             details: {
                 전용: 125.7263,
                 주거공용: 35.7885,
@@ -139,7 +152,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²B형",
             areaM2: 125.9086,
             units: 18,
-            image: "/images/type-125b.png",
+            image: (h125B as unknown as string),
             details: {
                 전용: 125.9086,
                 주거공용: 36.2387,
@@ -152,7 +165,7 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²C형",
             areaM2: 125.7459,
             units: 18,
-            image: "/images/type-125c.png",
+            image: (h125C as unknown as string),
             details: {
                 전용: 125.7459,
                 주거공용: 36.2975,
@@ -165,13 +178,26 @@ export const HouseTypeSelector: React.FC = () => {
             label: "125m²D형",
             areaM2: 125.8938,
             units: 20,
-            image: "/images/type-125d.png",
+            image: (h125D as unknown as string),
             details: {
                 전용: 125.8938,
                 주거공용: 35.7621,
                 공급: 161.6559,
                 기타공용: 81.8160,
                 계약: 243.4719,
+            },
+        },
+        {
+            label: "125m²E형",
+            areaM2: 125.4919,
+            units: 20,
+            image: (h125E as unknown as string),
+            details: {
+                전용: 125.4919,
+                주거공용: 36.0016,
+                공급: 161.4935,
+                기타공용: 81.5548,
+                계약: 243.0483,
             },
         },
     ]
