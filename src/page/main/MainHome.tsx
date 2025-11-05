@@ -98,7 +98,7 @@ export const MainHome: React.FC = () => {
                 <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/35 to-transparent">
                     <PromoNavbar
                         brand="e편한세상 동대구역 센텀스퀘어"
-                        brandHref="/bunyang"
+                        brandHref="/"
                         nav={[
                             { label: "사업개요", badge: "분양중" },
                             { label: "세대안내" },
