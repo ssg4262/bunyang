@@ -10,14 +10,19 @@ import mainCarousel3 from "@/assets/main/carousel/mainCarousel3.png"
 import room1 from "@/assets/gallery/room1.jpg"
 import room2 from "@/assets/gallery/room2.jpg"
 import room3 from "@/assets/gallery/room3.jpg"
+import room4 from "@/assets/gallery/room4.jpg"
 import living1 from "@/assets/gallery/living1.jpg"
 import living2 from "@/assets/gallery/living2.jpg"
-import living3 from "@/assets/gallery/living3.jpg"
+import model1 from "@/assets/gallery/model1.jpg"
+import model2 from "@/assets/gallery/model2.jpg"
+import model3 from "@/assets/gallery/model3.jpg"
+import model4 from "@/assets/gallery/model4.jpg"
+import sanga from "@/assets/gallery/sanga.jpg"
 
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
-import { PromoFooter } from "@/components/PromoFooter.tsx"
+import { PromoFooter } from "@/components/footer/PromoFooter.tsx"
 import { HouseTypeSelector } from "@/components/sections/HouseTypeSelector.tsx"
 import {
     ProjectOverviewTabs,
@@ -178,9 +183,14 @@ export const MainHome: React.FC = () => {
                     { id: 1, src: room1, alt: "방1", room: "침실", caption: "방 전경" },
                     { id: 2, src: room2, alt: "방2", room: "침실", caption: "방 전경" },
                     { id: 3, src: room3, alt: "방3", room: "침실", caption: "방 전경" },
-                    { id: 4, src: living1, alt: "거실1", room: "거실", caption: "거실 전경" },
-                    { id: 5, src: living2, alt: "거실2", room: "거실", caption: "거실 전경" },
-                    { id: 6, src: living3, alt: "거실3", room: "거실", caption: "거실 전경" },
+                    { id: 4, src: room4, alt: "방4", room: "침실", caption: "방 전경" },
+                    { id: 5, src: living1, alt: "거실1", room: "거실", caption: "거실 전경" },
+                    { id: 6, src: living2, alt: "거실2", room: "거실", caption: "거실 전경" },
+                    { id: 7, src: model1, alt: "모델1", room: "모델", caption: "미니어쳐" },
+                    { id: 8, src: model2, alt: "모델2", room: "모델", caption: "미니어쳐" },
+                    { id: 9, src: model3, alt: "모델3", room: "모델", caption: "미니어쳐" },
+                    { id: 10, src: model4, alt: "모델4", room: "모델", caption: "미니어쳐" },
+                    { id: 11, src: sanga, alt: "상가", room: "상가", caption: "미니어쳐" },
                 ]}
                 defaultFilter="전체"
             />
@@ -267,9 +277,9 @@ export const MainHome: React.FC = () => {
                     "대구 동구 신천동 325-1",
                     "e편한세상 동대구역 센텀스퀘어 분양홍보관",
                 ]}
-                bizName="시행 · 시공: (주)건설"
-                bizRep="대표: 이광탁"
-                bizRegNo="사업자등록번호: 123-45-67890"
+                bizName=""
+                bizRep=""
+                bizRegNo=""
                 navGroups={[]}
             />
         </>

@@ -6,12 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import {
-    ChevronLeft,
-    ChevronRight,
-    Maximize2,
-    X,
-} from "lucide-react"
+import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react"
 
 /* ======================== Types ======================== */
 export type RoomKind =
@@ -23,6 +18,8 @@ export type RoomKind =
     | "현관"
     | "발코니"
     | "기타"
+    | "모델"
+    | "상가"
 
 export type HousePhoto = {
     id: string | number
@@ -51,17 +48,20 @@ export type HousePhotoRailProps = {
 
 /* ======================== Component ======================== */
 export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
-                                                                     photos,
-                                                                     className,
-                                                                     defaultFilter = "전체",
-                                                                     cardHeight = 260,
-                                                                     thumbHeight = 68,
-                                                                     subtleBorder = true,
-                                                                     disableLightbox = false,
-                                                                 }) => {
+                                                                  photos,
+                                                                  className,
+                                                                  defaultFilter = "전체",
+                                                                  cardHeight = 260,
+                                                                  thumbHeight = 68,
+                                                                  subtleBorder = true,
+                                                                  disableLightbox = false,
+                                                              }) => {
     const [filter, setFilter] = React.useState<RoomKind | "전체">(defaultFilter)
     const [open, setOpen] = React.useState(false)
     const [lightIdx, setLightIdx] = React.useState(0)
+
+    // 좌우 버튼 노출 판단
+    const [canScroll, setCanScroll] = React.useState(false)
 
     const railRef = React.useRef<HTMLDivElement>(null)
 
@@ -74,6 +74,14 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
         const set = new Set<RoomKind>(photos.map((p) => p.room))
         return ["전체", ...Array.from(set)]
     }, [photos])
+
+    const updateArrows = React.useCallback(() => {
+        const el = railRef.current
+        if (!el) return
+        // 가로로 넘치면 true
+        const overflow = el.scrollWidth > el.clientWidth + 1
+        setCanScroll(overflow)
+    }, [])
 
     // 스크롤 이동
     const scrollBy = (dx: number) => {
@@ -118,7 +126,6 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
         const el = railRef.current
         if (!el) return
         const onWheel = (e: WheelEvent) => {
-            // shift 없이도 가로로 흘러가도록
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return // 이미 가로 스크롤이면 기본 동작
             if (e.ctrlKey) return
             el.scrollBy({ left: e.deltaY, behavior: "auto" })
@@ -132,8 +139,10 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
     React.useEffect(() => {
         if (!open) return
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === "ArrowRight") setLightIdx((i) => (i + 1) % Math.max(filtered.length, 1))
-            else if (e.key === "ArrowLeft") setLightIdx((i) => (i - 1 + filtered.length) % Math.max(filtered.length, 1))
+            if (e.key === "ArrowRight")
+                setLightIdx((i) => (i + 1) % Math.max(filtered.length, 1))
+            else if (e.key === "ArrowLeft")
+                setLightIdx((i) => (i - 1 + filtered.length) % Math.max(filtered.length, 1))
             else if (e.key === "Escape") setOpen(false)
         }
         window.addEventListener("keydown", onKey)
@@ -150,7 +159,8 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
         if (!touchRef.current) return
         const t = e.changedTouches[0]
         const dx = t.clientX - touchRef.current.x
-        if (Math.abs(dx) > 40) setLightIdx((i) => (i + (dx < 0 ? 1 : -1) + filtered.length) % filtered.length)
+        if (Math.abs(dx) > 40)
+            setLightIdx((i) => (i + (dx < 0 ? 1 : -1) + filtered.length) % filtered.length)
         touchRef.current = null
     }
 
@@ -159,6 +169,52 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
         setLightIdx(i)
         setOpen(true)
     }
+
+    // 이미지 로드 후 / 필터 변경 / 리사이즈 시 버튼 노출 재계산 (debounce 느낌)
+    const onImgLoad = () => {
+        setTimeout(updateArrows, 80)
+    }
+
+    // 관찰자들: 사이즈/자식 변경 시도 모두 캐치
+    React.useEffect(() => {
+        const el = railRef.current
+        if (!el) return
+
+        // 1) 스크롤/리사이즈
+        const onScroll = () => updateArrows()
+        el.addEventListener("scroll", onScroll, { passive: true })
+        const onResize = () => updateArrows()
+        window.addEventListener("resize", onResize)
+
+        // 2) ResizeObserver (요소 너비 변화)
+        const ro = new ResizeObserver(() => updateArrows())
+        ro.observe(el)
+
+        // 3) MutationObserver (자식 수/스타일 변화)
+        const mo = new MutationObserver(() => updateArrows())
+        mo.observe(el, { childList: true, subtree: true, attributes: true })
+
+        // 4) 초기 렌더 타이밍 보정
+        const timers = [
+            setTimeout(updateArrows, 30),
+            setTimeout(updateArrows, 150),
+            setTimeout(updateArrows, 400),
+        ]
+
+        return () => {
+            timers.forEach(clearTimeout)
+            el.removeEventListener("scroll", onScroll)
+            window.removeEventListener("resize", onResize)
+            ro.disconnect()
+            mo.disconnect()
+        }
+    }, [filtered.length, updateArrows])
+
+    // 필터 변경 직후에도 명시적으로 업데이트
+    React.useEffect(() => {
+        const t = setTimeout(updateArrows, 60)
+        return () => clearTimeout(t)
+    }, [filter, updateArrows])
 
     return (
         <section className={cn("w-full py-10 md:py-14", className)}>
@@ -187,8 +243,13 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
             {/* 가로 스냅 레일 */}
             <div className="container mx-auto max-w-6xl px-4 mt-4">
                 <div className="relative">
-                    {/* 좌우 버튼 */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+                    {/* 좌/우 버튼: 항상 DOM에 렌더해두고, canScroll 기준으로 보이기/숨기기만 제어 */}
+                    <div
+                        className={cn(
+                            "pointer-events-none absolute inset-y-0 left-0 z-20 flex items-center transition-opacity",
+                            canScroll ? "opacity-100" : "opacity-0"
+                        )}
+                    >
                         <Button
                             type="button"
                             size="icon"
@@ -200,7 +261,12 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
                     </div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
+                    <div
+                        className={cn(
+                            "pointer-events-none absolute inset-y-0 right-0 z-20 flex items-center transition-opacity",
+                            canScroll ? "opacity-100" : "opacity-0"
+                        )}
+                    >
                         <Button
                             type="button"
                             size="icon"
@@ -241,14 +307,15 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             >
                                 <button
                                     type="button"
-                                    className="relative block h-full w-auto"
+                                    className="relative block h-full w-full"
                                     onClick={() => openAt(i)}
                                 >
                                     <img
                                         src={p.src}
                                         alt={p.alt}
-                                        className="h-full w-auto object-cover"
+                                        className="h-full w-full object-cover"
                                         draggable={false}
+                                        onLoad={onImgLoad}
                                     />
 
                                     {/* 상단 라벨 */}
@@ -289,7 +356,13 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                 </span>
                             </div>
                             <div className="flex items-center gap-1">
-                                <Button size="icon" variant="ghost" asChild className="rounded-lg" title="새 탭에서 보기">
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    asChild
+                                    className="rounded-lg"
+                                    title="새 탭에서 보기"
+                                >
                                     <a href={filtered[lightIdx]?.src} target="_blank" rel="noreferrer">
                                         <Maximize2 className="h-4 w-4" />
                                     </a>
@@ -310,7 +383,9 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                         <div className="relative bg-black/80">
                             <button
                                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-2 hover:bg-black/60"
-                                onClick={() => setLightIdx((i) => (i - 1 + filtered.length) % Math.max(filtered.length, 1))}
+                                onClick={() =>
+                                    setLightIdx((i) => (i - 1 + filtered.length) % Math.max(filtered.length, 1))
+                                }
                                 aria-label="이전"
                             >
                                 <ChevronLeft className="h-6 w-6 text-white" />
@@ -339,12 +414,19 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                     onClick={() => setLightIdx(i)}
                                     className={cn(
                                         "flex-shrink-0 overflow-hidden rounded-lg border",
-                                        i === lightIdx ? "border-orange-500 ring-2 ring-orange-500/30" : "border-transparent"
+                                        i === lightIdx
+                                            ? "border-orange-500 ring-2 ring-orange-500/30"
+                                            : "border-transparent"
                                     )}
                                     style={{ height: thumbHeight, width: Math.round(thumbHeight * (3 / 2)) }}
                                     aria-label={`${p.room} 미리보기`}
                                 >
-                                    <img src={p.src} alt={p.alt} className="h-full w-full object-cover" draggable={false} />
+                                    <img
+                                        src={p.src}
+                                        alt={p.alt}
+                                        className="h-full w-full object-cover"
+                                        draggable={false}
+                                    />
                                 </button>
                             ))}
                         </div>

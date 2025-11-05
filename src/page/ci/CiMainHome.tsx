@@ -3,7 +3,7 @@
 
 import React from "react"
 import { PromoNavbar } from "@/components/nav/PromoNavbar"
-import { PromoFooter } from "@/components/PromoFooter"
+import { PromoFooter } from "@/components/footer/PromoFooter.tsx"
 import { SitePlanSection } from "@/components/sections/SitePlanSection"
 import dangebatch from "@/assets/ci/dangebatch.png"
 import jomang from "@/assets/ci/jomang.png"
