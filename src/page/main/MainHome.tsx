@@ -19,6 +19,14 @@ import model3 from "@/assets/gallery/model3.jpg"
 import model4 from "@/assets/gallery/model4.jpg"
 import sanga from "@/assets/gallery/sanga.jpg"
 
+import sanga1 from "@/assets/sanga/sanga1.png"
+import sanga2 from "@/assets/sanga/sanga2.png"
+import sanga3 from "@/assets/sanga/sanga3.png"
+import sanga4 from "@/assets/sanga/sanga4.png"
+import sanga5 from "@/assets/sanga/sanga5.png"
+import sanga6 from "@/assets/sanga/sanga6.png"
+import sanga7 from "@/assets/sanga/sanga7.png"
+
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
@@ -41,6 +49,7 @@ import pr3 from "@/assets/pr/pr3.png"
 import pr4 from "@/assets/pr/pr4.png"
 import pr5 from "@/assets/pr/pr5.png"
 import pr6 from "@/assets/pr/pr6.png"
+import {ShopInfoSection} from "@/components/sections/ShopInfoSection.tsx";
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
@@ -193,6 +202,21 @@ export const MainHome: React.FC = () => {
                     { id: 11, src: sanga, alt: "상가", room: "상가", caption: "미니어쳐" },
                 ]}
                 defaultFilter="전체"
+            />
+
+            <ShopInfoSection
+                items={[
+                    { src: sanga1, title: "고속터미널", subtitle: "상업시설", badge: "신규", },
+                    { src: sanga2, title: "도시철도1호선", subtitle: "도시철도 1호선", badge: "신규", },
+                    { src: sanga3, title: "B1F", subtitle: "지하1층", badge: "신규", },
+                    { src: sanga4, title: "1F", subtitle: "1층", badge: "신규", },
+                    { src: sanga5, title: "2F", subtitle: "2층", badge: "신규", },
+                    { src: sanga6, title: "3F", subtitle: "3층", badge: "신규", },
+                    { src: sanga7, title: "4F", subtitle: "4층", badge: "신규", },
+                ]}
+                // title="상가안내"
+                // thumbHeight={220}
+                // rounded={true}
             />
 
             {/* ✅ 스크롤 타깃: 세대안내 */}
