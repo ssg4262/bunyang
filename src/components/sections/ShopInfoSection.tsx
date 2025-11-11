@@ -1,9 +1,9 @@
 "use client";
 
 // src/components/sections/ShopInfoSection.tsx
-// - 모바일: 1장 캐러셀
-// - 데스크톱: 2장 캐러셀 (이미지 크게, 원본 비율 유지)
-// - 클릭 시 라이트박스
+// - 모바일: 1장 캐러셀(이미지 단독) + 이미지 아래 캡션 + 가시성 높은 하단 인디케이터
+// - 데스크탑: 2장 캐러셀(이미지 단독, 원본비율) + 캡션 + 간격(12px)
+// - 라이트박스 유지
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -22,17 +22,12 @@ export type ShopInfoSectionProps = {
     items: ShopImage[];
     title?: string;
     className?: string;
-    /** 섹션 좌우 여백 */
-    paddingXClass?: string; // 기본 px-4 md:px-8 lg:px-12
-    /** 캐러셀 높이 */
-    mobileHeightClass?: string;  // 기본 h-[52vh]
-    desktopHeightClass?: string; // 기본 h-[62vh]
-    /** 자동 전환(ms). 0이면 자동 전환 안함 */
+    paddingXClass?: string;      // 섹션 좌우 여백
+    mobileHeightClass?: string;  // 기본 h-auto
+    desktopHeightClass?: string; // 기본 h-auto
     autoMs?: number;
-    /** 카드 라운드 */
-    rounded?: boolean;
-    /** 오버레이(타이틀/서브) 표시 여부 */
-    showOverlay?: boolean;
+    rounded?: boolean;           // 이미지 모서리
+    showCaption?: boolean;       // 이미지 '아래' 타이틀/서브 표시
 };
 
 /* ---------------------------------- Helpers ---------------------------------- */
@@ -44,11 +39,11 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                                                                     title = "상가안내",
                                                                     className,
                                                                     paddingXClass = "px-4 md:px-8 lg:px-12",
-                                                                    mobileHeightClass = "h-[52vh]",
-                                                                    desktopHeightClass = "h-[62vh]",
+                                                                    mobileHeightClass = "h-auto",
+                                                                    desktopHeightClass = "h-auto",
                                                                     autoMs = 0,
-                                                                    rounded = true,
-                                                                    showOverlay = true,
+                                                                    rounded = false,
+                                                                    showCaption = true,
                                                                 }) => {
     const [open, setOpen] = React.useState(false);
     const [lightIdx, setLightIdx] = React.useState(0);
@@ -73,11 +68,11 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     rounded={rounded}
                     autoMs={autoMs}
                     onOpenLightbox={openAt}
-                    showOverlay={showOverlay}
+                    showCaption={showCaption}
                 />
             </div>
 
-            {/* 데스크톱 2-up 캐러셀 */}
+            {/* 데스크탑 2-up 캐러셀 (간격 포함) */}
             <div className="hidden md:block">
                 <CarouselBase
                     items={items}
@@ -86,7 +81,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     rounded={rounded}
                     autoMs={autoMs}
                     onOpenLightbox={openAt}
-                    showOverlay={showOverlay}
+                    showCaption={showCaption}
                 />
             </div>
 
@@ -109,29 +104,33 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
 /* ================================ Generic Carousel ================================ */
 type CarouselBaseProps = {
     items: ShopImage[];
-    itemsPerView: number;     // 1(모바일) or 2(데스크톱)
-    heightClass: string;      // h-[..]
+    itemsPerView: number; // 1(모바일) or 2(데스크탑)
+    heightClass?: string; // 권장 h-auto
     rounded?: boolean;
     autoMs?: number;
-    showOverlay?: boolean;
     onOpenLightbox?: (index: number) => void;
+    showCaption?: boolean;
 };
 
 const CarouselBase: React.FC<CarouselBaseProps> = ({
                                                        items,
                                                        itemsPerView,
                                                        heightClass,
-                                                       rounded = true,
+                                                       rounded = false,
                                                        autoMs = 0,
-                                                       showOverlay = true,
                                                        onOpenLightbox,
+                                                       showCaption = true,
                                                    }) => {
     const [index, setIndex] = React.useState(0);
     const [controls, setControls] = React.useState(false);
     const count = items.length;
 
-    const pageMax = Math.max(0, count - itemsPerView); // 마지막 시작 인덱스
+    const pageMax = Math.max(0, count - itemsPerView);
     const itemWidthPct = 100 / itemsPerView;
+
+    // 데스크탑에서만 간격(px)
+    const gapPx = itemsPerView > 1 ? 12 : 0; // 12px 간격
+    const halfGap = gapPx / 2;
 
     const downX = React.useRef<number | null>(null);
     const hideTimer = React.useRef<number | null>(null);
@@ -160,7 +159,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
         };
     }, [autoMs, count, itemsPerView, pageMax]);
 
-    // hover로 컨트롤 표시(데스크톱)
+    // hover 컨트롤(데스크탑)
     const wrapRef = React.useRef<HTMLDivElement | null>(null);
     React.useEffect(() => {
         const el = wrapRef.current;
@@ -192,8 +191,13 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
         downX.current = null;
     };
 
-    // 인디케이터(페이지 수 = pageMax + 1)
     const pages = pageMax + 1;
+
+    // 트랙 transform: 인덱스*퍼센트 + 인덱스*gap(px) 동시 보정
+    const transformStyle =
+        gapPx > 0
+            ? { transform: `translateX(calc(-${index * itemWidthPct}% - ${index * gapPx}px))` }
+            : { transform: `translateX(-${index * itemWidthPct}%)` };
 
     return (
         <section
@@ -203,73 +207,58 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
             aria-label={`${itemsPerView}-up carousel`}
             className={cn(
                 "relative overflow-hidden select-none group",
-                // 외곽 스타일
-                "border border-white/10 bg-black rounded-none",
-                heightClass
+                "bg-transparent border-0 rounded-none",
+                heightClass ?? "h-auto"
             )}
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
         >
             {/* 트랙 */}
             <div
-                className="h-full w-full flex transition-transform duration-500 -mx-2"
-                style={{ transform: `translateX(-${index * itemWidthPct}%)` }}
+                className="w-full flex transition-transform duration-500"
+                style={{
+                    ...transformStyle,
+                    // 간격이 있을 때 바깥 가장자리 정렬 유지
+                    marginLeft: gapPx ? -halfGap : 0,
+                    marginRight: gapPx ? -halfGap : 0,
+                }}
             >
                 {items.map((it, i) => (
                     <div
                         key={i}
-                        className="h-full px-2"
-                        style={{ flex: `0 0 ${itemWidthPct}%` }}
+                        className="w-full"
+                        style={{
+                            flex: `0 0 ${itemWidthPct}%`,
+                            paddingLeft: gapPx ? halfGap : 0,
+                            paddingRight: gapPx ? halfGap : 0,
+                        }}
                     >
                         <button
                             type="button"
                             onClick={() => onOpenLightbox?.(i)}
-                            className={cn(
-                                "relative block h-full w-full overflow-hidden",
-                                rounded ? "rounded-2xl" : "rounded-none",
-                                "ring-1 ring-black/10 dark:ring-white/10 hover:ring-black/20 dark:hover:ring-white/20 transition"
-                            )}
+                            className={cn("block w-full", rounded ? "rounded-2xl overflow-hidden" : "rounded-none")}
                         >
-                            {/* 원본 비율 유지: object-contain */}
-                            <div className="w-full h-full bg-black grid place-items-center">
-                                <img
-                                    src={it.src}
-                                    alt={it.title ?? `slide ${i + 1}`}
-                                    className="max-w-full max-h-full object-contain select-none transition-transform duration-500 group-hover:scale-[1.02]"
-                                    draggable={false}
-                                />
-                            </div>
-
-                            {/* 배지 (옵션) */}
-                            {it.badge && (
-                                <span className="absolute left-3 top-3 z-10 rounded-md bg-white/90 px-2 py-0.5 text-[11px] font-medium text-black shadow">
-                  {it.badge}
-                </span>
-                            )}
-
-                            {/* 캡션 (옵션) */}
-                            {showOverlay && (it.title || it.subtitle) && (
-                                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-3 lg:p-4">
-                                    <div className="rounded-xl bg-gradient-to-t from-black/70 via-black/30 to-transparent p-3 lg:p-4">
-                                        {it.title && (
-                                            <h3 className="text-sm lg:text-base font-semibold text-white drop-shadow-sm">
-                                                {it.title}
-                                            </h3>
-                                        )}
-                                        {it.subtitle && (
-                                            <p className="mt-0.5 text-[12px] lg:text-sm text-white/85">
-                                                {it.subtitle}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
+                            {/* 이미지만 표시, 비율 유지 */}
+                            <img
+                                src={it.src}
+                                alt={it.title ?? `slide ${i + 1}`}
+                                className="block w-full h-auto object-contain"
+                                draggable={false}
+                            />
                         </button>
+
+                        {/* 이미지 '아래' 캡션 */}
+                        {showCaption && (it.title || it.subtitle) && (
+                            <div className="mt-2">
+                                {it.title && <h3 className="text-sm md:text-base font-semibold">{it.title}</h3>}
+                                {it.subtitle && <p className="text-xs md:text-sm text-muted-foreground">{it.subtitle}</p>}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
 
-            {/* 화살표: hover/tap 시 표시 */}
+            {/* 좌우 화살표 */}
             {count > itemsPerView && (
                 <>
                     <button
@@ -277,11 +266,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         aria-label="이전"
                         onClick={() => { prev(); showCtrl(1500); }}
                         data-carousel-interactive="true"
-                        className={cn(
-                            arrowBase,
-                            "left-3 md:left-4 z-20",
-                            controls ? arrowVisible : arrowHidden
-                        )}
+                        className={cn(arrowBase, "left-3 md:left-4 z-20", controls ? arrowVisible : arrowHidden)}
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </button>
@@ -290,33 +275,32 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         aria-label="다음"
                         onClick={() => { next(); showCtrl(1500); }}
                         data-carousel-interactive="true"
-                        className={cn(
-                            arrowBase,
-                            "right-3 md:right-4 z-20",
-                            controls ? arrowVisible : arrowHidden
-                        )}
+                        className={cn(arrowBase, "right-3 md:right-4 z-20", controls ? arrowVisible : arrowHidden)}
                     >
                         <ChevronRight className="h-5 w-5" />
                     </button>
                 </>
             )}
 
-            {/* 인디케이터 */}
+            {/* === 하단 인디케이터: 항상 잘 보이도록 별도 바 === */}
             {count > itemsPerView && (
-                <div className="absolute bottom-3 md:bottom-5 left-0 right-0 flex items-center justify-center gap-2 z-20">
-                    {Array.from({ length: pages }).map((_, p) => (
-                        <button
-                            key={p}
-                            type="button"
-                            aria-label={`${p + 1}번째로 이동`}
-                            onClick={() => { setIndex(p); showCtrl(1500); }}
-                            data-carousel-interactive="true"
-                            className={cn(
-                                "h-1.5 w-6 rounded-full transition-all",
-                                p === index ? "bg-white/90 w-8" : "bg-white/40 hover:bg-white/60"
-                            )}
-                        />
-                    ))}
+                <div className="mt-3 flex items-center justify-center">
+                    <div className="rounded-full border border-border/60 bg-background/80 px-2 py-1 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm">
+                        {Array.from({ length: pages }).map((_, p) => (
+                            <button
+                                key={p}
+                                type="button"
+                                aria-label={`${p + 1}번째로 이동`}
+                                aria-current={p === index ? "true" : "false"}
+                                onClick={() => { setIndex(p); showCtrl(1500); }}
+                                data-carousel-interactive="true"
+                                className={cn(
+                                    "mx-1 inline-block h-2 w-6 rounded-full transition-all",
+                                    p === index ? "bg-foreground w-8" : "bg-foreground/40 hover:bg-foreground/60"
+                                )}
+                            />
+                        ))}
+                    </div>
                 </div>
             )}
         </section>
