@@ -122,7 +122,7 @@ export const MainHome: React.FC = () => {
                             const key = item.label.replace(/\s/g, "")
                             if (key.includes("사업개요")) {
                                 scrollToEl(overviewRef.current)
-                            } else if (key.includes("세대안내")) {
+                            } else if (key.includes("세대평면도")) {
                                 scrollToEl(houseTypeRef.current)
                             } else if (key.includes("단지정보")) {
                                 // 첫 번째 단지정보 섹션(단지 배치도)로 포커싱
