@@ -110,9 +110,9 @@ export const MainHome: React.FC = () => {
                         brandHref="/"
                         nav={[
                             { label: "사업개요", badge: "분양중" },
-                            { label: "세대안내" },
                             { label: "단지정보" },
                             { label: "프리미엄" },
+                            { label: "세대평면도" },
                             // { label: "오시는길" },
                         ]}
                         contactLabel="분양문의 053-760-4818"
@@ -166,7 +166,7 @@ export const MainHome: React.FC = () => {
             </header>
 
             <SalesIntroSection
-                heroImage={mainCarousel as any}
+                heroImage={mainCarousel}
                 eyebrow="동대구 최중심을 누리는 특별한 삶"
                 title="e편한세상 동대구역 센텀스퀘어"
                 badges={["분양중", "공사완료"]}
@@ -185,6 +185,29 @@ export const MainHome: React.FC = () => {
                     brandImages={[brand]}
                 />
             </div>
+
+
+            {/* ✅ 스크롤 타깃: 단지정보(첫 섹션으로 점프) */}
+            <div ref={complexInfoRef}>
+                <SitePlanSection
+                    title="단지 배치도"
+                    image={dangebatch}
+                    alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
+                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
+                    className="pt-0"
+                />
+            </div>
+
+            {/* 단지정보의 나머지 섹션들(연속 배치) */}
+            <SitePlanSection title="조망경관" image={jomang} alt="조망경관" className="pt-0" />
+            <SitePlanSection title="동호수표" image={dong} alt="동호수표" className="pt-0" />
+            <SitePlanSection title="커뮤니티" image={comu} alt="커뮤니티" className="pt-0" />
+
+            {/* ✅ 스크롤 타깃: 세대안내 */}
+            <div ref={houseTypeRef}>
+                <HouseTypeSelector />
+            </div>
+
 
             {/* 사진 갤러리 */}
             <HousePhotoGallery
@@ -218,27 +241,6 @@ export const MainHome: React.FC = () => {
                 // thumbHeight={220}
                 // rounded={true}
             />
-
-            {/* ✅ 스크롤 타깃: 세대안내 */}
-            <div ref={houseTypeRef}>
-                <HouseTypeSelector />
-            </div>
-
-            {/* ✅ 스크롤 타깃: 단지정보(첫 섹션으로 점프) */}
-            <div ref={complexInfoRef}>
-                <SitePlanSection
-                    title="단지 배치도"
-                    image={dangebatch}
-                    alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
-                    note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
-                    className="pt-0"
-                />
-            </div>
-
-            {/* 단지정보의 나머지 섹션들(연속 배치) */}
-            <SitePlanSection title="조망경관" image={jomang} alt="조망경관" className="pt-0" />
-            <SitePlanSection title="동호수표" image={dong} alt="동호수표" className="pt-0" />
-            <SitePlanSection title="커뮤니티" image={comu} alt="커뮤니티" className="pt-0" />
 
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
@@ -289,6 +291,8 @@ export const MainHome: React.FC = () => {
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
                     className="pt-0"
                 />
+
+
 
 
             </div>

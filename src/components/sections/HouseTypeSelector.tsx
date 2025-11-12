@@ -237,7 +237,7 @@ export const HouseTypeSelector: React.FC = () => {
                         동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어.
                         중·대형 평면으로 구성된 총 322세대 일반분양 공동주택
                     </p>
-                    <h2 className="mt-2 text-2xl md:text-4xl font-extrabold tracking-tight">세대안내</h2>
+                    <h2 className="mt-2 text-2xl md:text-4xl font-extrabold tracking-tight">세대평면도</h2>
                 </div>
 
                 {/* 탭 바 */}
