@@ -6,6 +6,8 @@
 // - 라이트박스: 완전 풀스크린(여백 0) + 투명 배경(Overlay/Content 모두 bg-transparent)
 // - 이미지 밖 클릭 시 라이트박스 닫기
 // - 이미지 스크롤바 노출 방지(overflow-hidden)
+// - 좌우 화살표: 모바일/데스크탑 모두 항상 표시
+// - 스와이프: 손가락/포인터 이동 추적하여 자연스러운 드래그 이동
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -161,25 +163,17 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                                        onCall,
                                                    }) => {
     const [index, setIndex] = React.useState(0);
-    const [controls, setControls] = React.useState(false);
     const count = items.length;
 
     const pageMax = Math.max(0, count - itemsPerView);
     const itemWidthPct = 100 / itemsPerView;
 
-    // 한 장만 보여주므로 간격 0
-    const gapPx = 0;
-    const halfGap = 0;
+    // 드래그 상태 (손가락 추적 이동)
+    const wrapRef = React.useRef<HTMLDivElement | null>(null);
+    const startX = React.useRef<number | null>(null);
+    const [dragPct, setDragPct] = React.useState(0); // 컨테이너 폭 대비 %
 
-    const downX = React.useRef<number | null>(null);
-    const hideTimer = React.useRef<number | null>(null);
     const autoTimer = React.useRef<number | null>(null);
-
-    const showCtrl = React.useCallback((ms = 1800) => {
-        setControls(true);
-        if (hideTimer.current) window.clearTimeout(hideTimer.current);
-        hideTimer.current = window.setTimeout(() => setControls(false), ms);
-    }, []);
 
     const goTo = (n: number) => setIndex(() => Math.max(0, Math.min(n, pageMax)));
     const prev = () => goTo(index - 1);
@@ -198,40 +192,39 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
         };
     }, [autoMs, count, itemsPerView, pageMax]);
 
-    // hover 컨트롤(데스크탑)
-    const wrapRef = React.useRef<HTMLDivElement | null>(null);
-    React.useEffect(() => {
-        const el = wrapRef.current;
-        if (!el) return;
-        const onEnter = () => { showCtrl(999999); };
-        const onLeave = () => { setControls(false); };
-        el.addEventListener("mouseenter", onEnter);
-        el.addEventListener("mouseleave", onLeave);
-        return () => {
-            el.removeEventListener("mouseenter", onEnter);
-            el.removeEventListener("mouseleave", onLeave);
-        };
-    }, [showCtrl]);
+    const getWidth = () => wrapRef.current?.clientWidth ?? 1;
 
-    // swipe
+    // swipe: 추적 이동
     const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
         const target = e.target as HTMLElement;
         if (target.closest('[data-carousel-interactive="true"]')) return;
-        downX.current = e.clientX;
+        startX.current = e.clientX;
+        setDragPct(0);
         (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-        showCtrl();
     };
+
+    const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (startX.current == null) return;
+        const dx = e.clientX - startX.current;
+        setDragPct((dx / getWidth()) * 100); // px → %
+    };
+
     const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (downX.current == null) return;
-        const dx = e.clientX - downX.current;
-        const th = 40;
-        if (dx > th) prev();
-        else if (dx < -th) next();
-        downX.current = null;
+        if (startX.current == null) return;
+        const dx = e.clientX - startX.current;
+        const thresholdPx = Math.max(40, getWidth() * 0.08); // 8% 또는 40px
+        if (dx > thresholdPx) prev();
+        else if (dx < -thresholdPx) next();
+        // 리셋
+        startX.current = null;
+        setDragPct(0);
     };
 
     const pages = pageMax + 1;
-    const transformStyle = { transform: `translateX(-${index * itemWidthPct}%)` };
+
+    // 현재 인덱스 이동 + 드래그 오프셋 반영
+    const basePct = -(index * itemWidthPct);
+    const transformStyle = { transform: `translateX(calc(${basePct}% + ${dragPct}%))` } as React.CSSProperties;
 
     return (
         <section
@@ -240,29 +233,27 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
             aria-roledescription="carousel"
             aria-label={`${itemsPerView}-up carousel`}
             className={cn(
-                "relative select-none group overflow-hidden", // ← 스크롤바 숨김
+                "relative select-none group overflow-hidden",
                 "bg-transparent border-0 rounded-none",
+                "touch-pan-y overscroll-none", // iOS/안드로이드 스크롤 충돌 최소화
                 heightClass ?? "h-auto"
             )}
-            // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게 (래퍼는 hidden, 캡션 영역은 자체 블록)
+            // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게
             style={{ overflowX: "hidden", overflowY: "visible" }}
             onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
         >
             {/* 트랙 */}
             <div
-                className="w-full flex transition-transform duration-500"
-                style={{
-                    ...transformStyle,
-                    marginLeft: gapPx ? -halfGap : 0,
-                    marginRight: gapPx ? -halfGap : 0,
-                }}
+                className="w-full flex transition-transform duration-300"
+                style={transformStyle}
             >
                 {items.map((it, i) => (
                     <div
                         key={i}
                         className="relative w-full"
-                        style={{ flex: `0 0 ${itemWidthPct}%`, paddingLeft: 0, paddingRight: 0 }}
+                        style={{ flex: `0 0 ${itemWidthPct}%` }}
                     >
                         {/* 이미지 우상단 '분양문의' 버튼 */}
                         <button
@@ -287,7 +278,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                             type="button"
                             onClick={(e) => { e.stopPropagation(); onOpenLightbox?.(i); }}
                             className={cn(
-                                "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-hidden", // ← overflow-hidden
+                                "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-hidden",
                                 rounded ? "rounded-2xl" : "rounded-none"
                             )}
                             data-carousel-interactive="true"
@@ -311,24 +302,24 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                 ))}
             </div>
 
-            {/* 좌우 화살표 */}
+            {/* 좌우 화살표 (항상 보이기) */}
             {count > itemsPerView && (
                 <>
                     <button
                         type="button"
                         aria-label="이전"
-                        onClick={() => { prev(); showCtrl(1500); }}
+                        onClick={() => prev()}
                         data-carousel-interactive="true"
-                        className={cn(arrowBase, "left-3 md:left-4 z-[5]", controls ? arrowVisible : arrowHidden)}
+                        className={cn(arrowBase, "left-3 md:left-4 z-[5]", "opacity-100 pointer-events-auto")}
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                         type="button"
                         aria-label="다음"
-                        onClick={() => { next(); showCtrl(1500); }}
+                        onClick={() => next()}
                         data-carousel-interactive="true"
-                        className={cn(arrowBase, "right-3 md:right-4 z-[5]", controls ? arrowVisible : arrowHidden)}
+                        className={cn(arrowBase, "right-3 md:right-4 z-[5]", "opacity-100 pointer-events-auto")}
                     >
                         <ChevronRight className="h-5 w-5" />
                     </button>
@@ -345,7 +336,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                 type="button"
                                 aria-label={`${p + 1}번째로 이동`}
                                 aria-current={p === index ? "true" : "false"}
-                                onClick={() => { setIndex(p); showCtrl(1500); }}
+                                onClick={() => setIndex(p)}
                                 data-carousel-interactive="true"
                                 className={cn(
                                     "mx-1 inline-block h-2 w-6 rounded-full transition-all",
@@ -362,8 +353,6 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 
 const arrowBase =
     "absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-10 w-10 rounded-full bg-white/85 text-black shadow-lg ring-1 ring-black/10 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-opacity duration-200";
-const arrowHidden = "opacity-0 pointer-events-none";
-const arrowVisible = "opacity-100 pointer-events-auto";
 
 /* -------------------------------- 라이트박스 -------------------------------- */
 interface LightboxProps {
