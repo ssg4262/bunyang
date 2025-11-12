@@ -60,7 +60,7 @@ export const MainHome: React.FC = () => {
     const houseTypeRef = React.useRef<HTMLDivElement>(null)     // 세대안내
     const complexInfoRef = React.useRef<HTMLDivElement>(null)   // 단지정보(단지 배치도 섹션)
     const premiumRef = React.useRef<HTMLDivElement>(null)       // 프리미엄(PR 섹션)
-
+    const sangaRef = React.useRef<HTMLDivElement>(null)       // 프리미엄(PR 섹션)
     // 스무스 스크롤 도우미(헤더 높이만큼 여유)
     const scrollToEl = React.useCallback(
         (el: HTMLElement | null) => {
@@ -113,7 +113,7 @@ export const MainHome: React.FC = () => {
                             { label: "단지정보" },
                             { label: "세대평면도" },
                             { label: "프리미엄" },
-                            // { label: "오시는길" },
+                            { label: "상가분양안내" },
                         ]}
                         contactLabel="분양문의 053-760-4818"
                         onHeightChange={(h) => setNavH(h)}
@@ -130,7 +130,10 @@ export const MainHome: React.FC = () => {
                             } else if (key.includes("프리미엄")) {
                                 // PR 섹션으로 포커싱
                                 scrollToEl(premiumRef.current)
-                            }
+                            } else if (key.includes("상가분양안내")) {
+                            // PR 섹션으로 포커싱
+                                scrollToEl(sangaRef.current)
+                        }
                         }}
                     />
                 </div>
@@ -226,22 +229,22 @@ export const MainHome: React.FC = () => {
                 ]}
                 defaultFilter="전체"
             />
-
-            <ShopInfoSection
-                items={[
-                    { src: sanga1, title: "고속터미널", subtitle: "상업시설", badge: "신규", },
-                    { src: sanga2, title: "도시철도1호선", subtitle: "도시철도 1호선", badge: "신규", },
-                    { src: sanga3, title: "B1F", subtitle: "지하1층", badge: "신규", },
-                    { src: sanga4, title: "1F", subtitle: "1층", badge: "신규", },
-                    { src: sanga5, title: "2F", subtitle: "2층", badge: "신규", },
-                    { src: sanga6, title: "3F", subtitle: "3층", badge: "신규", },
-                    { src: sanga7, title: "4F", subtitle: "4층", badge: "신규", },
-                ]}
-                // title="상가안내"
-                // thumbHeight={220}
-                // rounded={true}
-            />
-
+            <div ref={sangaRef}>
+                <ShopInfoSection
+                    items={[
+                        { src: sanga1, title: "고속터미널", subtitle: "상업시설", badge: "신규", },
+                        { src: sanga2, title: "도시철도1호선", subtitle: "도시철도 1호선", badge: "신규", },
+                        { src: sanga3, title: "B1F", subtitle: "지하1층", badge: "신규", },
+                        { src: sanga4, title: "1F", subtitle: "1층", badge: "신규", },
+                        { src: sanga5, title: "2F", subtitle: "2층", badge: "신규", },
+                        { src: sanga6, title: "3F", subtitle: "3층", badge: "신규", },
+                        { src: sanga7, title: "4F", subtitle: "4층", badge: "신규", },
+                    ]}
+                    // title="상가안내"
+                    // thumbHeight={220}
+                    // rounded={true}
+                />
+            </div>
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
                 <SitePlanSection

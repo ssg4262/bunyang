@@ -201,19 +201,28 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                         {s.sub}
                                     </p>
                                 )}
-                                {s.ctaLabel && (
+                                { s.ctaLabel && (
                                     <div className="pt-2">
                                         <Button
                                             onClick={() =>
                                                 smartDial("053-760-4818", {
                                                     desktopApp: "facetime",
-                                                    onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
-                                                })}
+                                                    onFail: () =>
+                                                        alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                                })
+                                            }
                                             type="button"
                                             size="lg"
-                                            className="rounded-xl cursor-pointer"
                                             data-carousel-interactive="true"
-                                            // onClick={() => showControls(2000)}
+                                            // 밝은(화이트) CTA 스타일
+                                            className={cn(
+                                                "rounded-xl cursor-pointer",
+                                                "bg-white text-black",                 // 핵심: 밝게
+                                                "hover:bg-white/90 active:bg-white/80",
+                                                "shadow-lg ring-1 ring-black/10",      // 또렷함
+                                                "dark:bg-white dark:text-black",        // 다크모드에서도 밝게
+                                                "font-bold"
+                                                )}
                                         >
                                             {s.ctaLabel}
                                         </Button>
