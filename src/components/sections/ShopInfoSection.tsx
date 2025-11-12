@@ -4,6 +4,8 @@
 // - 모바일/데스크탑: 1장 캐러셀(이미지 단독) + 이미지 우상단 '분양문의' 버튼 + 하단 인디케이터
 // - 캡션 잘림 방지(세로 overflow 허용)
 // - 라이트박스: 완전 풀스크린(여백 0) + 투명 배경(Overlay/Content 모두 bg-transparent)
+// - 이미지 밖 클릭 시 라이트박스 닫기
+// - 이미지 스크롤바 노출 방지(overflow-hidden)
 
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -238,11 +240,11 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
             aria-roledescription="carousel"
             aria-label={`${itemsPerView}-up carousel`}
             className={cn(
-                "relative select-none group",
+                "relative select-none group overflow-hidden", // ← 스크롤바 숨김
                 "bg-transparent border-0 rounded-none",
                 heightClass ?? "h-auto"
             )}
-            // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게
+            // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게 (래퍼는 hidden, 캡션 영역은 자체 블록)
             style={{ overflowX: "hidden", overflowY: "visible" }}
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
@@ -285,8 +287,8 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                             type="button"
                             onClick={(e) => { e.stopPropagation(); onOpenLightbox?.(i); }}
                             className={cn(
-                                "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50",
-                                rounded ? "rounded-2xl overflow-hidden" : "rounded-none"
+                                "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-hidden", // ← overflow-hidden
+                                rounded ? "rounded-2xl" : "rounded-none"
                             )}
                             data-carousel-interactive="true"
                         >
@@ -387,6 +389,8 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
     const uiTimer = React.useRef<number | null>(null);
     const lastTap = React.useRef<number>(0);
 
+    const imgRef = React.useRef<HTMLImageElement | null>(null);
+
     const isMobile = typeof window !== "undefined"
         ? window.matchMedia("(max-width: 767px)").matches
         : true;
@@ -440,17 +444,29 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
         downX.current = null; downY.current = null;
     };
 
+    // 이미지 밖 클릭 시 닫기
+    const onWrapperClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const target = e.target as Node;
+        if (imgRef.current && imgRef.current.contains(target)) {
+            // 이미지 위 클릭: 모바일에서는 UI 토글만 유지
+            if (isMobile) setUiVisible((v) => !v);
+            return;
+        }
+        // 이미지 바깥 클릭: 닫기
+        onClose();
+    };
+
     const p = photos[index];
 
     return (
         <div
-            className="relative w-screen h-screen touch-none select-none"
+            className="relative w-screen h-screen touch-none select-none overflow-hidden" // ← 스크롤바 숨김
             tabIndex={0}
             onKeyDown={onKey}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
-            onClick={() => { if (isMobile) setUiVisible((v) => !v); }}
+            onClick={onWrapperClick}
         >
             {/* 상단 바(얇게) + 우상단 분양문의 */}
             <div
@@ -502,6 +518,7 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
                     </div>
                 )}
                 <img
+                    ref={imgRef}
                     src={p.src}
                     alt={p.title ?? "shop photo"}
                     className={cn(
