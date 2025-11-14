@@ -101,10 +101,9 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
 
                     {/* 전화 */}
                     <div className="mt-5 flex items-end gap-2">
-                        <span className="text-sm text-muted-foreground">분양문의</span>
-                        <strong className="text-3xl md:text-4xl font-extrabold tracking-wider">
-                            {phone}
-                        </strong>
+                        <div className="mt-2 text-2xl md:text-3xl font-extrabold text-red-600">
+                            상가분양문의    {phone}
+                        </div>
                     </div>
 
                     {/* 이미지 */}

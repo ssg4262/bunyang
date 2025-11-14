@@ -90,9 +90,9 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
       if (item.href) return false // href 있는 항목은 제외
       const normalizedLabel = item.label.replace(/\s/g, "").toLowerCase()
       return (
-          hash === "overview" && normalizedLabel.includes("사업개요") ||
-          hash === "housetype" && normalizedLabel.includes("세대안내") ||
-          hash === "complex" && normalizedLabel.includes("단지정보")
+          (hash === "overview" && normalizedLabel.includes("사업개요")) ||
+          (hash === "housetype" && normalizedLabel.includes("세대안내")) ||
+          (hash === "complex" && normalizedLabel.includes("단지정보"))
       )
     })
 
@@ -113,7 +113,9 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
   React.useEffect(() => {
     const root = document.documentElement
     root.classList.remove("dark")
-    try { localStorage.setItem("theme", "light") } catch {}
+    try {
+      localStorage.setItem("theme", "light")
+    } catch { /* empty */ }
   }, [])
 
   // 모바일 판별
@@ -153,9 +155,15 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
         null
 
     const compute = () => {
-      if (!isMobile) { setOverHeroMobile(false); return }
+      if (!isMobile) {
+        setOverHeroMobile(false)
+        return
+      }
       const headerH = navH
-      if (!heroEl) { setOverHeroMobile(window.scrollY < headerH + 32); return }
+      if (!heroEl) {
+        setOverHeroMobile(window.scrollY < headerH + 32)
+        return
+      }
       const rect = heroEl.getBoundingClientRect()
       setOverHeroMobile(rect.bottom > headerH + 8)
     }
@@ -320,15 +328,16 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
               {contactLabel && (
                   <Button
                       type="button"
-                      variant={isMobile && overHeroMobile ? "outline" : "default"}
+                      variant="default"
                       className={cn(
                           "hidden sm:inline-flex cursor-pointer rounded-xl",
-                          isMobile && overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20"
+                          "bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
                       )}
                       onClick={() =>
                           smartDial("053-760-4818", {
                             desktopApp: "facetime",
-                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                            onFail: () =>
+                                alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
                           })
                       }
                   >
@@ -374,7 +383,16 @@ const MobileMenu: React.FC<{
   currentPath: string
   brandHref: string
   onScrollOrRoute: (item: NavItem) => void
-}> = ({ brand, nav, contactLabel, onItemClick, overHeroMobile, footerLinks, currentPath, onScrollOrRoute }) => {
+}> = ({
+        brand,
+        nav,
+        contactLabel,
+        onItemClick,
+        overHeroMobile,
+        footerLinks,
+        currentPath,
+        onScrollOrRoute,
+      }) => {
   const [openMap, setOpenMap] = React.useState<Record<number, boolean>>(
       () => Object.fromEntries(nav.map((_, i) => [i, i === 0])) as Record<number, boolean>
   )
@@ -393,7 +411,10 @@ const MobileMenu: React.FC<{
           <Button
               variant="outline"
               size="icon"
-              className={cn("md:hidden rounded-xl", overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20")}
+              className={cn(
+                  "md:hidden rounded-xl",
+                  overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20"
+              )}
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Open menu</span>
@@ -421,7 +442,9 @@ const MobileMenu: React.FC<{
                           <h3
                               className={cn(
                                   "text-[28px] leading-[1.2] font-extrabold tracking-tight",
-                                  isOpen || isRouteActive(section.href) ? "text-orange-500" : "text-gray-900"
+                                  isOpen || isRouteActive(section.href)
+                                      ? "text-orange-500"
+                                      : "text-gray-900"
                               )}
                           >
                             {section.label}
@@ -497,7 +520,9 @@ const MobileMenu: React.FC<{
                                         onClick={() => onItemClick?.(child, ci)}
                                         className={cn(
                                             "block w-full text-left text-[20px] leading-6",
-                                            child.disabled ? "text-gray-300" : "text-gray-700 hover:text-gray-900"
+                                            child.disabled
+                                                ? "text-gray-300"
+                                                : "text-gray-700 hover:text-gray-900"
                                         )}
                                     >
                                       {child.label}
@@ -516,11 +541,12 @@ const MobileMenu: React.FC<{
                   <SheetClose asChild>
                     <Button
                         type="button"
-                        className="w-full rounded-xl"
+                        className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
                         onClick={() =>
                             smartDial("053-760-4818", {
                               desktopApp: "facetime",
-                              onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                              onFail: () =>
+                                  alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
                             })
                         }
                     >
@@ -536,10 +562,16 @@ const MobileMenu: React.FC<{
                 <div className="flex items-center gap-3 flex-wrap">
                   {footerLinks.map((f, i) => (
                       <React.Fragment key={`${f.label}-${i}`}>
-                        <button type="button" onClick={f.onClick} className="hover:text-gray-600">
+                        <button
+                            type="button"
+                            onClick={f.onClick}
+                            className="hover:text-gray-600"
+                        >
                           {f.label}
                         </button>
-                        {i < footerLinks.length - 1 && <span className="text-gray-300">|</span>}
+                        {i < footerLinks.length - 1 && (
+                            <span className="text-gray-300">|</span>
+                        )}
                       </React.Fragment>
                   ))}
                 </div>
