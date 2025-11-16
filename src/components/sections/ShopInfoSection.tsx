@@ -11,7 +11,12 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogClose, DialogOverlay } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogClose,
+    DialogOverlay,
+} from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Phone } from "lucide-react";
 
 /* ------------------------------------ Types ----------------------------------- */
@@ -26,13 +31,13 @@ export type ShopInfoSectionProps = {
     items: ShopImage[];
     title?: string;
     className?: string;
-    paddingXClass?: string;      // 섹션 좌우 여백
-    mobileHeightClass?: string;  // 기본 h-auto
+    paddingXClass?: string; // 섹션 좌우 여백
+    mobileHeightClass?: string; // 기본 h-auto
     desktopHeightClass?: string; // 기본 h-auto
     autoMs?: number;
-    rounded?: boolean;           // 이미지 모서리
-    showCaption?: boolean;       // 이미지 '아래' 타이틀/서브 표시
-    onCallClick?: () => void;    // 전화 버튼 클릭 시 커스텀 핸들러(선택)
+    rounded?: boolean; // 이미지 모서리
+    showCaption?: boolean; // 이미지 '아래' 타이틀/서브 표시
+    onCallClick?: () => void; // 전화 버튼 클릭 시 커스텀 핸들러(선택)
 };
 
 /* ---------------------------------- Helpers ---------------------------------- */
@@ -55,7 +60,10 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
     const [lightIdx, setLightIdx] = React.useState(0);
     const count = items.length;
 
-    const openAt = (i: number) => { setLightIdx(i); setOpen(true); };
+    const openAt = (i: number) => {
+        setLightIdx(i);
+        setOpen(true);
+    };
     const goLight = (n: number) => setLightIdx((i) => mod(i + n, count));
 
     const handleCall = () => {
@@ -64,7 +72,9 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
     };
 
     return (
-        <section className={cn("w-full py-4 md:py-6", paddingXClass, className)}>
+        <section
+            className={cn("w-full py-4 md:py-6", paddingXClass, className)}
+        >
             {/* 타이틀 */}
             <header className="mb-3 md:mb-5">
                 <h1 className="mt-1 text-3xl md:text-5xl font-semibold tracking-tight">
@@ -114,7 +124,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     className={cn(
                         "fixed inset-0 z-50 bg-transparent",
                         "data-[state=open]:animate-in data-[state=closed]:animate-out",
-                        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+                        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                     )}
                 />
                 {/* Content도 투명 + 풀스크린 */}
@@ -175,7 +185,8 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 
     const autoTimer = React.useRef<number | null>(null);
 
-    const goTo = (n: number) => setIndex(() => Math.max(0, Math.min(n, pageMax)));
+    const goTo = (n: number) =>
+        setIndex(() => Math.max(0, Math.min(n, pageMax)));
     const prev = () => goTo(index - 1);
     const next = () => goTo(index + 1);
 
@@ -215,7 +226,6 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
         const thresholdPx = Math.max(40, getWidth() * 0.08); // 8% 또는 40px
         if (dx > thresholdPx) prev();
         else if (dx < -thresholdPx) next();
-        // 리셋
         startX.current = null;
         setDragPct(0);
     };
@@ -224,7 +234,9 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 
     // 현재 인덱스 이동 + 드래그 오프셋 반영
     const basePct = -(index * itemWidthPct);
-    const transformStyle = { transform: `translateX(calc(${basePct}% + ${dragPct}%))` } as React.CSSProperties;
+    const transformStyle = {
+        transform: `translateX(calc(${basePct}% + ${dragPct}%))`,
+    } as React.CSSProperties;
 
     return (
         <section
@@ -235,7 +247,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
             className={cn(
                 "relative select-none group overflow-hidden",
                 "bg-transparent border-0 rounded-none",
-                "touch-pan-y overscroll-none", // iOS/안드로이드 스크롤 충돌 최소화
+                "touch-pan-y overscroll-none",
                 heightClass ?? "h-auto"
             )}
             // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게
@@ -258,7 +270,10 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         {/* 이미지 우상단 '분양문의' 버튼 */}
                         <button
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); onCall?.(); }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onCall?.();
+                            }}
                             className={cn(
                                 "absolute right-2 top-2 z-20",
                                 "inline-flex items-center gap-1 rounded-full px-3 py-1.5",
@@ -276,7 +291,10 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         {/* 이미지(클릭 → 라이트박스) */}
                         <button
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); onOpenLightbox?.(i); }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenLightbox?.(i);
+                            }}
                             className={cn(
                                 "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-hidden",
                                 rounded ? "rounded-2xl" : "rounded-none"
@@ -294,8 +312,16 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         {/* 이미지 '아래' 캡션 */}
                         {showCaption && (it.title || it.subtitle) && (
                             <div className="mt-2">
-                                {it.title && <h3 className="text-sm md:text-base font-semibold">{it.title}</h3>}
-                                {it.subtitle && <p className="text-xs md:text-sm text-muted-foreground">{it.subtitle}</p>}
+                                {it.title && (
+                                    <h3 className="text-sm md:text-base font-semibold">
+                                        {it.title}
+                                    </h3>
+                                )}
+                                {it.subtitle && (
+                                    <p className="text-xs md:text-sm text-muted-foreground">
+                                        {it.subtitle}
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -310,7 +336,11 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         aria-label="이전"
                         onClick={() => prev()}
                         data-carousel-interactive="true"
-                        className={cn(arrowBase, "left-3 md:left-4 z-[5]", "opacity-100 pointer-events-auto")}
+                        className={cn(
+                            arrowBase,
+                            "left-3 md:left-4 z-[5]",
+                            "opacity-100 pointer-events-auto"
+                        )}
                     >
                         <ChevronLeft className="h-5 w-5" />
                     </button>
@@ -319,7 +349,11 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         aria-label="다음"
                         onClick={() => next()}
                         data-carousel-interactive="true"
-                        className={cn(arrowBase, "right-3 md:right-4 z-[5]", "opacity-100 pointer-events-auto")}
+                        className={cn(
+                            arrowBase,
+                            "right-3 md:right-4 z-[5]",
+                            "opacity-100 pointer-events-auto"
+                        )}
                     >
                         <ChevronRight className="h-5 w-5" />
                     </button>
@@ -340,7 +374,9 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                 data-carousel-interactive="true"
                                 className={cn(
                                     "mx-1 inline-block h-2 w-6 rounded-full transition-all",
-                                    p === index ? "bg-foreground w-8" : "bg-foreground/40 hover:bg-foreground/60"
+                                    p === index
+                                        ? "bg-foreground w-8"
+                                        : "bg-foreground/40 hover:bg-foreground/60"
                                 )}
                             />
                         ))}
@@ -364,7 +400,14 @@ interface LightboxProps {
     onCall?: () => void;
 }
 
-const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onClose, onCall }) => {
+const Lightbox: React.FC<LightboxProps> = ({
+                                               photos,
+                                               index,
+                                               onPrev,
+                                               onNext,
+                                               onClose,
+                                               onCall,
+                                           }) => {
     const [loaded, setLoaded] = React.useState(false);
     const [uiVisible, setUiVisible] = React.useState(true);
     const [zoom, setZoom] = React.useState(1);
@@ -380,17 +423,31 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
 
     const imgRef = React.useRef<HTMLImageElement | null>(null);
 
-    const isMobile = typeof window !== "undefined"
-        ? window.matchMedia("(max-width: 767px)").matches
-        : true;
+    const isMobile =
+        typeof window !== "undefined"
+            ? window.matchMedia("(max-width: 767px)").matches
+            : true;
 
-    React.useEffect(() => { setLoaded(false); setZoom(1); setTx(0); setTy(0); kickUI(); }, [index]);
-    React.useEffect(() => () => { if (uiTimer.current) window.clearTimeout(uiTimer.current); }, []);
+    React.useEffect(() => {
+        setLoaded(false);
+        setZoom(1);
+        setTx(0);
+        setTy(0);
+        kickUI();
+    }, [index]);
+
+    React.useEffect(
+        () => () => {
+            if (uiTimer.current) window.clearTimeout(uiTimer.current);
+        },
+        []
+    );
 
     const kickUI = (ms = 1400) => {
         setUiVisible(true);
         if (uiTimer.current) window.clearTimeout(uiTimer.current);
-        if (isMobile) uiTimer.current = window.setTimeout(() => setUiVisible(false), ms);
+        if (isMobile)
+            uiTimer.current = window.setTimeout(() => setUiVisible(false), ms);
     };
 
     const toggleZoom = () => setZoom((z) => (z === 1 ? 2.5 : 1));
@@ -406,38 +463,62 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
         if (target.closest('[data-lb-interactive="true"]')) return;
 
         const now = Date.now();
-        const dt = now - lastTap.current; lastTap.current = now;
-        if (dt < 260) { toggleZoom(); kickUI(1200); return; }
+        const dt = now - lastTap.current;
+        lastTap.current = now;
+        if (dt < 260) {
+            // 더블탭 → 줌 토글
+            toggleZoom();
+            kickUI(1200);
+            return;
+        }
 
-        downX.current = e.clientX; downY.current = e.clientY;
-        lastX.current = e.clientX; lastY.current = e.clientY;
+        downX.current = e.clientX;
+        downY.current = e.clientY;
+        lastX.current = e.clientX;
+        lastY.current = e.clientY;
         (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
         kickUI(1600);
     };
 
     const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
         if (lastX.current == null || lastY.current == null) return;
-        const dx = e.clientX - lastX.current; const dy = e.clientY - lastY.current;
-        lastX.current = e.clientX; lastY.current = e.clientY;
-        if (zoom > 1) { setTx((x) => x + dx); setTy((y) => y + dy); }
+        const dx = e.clientX - lastX.current;
+        const dy = e.clientY - lastY.current;
+        lastX.current = e.clientX;
+        lastY.current = e.clientY;
+        if (zoom > 1) {
+            setTx((x) => x + dx);
+            setTy((y) => y + dy);
+        }
     };
 
     const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
         if (downX.current == null || downY.current == null) return;
-        const totalDx = e.clientX - downX.current; const totalDy = e.clientY - downY.current;
+        const totalDx = e.clientX - downX.current;
+        const totalDy = e.clientY - downY.current;
+
         if (zoom === 1) {
-            const absX = Math.abs(totalDx); const absY = Math.abs(totalDy);
-            if (absY > 80 && absY > absX && totalDy > 0) onClose(); // 아래로 스와이프 → 닫기
-            else if (absX > 50 && absX > absY) { if (totalDx > 0) onPrev(); else onNext(); } // 좌우 스와이프 → 내비
+            const absX = Math.abs(totalDx);
+            const absY = Math.abs(totalDy);
+            if (absY > 80 && absY > absX && totalDy > 0) {
+                // 아래로 스와이프 → 닫기
+                onClose();
+            } else if (absX > 50 && absX > absY) {
+                // 좌우 스와이프 → 내비
+                if (totalDx > 0) onPrev();
+                else onNext();
+            }
         }
-        downX.current = null; downY.current = null;
+
+        downX.current = null;
+        downY.current = null;
     };
 
     // 이미지 밖 클릭 시 닫기
     const onWrapperClick = (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.target as Node;
         if (imgRef.current && imgRef.current.contains(target)) {
-            // 이미지 위 클릭: 모바일에서는 UI 토글만 유지
+            // 이미지 위 클릭: 모바일에서는 UI 토글만
             if (isMobile) setUiVisible((v) => !v);
             return;
         }
@@ -449,7 +530,7 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
 
     return (
         <div
-            className="relative w-screen h-screen touch-none select-none overflow-hidden" // ← 스크롤바 숨김
+            className="relative w-screen h-screen touch-none select-none overflow-hidden"
             tabIndex={0}
             onKeyDown={onKey}
             onPointerDown={onPointerDown}
@@ -457,7 +538,7 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
             onPointerUp={onPointerUp}
             onClick={onWrapperClick}
         >
-            {/* 상단 바(얇게) + 우상단 분양문의 */}
+            {/* 상단 바 + 우상단 분양문의 */}
             <div
                 className={cn(
                     "absolute inset-x-0 top-0 z-20 flex items-center justify-between",
@@ -465,7 +546,10 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
                     uiVisible ? "opacity-100" : "opacity-0"
                 )}
             >
-                <div className="text-xs md:text-sm text-white/85 drop-shadow" aria-live="polite">
+                <div
+                    className="text-xs md:text-sm text-white/85 drop-shadow"
+                    aria-live="polite"
+                >
                     {index + 1} / {photos.length}
                 </div>
 
@@ -473,7 +557,10 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
                     <button
                         type="button"
                         data-lb-interactive="true"
-                        onClick={(e) => { e.stopPropagation(); onCall?.(); }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onCall?.();
+                        }}
                         className={cn(
                             "hidden sm:inline-flex items-center gap-1 rounded-full px-3 py-1.5",
                             "text-xs md:text-sm font-semibold bg-red-600 text-white drop-shadow",
@@ -489,7 +576,10 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
                         <button
                             type="button"
                             data-lb-interactive="true"
-                            onClick={(e) => { e.stopPropagation(); onClose(); }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onClose();
+                            }}
                             className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
                             aria-label="닫기"
                         >
@@ -511,7 +601,11 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
                     src={p.src}
                     alt={p.title ?? "shop photo"}
                     className={cn(
-                        "max-w-[100vw] max-h-[100svh] md:max-h-[100vh] w-auto h-auto object-contain",
+                        // 모바일: 거의 꽉 차게
+                        "max-w-[100vw] max-h-[100svh]",
+                        // 데스크탑: 너무 커서 스크롤 안 생기도록 살짝 여유
+                        "md:max-w-[92vw] md:max-h-[88vh]",
+                        "w-auto h-auto object-contain",
                         loaded ? "opacity-100" : "opacity-0",
                         "transition-transform duration-150 ease-out"
                     )}
@@ -527,13 +621,19 @@ const Lightbox: React.FC<LightboxProps> = ({ photos, index, onPrev, onNext, onCl
     );
 };
 
-const LBNav: React.FC<{ onPrev: () => void; onNext: () => void }> = ({ onPrev, onNext }) => (
+const LBNav: React.FC<{ onPrev: () => void; onNext: () => void }> = ({
+                                                                         onPrev,
+                                                                         onNext,
+                                                                     }) => (
     <>
         <button
             type="button"
             aria-label="이전"
             data-lb-interactive="true"
-            onClick={(e) => { e.stopPropagation(); onPrev(); }}
+            onClick={(e) => {
+                e.stopPropagation();
+                onPrev();
+            }}
             className="absolute left-3 top-1/2 -translate-y-1/2 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow ring-1 ring-black/10 hover:bg-white"
         >
             <ChevronLeft className="h-5 w-5" />
@@ -542,7 +642,10 @@ const LBNav: React.FC<{ onPrev: () => void; onNext: () => void }> = ({ onPrev, o
             type="button"
             aria-label="다음"
             data-lb-interactive="true"
-            onClick={(e) => { e.stopPropagation(); onNext(); }}
+            onClick={(e) => {
+                e.stopPropagation();
+                onNext();
+            }}
             className="absolute right-3 top-1/2 -translate-y-1/2 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow ring-1 ring-black/10 hover:bg-white"
         >
             <ChevronRight className="h-5 w-5" />

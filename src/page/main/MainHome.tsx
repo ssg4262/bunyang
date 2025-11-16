@@ -27,6 +27,13 @@ import sanga5 from "@/assets/sanga/sanga5.png"
 import sanga6 from "@/assets/sanga/sanga6.png"
 import sanga7 from "@/assets/sanga/sanga7.png"
 
+import sangaB1F from "@/assets/sanga/sangaB1F.png"
+import sanga1F from "@/assets/sanga/sanga1F.png"
+import sanga2F from "@/assets/sanga/sanga2F.png"
+import sanga3F from "@/assets/sanga/sanga3F.png"
+import sanga4F from "@/assets/sanga/sanga4F.png"
+
+
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
@@ -50,6 +57,7 @@ import pr4 from "@/assets/pr/pr4.png"
 import pr5 from "@/assets/pr/pr5.png"
 import pr6 from "@/assets/pr/pr6.png"
 import {ShopInfoSection} from "@/components/sections/ShopInfoSection.tsx";
+import {FloorPlanTabs} from "@/components/sections/FloorPlanTabs.tsx";
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
@@ -244,6 +252,145 @@ export const MainHome: React.FC = () => {
                     // thumbHeight={220}
                     // rounded={true}
                 />
+                <FloorPlanTabs floors={[
+                    {
+                        id: "B1",
+                        label: "B1",
+                        image: sangaB1F,
+                        alt: "B1층 평면도",
+                        rows: [
+                            { no: "B101", exclusivePyeong: 48.81, contractPyeong: 118.62 },
+                            { no: "B102", exclusivePyeong: 52.07, contractPyeong: 126.53 },
+                            { no: "B103", exclusivePyeong: 80.98, contractPyeong: 196.79 },
+                            { no: "B104", exclusivePyeong: 72.62, contractPyeong: 176.49 },
+                        ],
+                    },
+                    {
+                        id: "1F",
+                        label: "1F",
+                        image: sanga1F,
+                        alt: "1층 평면도",
+                        rows: [
+                            { no: "101",   exclusivePyeong: 11.13, contractPyeong: 25.64 },
+                            { no: "102-1", exclusivePyeong: 16.10, contractPyeong: 37.09 },
+                            { no: "102-2", exclusivePyeong: 10.70, contractPyeong: 27.08 },
+                            { no: "103",   exclusivePyeong: 14.19, contractPyeong: 31.60 },
+                            { no: "104",   exclusivePyeong:  8.76, contractPyeong: 20.10 },
+                            { no: "105",   exclusivePyeong: 10.49, contractPyeong: 24.19 },
+                            { no: "106",   exclusivePyeong: 15.89, contractPyeong: 36.15 },
+                            { no: "107",   exclusivePyeong:  9.94, contractPyeong: 23.15 },
+                            { no: "108",   exclusivePyeong: 10.72, contractPyeong: 24.97 },
+                            { no: "108A",  exclusivePyeong: 12.29, contractPyeong: 28.63 },
+                            { no: "109",   exclusivePyeong: 12.29, contractPyeong: 28.63 },
+                            { no: "110",   exclusivePyeong: 10.82, contractPyeong: 25.11 },
+                            { no: "111",   exclusivePyeong: 15.89, contractPyeong: 36.15 },
+                            { no: "112",   exclusivePyeong: 13.80, contractPyeong: 29.76 },
+                            { no: "113",   exclusivePyeong: 13.80, contractPyeong: 29.76 },
+                            { no: "114",   exclusivePyeong: 13.94, contractPyeong: 32.71 },
+                            { no: "115",   exclusivePyeong: 14.52, contractPyeong: 33.47 },
+                            { no: "116",   exclusivePyeong: 16.22, contractPyeong: 37.37 },
+
+                            { no: "116A",  exclusivePyeong: 13.15, contractPyeong: 30.30 },
+                            { no: "117",   exclusivePyeong: 23.88, contractPyeong: 55.02 },
+                            { no: "118",   exclusivePyeong: 14.70, contractPyeong: 35.02 },
+                            { no: "119",   exclusivePyeong: 16.28, contractPyeong: 37.91 },
+                            { no: "120",   exclusivePyeong: 12.64, contractPyeong: 29.08 },
+                            { no: "121",   exclusivePyeong: 17.45, contractPyeong: 41.48 },
+                            { no: "122",   exclusivePyeong: 24.30, contractPyeong: 57.21 },
+                            { no: "123",   exclusivePyeong: 20.10, contractPyeong: 47.35 },
+                            { no: "124",   exclusivePyeong: 18.00, contractPyeong: 42.62 },
+                            { no: "125",   exclusivePyeong: 16.97, contractPyeong: 39.16 },
+                            { no: "126",   exclusivePyeong: 15.89, contractPyeong: 35.35 },
+                            { no: "127",   exclusivePyeong: 23.12, contractPyeong: 53.32 },
+                            { no: "128",   exclusivePyeong: 22.42, contractPyeong: 51.70 },
+                            { no: "129",   exclusivePyeong: 15.77, contractPyeong: 37.21 },
+                            { no: "130",   exclusivePyeong: 18.84, contractPyeong: 44.74 },
+                            { no: "131",   exclusivePyeong: 16.01, contractPyeong: 35.88 },
+                            { no: "132",   exclusivePyeong: 15.37, contractPyeong: 35.43 },
+                        ],
+                    },
+                    {
+                        id: "2F",
+                        label: "2F",
+                        image: sanga2F,
+                        alt: "2층 평면도",
+                        rows: [
+                            { no: "101-2", exclusivePyeong: 21.20, contractPyeong: 50.61 },
+                            { no: "102-2", exclusivePyeong: 32.12, contractPyeong: 76.67 },
+                            { no: "201",   exclusivePyeong: 21.30, contractPyeong: 50.84 },
+                            { no: "202",   exclusivePyeong: 11.49, contractPyeong: 27.44 },
+                            { no: "203",   exclusivePyeong: 12.98, contractPyeong: 30.99 },
+                            { no: "204",   exclusivePyeong: 18.69, contractPyeong: 44.62 },
+                            { no: "205",   exclusivePyeong: 19.66, contractPyeong: 46.94 },
+                            { no: "206",   exclusivePyeong: 23.77, contractPyeong: 56.74 },
+                            { no: "207",   exclusivePyeong: 16.19, contractPyeong: 38.64 },
+                            { no: "208",   exclusivePyeong: 16.72, contractPyeong: 39.91 },
+                            { no: "209",   exclusivePyeong: 23.19, contractPyeong: 55.37 },
+                            { no: "210",   exclusivePyeong:  6.00, contractPyeong: 14.33 },
+                            { no: "211",   exclusivePyeong: 18.89, contractPyeong: 45.09 },
+                            { no: "212",   exclusivePyeong: 63.65, contractPyeong: 151.94 },
+                            { no: "213",   exclusivePyeong: 18.14, contractPyeong: 43.31 },
+                            { no: "214",   exclusivePyeong: 30.11, contractPyeong: 71.89 },
+
+                            { no: "215",   exclusivePyeong: 30.85, contractPyeong: 73.65 },
+                            { no: "216",   exclusivePyeong: 22.79, contractPyeong: 54.41 },
+                            { no: "217",   exclusivePyeong: 37.52, contractPyeong: 89.57 },
+                            { no: "218",   exclusivePyeong: 26.03, contractPyeong: 62.15 },
+                            { no: "219",   exclusivePyeong: 20.59, contractPyeong: 49.15 },
+                            { no: "220",   exclusivePyeong: 18.55, contractPyeong: 44.29 },
+                            { no: "221",   exclusivePyeong: 33.47, contractPyeong: 79.89 },
+                            { no: "222",   exclusivePyeong: 16.35, contractPyeong: 39.04 },
+                            { no: "223",   exclusivePyeong: 24.26, contractPyeong: 57.92 },
+                            { no: "224",   exclusivePyeong: 54.53, contractPyeong: 130.17 },
+                            { no: "225",   exclusivePyeong: 12.50, contractPyeong: 29.84 },
+                            { no: "226",   exclusivePyeong: 17.58, contractPyeong: 41.98 },
+                            { no: "227",   exclusivePyeong: 18.01, contractPyeong: 42.99 },
+                        ],
+                    },{
+                        id: "3F",
+                        label: "3F",
+                        image:sanga3F,
+                        alt: "3층 평면도",
+                        rows: [
+                            { no: "301", exclusivePyeong: 32.87, contractPyeong: 73.20 },
+                            { no: "302", exclusivePyeong: 25.60, contractPyeong: 57.02 },
+                            { no: "303", exclusivePyeong: 27.94, contractPyeong: 62.24 },
+                            { no: "304", exclusivePyeong: 36.88, contractPyeong: 82.14 },
+                            { no: "305", exclusivePyeong: 50.96, contractPyeong: 113.51 },
+                            { no: "306", exclusivePyeong: 32.03, contractPyeong: 71.33 },
+                            { no: "307", exclusivePyeong: 39.30, contractPyeong: 87.54 },
+                            { no: "308", exclusivePyeong: 24.06, contractPyeong: 53.58 },
+                            { no: "309", exclusivePyeong: 70.93, contractPyeong: 157.97 },
+                            { no: "310", exclusivePyeong: 24.04, contractPyeong: 53.55 },
+                            { no: "311", exclusivePyeong: 41.31, contractPyeong: 92.00 },
+                            { no: "312", exclusivePyeong: 55.75, contractPyeong: 124.17 },
+                            { no: "313", exclusivePyeong: 72.87, contractPyeong: 162.31 },
+                        ],
+                    },{
+                        id: "4F",
+                        label: "4F",
+                        image: sanga4F,
+                        alt: "4층 평면도",
+                        rows: [
+                            { no: "401", exclusivePyeong: 32.87, contractPyeong: 74.38 },
+                            { no: "402", exclusivePyeong: 25.60, contractPyeong: 57.93 },
+                            { no: "403", exclusivePyeong: 27.94, contractPyeong: 63.24 },
+                            { no: "404", exclusivePyeong: 36.88, contractPyeong: 83.45 },
+                            { no: "405", exclusivePyeong: 50.96, contractPyeong: 115.33 },
+                            { no: "406", exclusivePyeong: 32.03, contractPyeong: 72.47 },
+                            { no: "407", exclusivePyeong: 39.30, contractPyeong: 88.94 },
+                            { no: "408", exclusivePyeong: 24.06, contractPyeong: 54.44 },
+                            { no: "409", exclusivePyeong: 67.90, contractPyeong: 153.65 },
+                            { no: "410", exclusivePyeong: 24.04, contractPyeong: 54.40 },
+                            { no: "411", exclusivePyeong: 29.36, contractPyeong: 66.44 },
+                            { no: "412", exclusivePyeong: 49.10, contractPyeong: 111.10 },
+                            { no: "413", exclusivePyeong: 69.44, contractPyeong: 157.13 },
+                        ],
+                    }
+
+
+
+                ]} defaultTab="B1" className="mt-6" />
             </div>
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
