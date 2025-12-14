@@ -58,6 +58,7 @@ import pr5 from "@/assets/pr/pr5.png"
 import pr6 from "@/assets/pr/pr6.png"
 import {ShopInfoSection} from "@/components/sections/ShopInfoSection.tsx";
 import {FloorPlanTabs} from "@/components/sections/FloorPlanTabs.tsx";
+import {InterestedCustomerForm} from "@/components/sections/InterestedCustomerForm.tsx";
 
 export const MainHome: React.FC = () => {
     // ── 네브바 고정 높이 (스크롤 오프셋에 사용)
@@ -69,6 +70,7 @@ export const MainHome: React.FC = () => {
     const complexInfoRef = React.useRef<HTMLDivElement>(null)   // 단지정보(단지 배치도 섹션)
     const premiumRef = React.useRef<HTMLDivElement>(null)       // 프리미엄(PR 섹션)
     const sangaRef = React.useRef<HTMLDivElement>(null)       // 프리미엄(PR 섹션)
+    const customerFormRef = React.useRef<HTMLDivElement>(null)
     // 스무스 스크롤 도우미(헤더 높이만큼 여유)
     const scrollToEl = React.useCallback(
         (el: HTMLElement | null) => {
@@ -122,6 +124,7 @@ export const MainHome: React.FC = () => {
                             { label: "세대평면도" },
                             { label: "프리미엄" },
                             { label: "상가분양안내" },
+                            {label: "관심고객등록" ,badge: "상시문의가능"}
                         ]}
                         contactLabel="분양문의 053-760-4818"
                         onHeightChange={(h) => setNavH(h)}
@@ -141,7 +144,10 @@ export const MainHome: React.FC = () => {
                             } else if (key.includes("상가분양안내")) {
                             // PR 섹션으로 포커싱
                                 scrollToEl(sangaRef.current)
-                        }
+                            }else if (key.includes("관심고객등록")) {
+                                // PR 섹션으로 포커싱
+                                scrollToEl(customerFormRef.current)
+                            }
                         }}
                     />
                 </div>
@@ -450,7 +456,22 @@ export const MainHome: React.FC = () => {
                     className="pt-0"
                 />
 
-
+                <section
+                    ref={customerFormRef}
+                >
+                    <div className="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+                        <div className="grid grid-cols-1 place-items-center">
+                            <InterestedCustomerForm
+                                className="w-full max-w-[560px]"
+                                onSubmit={async (data) => {
+                                    // 예시: 실제 API 호출로 교체
+                                    // await fetch("/api/leads", { method: "POST", body: JSON.stringify(data) })
+                                    console.log("lead payload:", data);
+                                }}
+                            />
+                        </div>
+                    </div>
+                </section>
 
 
             </div>
