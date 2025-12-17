@@ -75,7 +75,7 @@ export const PrMainHome: React.FC = () => {
                 tagline="동대구 최중심 라이프"
                 phone="053-760-4818"
                 addressLines={[
-                    "대구 동구 신천동 325-1",
+                    "대구 동구 신천동 328-1",
                     "e편한세상 동대구역 센텀스퀘어 분양홍보관",
                 ]}
                 bizName="시행 · 시공: (주)건설"

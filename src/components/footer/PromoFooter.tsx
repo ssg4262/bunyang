@@ -80,14 +80,14 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                         </div>
 
                         <div className="mt-2 grid gap-2">
-                            <Button type="button" variant="default" className="rounded-xl justify-start cursor-pointer"
+                            <Button type="button" variant="default" className="rounded-xl justify-start cursor-pointer bg-red-600 hover:bg-red-700 text-white"
                                     onClick={() =>
                                         smartDial("053-760-4818", {
                                             desktopApp: "facetime",
                                             onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
                                         })}
                             >
-                                <Phone className="mr-2 h-4 w-4" />
+                                <Phone className="mr-2 h-4 w-4 "  />
                                 분양문의 {phone}
                             </Button>
                             <div className="flex items-start gap-2 text-sm text-muted-foreground">
