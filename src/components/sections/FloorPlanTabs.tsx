@@ -68,7 +68,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
         >
             <Tabs value={tab} onValueChange={(v) => setTab(v as FloorInfo["id"])}>
                 {/* 헤더 */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="text-xs text-muted-foreground">층별 정보</p>
                         <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
