@@ -28,11 +28,13 @@ import {
     AlertTriangle,
     X,
     ChevronRight,
+    ArrowDown,
 } from "lucide-react";
 
 /* ───────────────────────── 설정 ───────────────────────── */
 const GAS_ENDPOINT =
     "https://script.google.com/macros/s/AKfycbxw7lRX8_N5Hom92xIfnanQkiNNIFhB8cZKX3IfSEPEticif_v2l-8Ki0xG8Eex_6Em/exec";
+const SECTION_ID = "interested-customer-form";
 
 /* ───────────────────────── BottomAlert (알림창) ───────────────────────── */
 type BottomAlertProps = {
@@ -66,12 +68,7 @@ const BottomAlert: React.FC<BottomAlertProps> = ({
                 open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
             )}
         >
-            <div
-                className={cn(
-                    "pointer-events-auto w-full max-w-[560px] rounded-2xl border px-4 py-3 shadow-lg",
-                    "bg-white border-zinc-200"
-                )}
-            >
+            <div className="pointer-events-auto w-full max-w-[560px] rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-black/5">
                 <div className="flex items-start gap-3">
                     <div
                         className={cn(
@@ -182,64 +179,180 @@ async function submitToGoogleSheet(payload: {
     });
 }
 
-/* ───────────────────────── UI (라이트 전용, 약관 느낌) ───────────────────────── */
+/* ───────────────────────── 스크롤 유틸 (도중 멈춤 방지) ───────────────────────── */
+const prefersReducedMotion = () =>
+    typeof window !== "undefined" &&
+    !!window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const isScrollable = (el: HTMLElement) => {
+    const style = window.getComputedStyle(el);
+    const oy = style.overflowY;
+    return (oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight;
+};
+
+const getScrollParent = (el: HTMLElement | null): HTMLElement | Window => {
+    let p = el?.parentElement ?? null;
+    while (p) {
+        if (isScrollable(p)) return p;
+        p = p.parentElement;
+    }
+    return window;
+};
+
+const getScrollTop = (scroller: HTMLElement | Window) =>
+    scroller === window
+        ? window.scrollY || window.pageYOffset || 0
+        : (scroller as HTMLElement).scrollTop;
+
+const setScrollTop = (scroller: HTMLElement | Window, top: number) => {
+    if (scroller === window) {
+        window.scrollTo({ top, behavior: "auto" });
+    } else {
+        (scroller as HTMLElement).scrollTop = top;
+    }
+};
+
+const calcTargetTop = (
+    scroller: HTMLElement | Window,
+    target: HTMLElement,
+    offset = 14
+) => {
+    if (scroller === window) {
+        return target.getBoundingClientRect().top + (window.scrollY || 0) - offset;
+    }
+    const s = scroller as HTMLElement;
+    const sRect = s.getBoundingClientRect();
+    const tRect = target.getBoundingClientRect();
+    return s.scrollTop + (tRect.top - sRect.top) - offset;
+};
+
+const smoothScrollTo = (
+    scroller: HTMLElement | Window,
+    top: number,
+    duration = 520
+) => {
+    if (prefersReducedMotion()) {
+        setScrollTop(scroller, top);
+        return;
+    }
+
+    const start = getScrollTop(scroller);
+    const delta = top - start;
+    const startTime = performance.now();
+
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const step = (now: number) => {
+        const p = Math.min(1, (now - startTime) / duration);
+        const next = start + delta * easeOutCubic(p);
+
+        if (scroller === window) {
+            window.scrollTo(0, next);
+        } else {
+            (scroller as HTMLElement).scrollTop = next;
+        }
+
+        if (p < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+};
+
+/* ───────────────────────── UI ─────────────────────────
+   ✅ 모바일 깨짐 원인: 긴 텍스트/버튼 영역이 줄바꿈/넘침(Accordion row)
+   해결: (1) min-w-0/overflow 처리 강화
+        (2) 보기 버튼 shrink-0
+        (3) row를 items-start로 + gap/line-height 조정
+        (4) policyBox 가로 넘침 방지: break-words + whitespace-normal
+──────────────────────────────────────────────────────── */
 const UI = {
     wrap: cn(
         "w-full max-w-[560px] rounded-3xl overflow-hidden",
-        "border border-zinc-200 bg-white shadow-sm"
     ),
-    header: "px-6 pt-6 pb-4",
-    // ✅ 타이틀: 더 크고, 더 굵게, 녹색계열로 시인성 강화
-    title: "text-[20px] font-extrabold tracking-tight text-emerald-600",
-    desc: "mt-1 text-[13px] leading-5 text-zinc-600",
-    content: "px-6 pb-6 space-y-6",
 
-    fieldLabel: "text-[12px] font-medium text-zinc-700",
+    header: "px-6 pt-6 pb-4 bg-white",
+    title: "text-[22px] font-extrabold tracking-tight text-orange-600",
+    desc: "mt-1 text-[14px] leading-6 text-zinc-600",
+    content: "px-6 pb-6 pt-2 space-y-6",
+
+    label: "text-[13px] font-semibold text-zinc-800",
     field: cn(
-        "relative rounded-2xl border border-zinc-200 bg-white",
-        "transition focus-within:border-zinc-900/25 focus-within:ring-2 focus-within:ring-zinc-900/10"
+        "relative rounded-2xl bg-white",
+        "border border-zinc-200/80",
+        "transition",
+        "focus-within:border-zinc-900/20 focus-within:ring-4 focus-within:ring-zinc-900/5"
     ),
-    fieldInput: cn(
+    input: cn(
         "h-12 w-full rounded-2xl border-0 bg-transparent pl-11 pr-4",
-        "text-[14px] text-zinc-950 placeholder:text-zinc-400",
+        "text-[15px] text-zinc-950 placeholder:text-zinc-400",
         "focus-visible:ring-0 focus-visible:ring-offset-0"
     ),
-    fieldIcon:
+    icon:
         "pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400",
 
-    agreeBox: cn("rounded-2xl border border-zinc-200 bg-zinc-50"),
-    row: cn("flex items-center justify-between gap-3 px-4 py-3"),
-    rowLeft: "flex items-center gap-3 min-w-0",
-    rowTitle: "text-[14px] font-medium text-zinc-900 truncate",
-    rowSub: "mt-1 text-[12px] leading-5 text-zinc-500",
+    agreeBox: cn("rounded-2xl bg-white", "border border-zinc-200/80 overflow-hidden"),
     divider: "h-px bg-zinc-200/70",
 
-    // 원형 체크 느낌
-    check: cn(
-        "h-5 w-5 rounded-full",
-        "border-zinc-300 data-[state=checked]:border-zinc-900",
-        "data-[state=checked]:bg-zinc-900"
+    // ✅ row: 모바일에서 텍스트가 길면 깨짐 → items-start + min-w-0 + overflow 처리
+    row: cn(
+        "flex items-start justify-between gap-3 px-4 py-3",
+        "transition-colors"
     ),
-    requiredTag: "text-[12px] font-semibold text-emerald-600",
-    viewBtn: cn(
-        "inline-flex items-center gap-1 text-[13px] font-medium",
-        "text-zinc-500 hover:text-zinc-900"
+    rowLeft: "flex items-start gap-3 min-w-0 flex-1",
+    rowTitle:
+        "text-[14px] font-semibold text-zinc-900 leading-5 whitespace-normal break-words",
+    rowSub: "mt-1 text-[12px] leading-5 text-zinc-500 whitespace-normal break-words",
+
+    check: cn(
+        "h-5 w-5 rounded-full shrink-0",
+        "border-zinc-300",
+        "data-[state=checked]:border-emerald-600 data-[state=checked]:bg-emerald-600",
+        "data-[state=checked]:text-white"
     ),
 
-    // 큰 바 버튼
+    requiredPill:
+        "inline-flex items-center rounded-full bg-emerald-500/12 px-2 py-0.5 text-[12px] font-extrabold text-emerald-700 shrink-0",
+
+    // ✅ 보기 버튼: shrink-0로 눌림/줄바꿈 깨짐 방지
+    viewBtn: cn(
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 shrink-0",
+        "text-[13px] font-semibold",
+        "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
+    ),
+
+    // ✅ 전문 박스: break-words + 보여지는 영역 가로 넘침 방지
+    policyBox:
+        "mx-4 mb-4 rounded-2xl bg-white px-4 py-3 text-xs leading-6 text-zinc-600 border border-zinc-200/70 break-words whitespace-normal",
+
     submit: (active: boolean) =>
         cn(
-            "h-12 w-full rounded-2xl font-semibold transition",
+            "h-12 w-full rounded-md font-extrabold text-[15px] tracking-tight",
+            "shadow-none",
             active
-                ? "bg-zinc-900 text-white hover:bg-zinc-800"
-                : "bg-zinc-200 text-zinc-700 hover:bg-zinc-200/90",
+                ? "bg-emerald-400 text-zinc-950 hover:bg-emerald-300 active:bg-emerald-500"
+                : "bg-zinc-200 text-zinc-700",
             "disabled:opacity-60 disabled:cursor-not-allowed"
         ),
 
-    footLink: "text-[13px] font-semibold text-emerald-600 hover:underline",
-    msgErr: "rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700",
+    footer: "px-4 pb-6 pt-0",
+    footLink: "text-[13px] font-extrabold text-emerald-600 hover:underline",
+
+    msgErr:
+        "rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 border border-red-200/80",
     msgOk:
-        "rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700",
+        "rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 border border-emerald-200/80",
+
+    fab: cn(
+        "fixed right-5 bottom-5 md:right-6 md:bottom-6 z-[70]",
+        "inline-flex items-center gap-2 rounded-full px-4 py-3 shadow-xl",
+        "bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-800",
+        "ring-1 ring-black/5",
+        "transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0",
+        "touch-manipulation select-none"
+    ),
+    fabIcon: "h-4 w-4",
+    fabText: "text-[13px] font-extrabold",
 };
 
 export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
@@ -268,7 +381,13 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
     const [alertTitle, setAlertTitle] = React.useState("");
     const [alertMsg, setAlertMsg] = React.useState("");
 
-    const openAlert = (variant: "success" | "error", title: string, msg: string) => {
+    const sectionRef = React.useRef<HTMLDivElement>(null);
+
+    const openAlert = (
+        variant: "success" | "error",
+        title: string,
+        msg: string
+    ) => {
         setAlertVariant(variant);
         setAlertTitle(title);
         setAlertMsg(msg);
@@ -339,207 +458,228 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
         }
     };
 
-    // 스타일만: 버튼 “활성” 느낌(실제 제출 가능 여부는 validate 그대로)
     const ctaActive =
-        allChecked &&
-        name.trim().length >= 2 &&
-        KOREA_PHONE_RE.test(phone.trim());
+        allChecked && name.trim().length >= 2 && KOREA_PHONE_RE.test(phone.trim());
+
+    const scrollToSection = React.useCallback(() => {
+        const el =
+            (document.getElementById(SECTION_ID) as HTMLElement | null) ??
+            (sectionRef.current as HTMLElement | null);
+        if (!el) return;
+
+        const scroller = getScrollParent(el);
+        const targetTop = calcTargetTop(scroller, el, 14);
+
+        smoothScrollTo(scroller, targetTop, 560);
+
+        window.setTimeout(() => {
+            const el2 =
+                (document.getElementById(SECTION_ID) as HTMLElement | null) ??
+                (sectionRef.current as HTMLElement | null);
+            if (!el2) return;
+
+            const scroller2 = getScrollParent(el2);
+            const targetTop2 = calcTargetTop(scroller2, el2, 14);
+            const cur = getScrollTop(scroller2);
+
+            if (Math.abs(cur - targetTop2) > 2) {
+                setScrollTop(scroller2, targetTop2);
+            }
+        }, 700);
+    }, []);
 
     return (
         <>
-            <Card className={cn(UI.wrap, className)}>
-                <form onSubmit={handleSubmit} noValidate>
-                    <Honeypot ref={hpRef} />
+            <div
+                id={SECTION_ID}
+                ref={sectionRef}
+                className={cn("scroll-mt-6", className)}
+            >
+                <Card className={UI.wrap}>
+                    <form onSubmit={handleSubmit} noValidate>
+                        <Honeypot ref={hpRef} />
 
-                    <CardHeader className={UI.header}>
-                        <CardTitle className={UI.title}>{title}</CardTitle>
-                        <CardDescription className={UI.desc}>{description}</CardDescription>
-                    </CardHeader>
+                        <CardHeader className={UI.header}>
+                            <CardTitle className={UI.title}>{title}</CardTitle>
+                            <CardDescription className={UI.desc}>{description}</CardDescription>
+                        </CardHeader>
 
-                    <CardContent className={UI.content}>
-                        {/* 이름 */}
-                        <div className="space-y-2">
-                            <Label htmlFor="lead-name" className={UI.fieldLabel}>
-                                이름 <span className="text-red-500">*</span>
-                            </Label>
-                            <div className={UI.field}>
-                                <User2 className={UI.fieldIcon} />
-                                <Input
-                                    id="lead-name"
-                                    placeholder="홍길동"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                    className={UI.fieldInput}
-                                />
-                            </div>
-                        </div>
-
-                        {/* 전화번호 */}
-                        <div className="space-y-2">
-                            <Label htmlFor="lead-phone" className={UI.fieldLabel}>
-                                전화번호 <span className="text-red-500">*</span>
-                            </Label>
-                            <div className={UI.field}>
-                                <PhoneIcon className={UI.fieldIcon} />
-                                <Input
-                                    id="lead-phone"
-                                    inputMode="tel"
-                                    placeholder="010-1234-5678"
-                                    value={phone}
-                                    onChange={(e) => setPhone(formatKoreanPhone(e.target.value))}
-                                    required
-                                    className={UI.fieldInput}
-                                />
-                            </div>
-                        </div>
-
-                        {/* 약관 동의 */}
-                        <div className={UI.agreeBox}>
-                            {/* 전체 동의 */}
-                            <div className="px-4 pt-4">
-                                <label className="flex items-start gap-3">
-                                    <Checkbox
-                                        checked={allChecked}
-                                        onCheckedChange={(v) => setAll(Boolean(v))}
-                                        className={UI.check}
+                        <CardContent className={UI.content}>
+                            {/* 이름 */}
+                            <div className="space-y-2">
+                                <Label htmlFor="lead-name" className={UI.label}>
+                                    이름 <span className="text-red-500">*</span>
+                                </Label>
+                                <div className={UI.field}>
+                                    <User2 className={UI.icon} />
+                                    <Input
+                                        id="lead-name"
+                                        placeholder="홍길동"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                        className={UI.input}
                                     />
-                                    <div className="min-w-0">
-                                        <p className="text-[14px] font-semibold text-zinc-900">
-                                            전체 동의하기
-                                        </p>
-                                        <p className={UI.rowSub}>
-                                            분양 안내를 위한 개인정보 수집·이용 및 처리 위탁 동의를 포함합니다.
-                                        </p>
-                                    </div>
-                                </label>
+                                </div>
                             </div>
 
-                            <div className={cn(UI.divider, "mt-4")} />
+                            {/* 전화번호 */}
+                            <div className="space-y-2">
+                                <Label htmlFor="lead-phone" className={UI.label}>
+                                    전화번호 <span className="text-red-500">*</span>
+                                </Label>
+                                <div className={UI.field}>
+                                    <PhoneIcon className={UI.icon} />
+                                    <Input
+                                        id="lead-phone"
+                                        inputMode="tel"
+                                        placeholder="010-1234-5678"
+                                        value={phone}
+                                        onChange={(e) => setPhone(formatKoreanPhone(e.target.value))}
+                                        required
+                                        className={UI.input}
+                                    />
+                                </div>
+                            </div>
 
-                            <Accordion type="single" collapsible className="px-0">
-                                {/* (필수) 개인정보 수집·이용 */}
-                                <AccordionItem value="collect-use" className="border-0">
-                                    <div className={UI.row}>
-                                        <label className={UI.rowLeft}>
-                                            <Checkbox
-                                                checked={collectUse}
-                                                onCheckedChange={(v) => setCollectUse(Boolean(v))}
-                                                required
-                                                className={UI.check}
-                                            />
-                                            <div className="min-w-0">
-                                                <p className={UI.rowTitle}>
-                                                    <span className={UI.requiredTag}>필수</span>
-                                                    <span className="ml-1">개인정보 수집·이용 동의</span>
-                                                </p>
-                                            </div>
-                                        </label>
-
-                                        <AccordionTrigger
-                                            className={cn(
-                                                "p-0 hover:no-underline",
-                                                "data-[state=open]:underline"
-                                            )}
-                                        >
-                      <span className={UI.viewBtn}>
-                        보기 <ChevronRight className="h-4 w-4" />
-                      </span>
-                                        </AccordionTrigger>
-                                    </div>
-
-                                    <AccordionContent className="px-4 pb-4 pt-1 text-xs leading-6 text-zinc-600">
-                                        1. 수집·이용 목적: 분양 정보 안내 및 상담, 방문 예약, 이벤트 및 프로모션 안내
-                                        <br />
-                                        2. 수집 항목: 성명, 휴대전화번호
-                                        <br />
-                                        3. 보유·이용 기간:{" "}
-                                        <strong className="text-zinc-900">
-                                            분양 완료 시까지 (단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간까지)
-                                        </strong>
-                                        <br />
-                                        ※ 귀하는 본 동의를 거부할 권리가 있으나, 거부 시 분양 상담 및 안내 서비스 제공이
-                                        제한됩니다.
-                                    </AccordionContent>
-                                </AccordionItem>
+                            {/* 약관 동의 */}
+                            <div className={UI.agreeBox}>
+                                <div className="px-4 pt-4 pb-3">
+                                    <label className="flex items-start gap-3">
+                                        <Checkbox
+                                            checked={allChecked}
+                                            onCheckedChange={(v) => setAll(Boolean(v))}
+                                            className={UI.check}
+                                        />
+                                        <div className="min-w-0">
+                                            <p className="text-[15px] font-extrabold text-zinc-900">
+                                                전체 동의하기
+                                            </p>
+                                            <p className={UI.rowSub}>
+                                                분양 안내를 위한 개인정보 수집·이용 및 처리 위탁 동의를 포함합니다.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
 
                                 <div className={UI.divider} />
 
-                                {/* (필수) 개인정보 처리 위탁 */}
-                                <AccordionItem value="outsourcing" className="border-0">
-                                    <div className={UI.row}>
-                                        <label className={UI.rowLeft}>
-                                            <Checkbox
-                                                checked={outsource}
-                                                onCheckedChange={(v) => setOutsource(Boolean(v))}
-                                                required
-                                                className={UI.check}
-                                            />
-                                            <div className="min-w-0">
-                                                <p className={UI.rowTitle}>
-                                                    <span className={UI.requiredTag}>필수</span>
-                                                    <span className="ml-1">개인정보 처리의 위탁 동의</span>
-                                                </p>
+                                <Accordion type="single" collapsible className="px-0">
+                                    <AccordionItem value="collect-use" className="border-0">
+                                        <div className={UI.row}>
+                                            <label className={UI.rowLeft}>
+                                                <Checkbox
+                                                    checked={collectUse}
+                                                    onCheckedChange={(v) => setCollectUse(Boolean(v))}
+                                                    required
+                                                    className={UI.check}
+                                                />
+                                                <div className="min-w-0">
+                                                    <p className={UI.rowTitle}>
+                                                        <span className={UI.requiredPill}>필수</span>
+                                                        <span className="ml-2">개인정보 수집·이용 동의</span>
+                                                    </p>
+                                                </div>
+                                            </label>
+
+                                            <AccordionTrigger className="p-0 hover:no-underline">
+                        <span className={UI.viewBtn}>
+                          보기 <ChevronRight className="h-4 w-4" />
+                        </span>
+                                            </AccordionTrigger>
+                                        </div>
+
+                                        <AccordionContent className="pt-1">
+                                            <div className={UI.policyBox}>
+                                                1. 수집·이용 목적: 분양 정보 안내 및 상담, 방문 예약, 이벤트 및 프로모션 안내
+                                                <br />
+                                                2. 수집 항목: 성명, 휴대전화번호
+                                                <br />
+                                                3. 보유·이용 기간:{" "}
+                                                <strong className="text-zinc-900">
+                                                    분양 완료 시까지 (단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간까지)
+                                                </strong>
+                                                <br />
+                                                ※ 귀하는 본 동의를 거부할 권리가 있으나, 거부 시 분양 상담 및 안내 서비스 제공이 제한됩니다.
                                             </div>
-                                        </label>
+                                        </AccordionContent>
+                                    </AccordionItem>
 
-                                        <AccordionTrigger
-                                            className={cn(
-                                                "p-0 hover:no-underline",
-                                                "data-[state=open]:underline"
-                                            )}
-                                        >
-                      <span className={UI.viewBtn}>
-                        보기 <ChevronRight className="h-4 w-4" />
-                      </span>
-                                        </AccordionTrigger>
-                                    </div>
+                                    <div className={UI.divider} />
 
-                                    <AccordionContent className="px-4 pb-4 pt-1 text-xs leading-6 text-zinc-600">
-                                        원활한 서비스 이행을 위해 아래와 같이 개인정보 처리를 위탁합니다.
-                                        <br />
-                                        1. 위탁받는 자 (수탁자):{" "}
-                                        <strong className="text-zinc-900">
-                                            (주)분양대행사 및 협력 마케팅 대행사
-                                        </strong>
-                                        <br />
-                                        2. 위탁하는 업무: 고객 정보 수집 및 관리, 분양 상담, 안내 문자(SMS/LMS) 발송,
-                                        해피콜 등
-                                        <br />
-                                        ※ 위탁 계약 시 개인정보보호 관련 법규의 준수, 제3자 제공 금지 및 책임 부담 등을
-                                        명확히 규정하고 있습니다.
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </Accordion>
-                        </div>
+                                    <AccordionItem value="outsourcing" className="border-0">
+                                        <div className={UI.row}>
+                                            <label className={UI.rowLeft}>
+                                                <Checkbox
+                                                    checked={outsource}
+                                                    onCheckedChange={(v) => setOutsource(Boolean(v))}
+                                                    required
+                                                    className={UI.check}
+                                                />
+                                                <div className="min-w-0">
+                                                    <p className={UI.rowTitle}>
+                                                        <span className={UI.requiredPill}>필수</span>
+                                                        <span className="ml-2">개인정보 처리의 위탁 동의</span>
+                                                    </p>
+                                                </div>
+                                            </label>
 
-                        {/* 인라인 메시지 */}
-                        <div aria-live="polite" className="space-y-2">
-                            {error && <div className={UI.msgErr}>{error}</div>}
-                            {success && <div className={UI.msgOk}>{success}</div>}
-                        </div>
-                    </CardContent>
+                                            <AccordionTrigger className="p-0 hover:no-underline">
+                        <span className={UI.viewBtn}>
+                          보기 <ChevronRight className="h-4 w-4" />
+                        </span>
+                                            </AccordionTrigger>
+                                        </div>
 
-                    <CardFooter className="px-6 pb-6 pt-0">
-                        <div className="w-full space-y-3">
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className={UI.submit(ctaActive)}
-                            >
-                                {isSubmitting ? "등록 중..." : submitLabel}
-                            </Button>
-
-                            <div className="flex items-center justify-between">
-                                <a href="#" className={UI.footLink}>
-                                    단체, 비즈니스 문의
-                                </a>
-                                <span className="text-[12px] text-zinc-400">©</span>
+                                        <AccordionContent className="pt-1">
+                                            <div className={UI.policyBox}>
+                                                원활한 서비스 이행을 위해 아래와 같이 개인정보 처리를 위탁합니다.
+                                                <br />
+                                                1. 위탁받는 자 (수탁자):{" "}
+                                                <strong className="text-zinc-900">
+                                                    (주)분양대행사 및 협력 마케팅 대행사
+                                                </strong>
+                                                <br />
+                                                2. 위탁하는 업무: 고객 정보 수집 및 관리, 분양 상담, 안내 문자(SMS/LMS) 발송, 해피콜 등
+                                                <br />
+                                                ※ 위탁 계약 시 개인정보보호 관련 법규의 준수, 제3자 제공 금지 및 책임 부담 등을 명확히 규정하고 있습니다.
+                                            </div>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                </Accordion>
                             </div>
-                        </div>
-                    </CardFooter>
-                </form>
-            </Card>
+
+                            <div aria-live="polite" className="space-y-2">
+                                {error && <div className={UI.msgErr}>{error}</div>}
+                                {success && <div className={UI.msgOk}>{success}</div>}
+                            </div>
+                        </CardContent>
+
+                        <CardFooter className={UI.footer}>
+                            <div className="w-full space-y-3">
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={UI.submit(ctaActive)}
+                                >
+                                    {isSubmitting ? "등록 중..." : submitLabel}
+                                </Button>
+                            </div>
+                        </CardFooter>
+                    </form>
+                </Card>
+            </div>
+
+            <button
+                type="button"
+                onClick={scrollToSection}
+                onTouchStart={() => {}}
+                className={UI.fab}
+                aria-label="관심 고객 등록 영역으로 이동"
+            >
+                <ArrowDown className={UI.fabIcon} />
+                <span className={UI.fabText}>관심고객 등록</span>
+            </button>
 
             <BottomAlert
                 open={alertOpen}
