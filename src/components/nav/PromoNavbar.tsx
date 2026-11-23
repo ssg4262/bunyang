@@ -50,6 +50,10 @@ export type PromoNavbarProps = {
   mobileFooterLinks?: { label: string; onClick?: () => void }[]
 }
 
+const NAV_LINK =
+    "inline-flex items-center gap-1.5 whitespace-nowrap py-2 text-[14px] font-semibold tracking-[0.01em] transition-colors disabled:opacity-40"
+const NAV_BADGE = "text-[10px] font-bold tracking-normal text-brand"
+
 /* ───────────────────────── 본컴포넌트 ───────────────────────── */
 export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                                                           brand = "분양홍보",
@@ -73,12 +77,6 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
   const [isMobile, setIsMobile] = React.useState(false)
   const [navH, setNavH] = React.useState(64)
   const headerRef = React.useRef<HTMLElement>(null)
-
-  // 현재 경로 -> 브랜드 활성화 표시용
-  const isBrandActive = React.useMemo(
-      () => location.pathname === brandHref || location.pathname.startsWith(brandHref + "/"),
-      [location.pathname, brandHref]
-  )
 
   // ✅ 다른 페이지에서 해시와 함께 도착했을 때 스크롤 처리
   React.useEffect(() => {
@@ -159,17 +157,13 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
         null
 
     const compute = () => {
-      if (!isMobile) {
+      // 히어로가 없는 페이지는 항상 흰 헤더
+      if (!heroEl) {
         setOverHeroMobile(false)
         return
       }
-      const headerH = navH
-      if (!heroEl) {
-        setOverHeroMobile(window.scrollY < headerH + 32)
-        return
-      }
       const rect = heroEl.getBoundingClientRect()
-      setOverHeroMobile(rect.bottom > headerH + 8)
+      setOverHeroMobile(rect.bottom > navH + 8)
     }
 
     compute()
@@ -187,19 +181,16 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
   }, [heroSelector, isMobile, navH])
 
   // 스타일
-  const headerMode =
-      isMobile && overHeroMobile
-          ? "border-transparent bg-transparent"
-          : "border-border/60 bg-background/80 backdrop-blur"
+  const overHero = overHeroMobile // 히어로 이미지 위에 떠 있는 동안(모든 화면 크기)
+  const headerMode = overHero
+      ? "border-transparent bg-transparent"
+      : "border-neutral-200/70 bg-white/90 backdrop-blur-md"
 
-  const textMain =
-      isMobile && overHeroMobile ? "text-white drop-shadow" : "text-foreground"
-  const navActive =
-      isMobile && overHeroMobile ? "bg-white/15 text-white" : "bg-primary/10 text-primary"
-  const navIdle =
-      isMobile && overHeroMobile
-          ? "text-white/85 hover:text-white hover:bg-white/10"
-          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+  const textMain = overHero ? "text-white" : "text-ink"
+  const navActive = overHero ? "text-white" : "text-brand"
+  const navIdle = overHero
+      ? "text-white/70 hover:text-white"
+      : "text-neutral-500 hover:text-ink"
 
   // ✅ 라벨 -> 해시 매핑 함수
   const getLabelHash = (label: string): string => {
@@ -238,33 +229,31 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
         <header
             ref={headerRef}
             className={cn(
-                "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ease-out will-change-[background-color,color]",
+                "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ease-out",
                 "pt-[max(0px,env(safe-area-inset-top))]",
                 headerMode,
                 className
             )}
         >
-          {/* 모바일 히어로 위에서만 그라데이션 오버레이 */}
-          {isMobile && overHeroMobile && (
+          {/* 히어로 위에서만 글자가 읽히도록 옅은 그라데이션 */}
+          {overHero && (
               <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-transparent"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-transparent"
               />
           )}
 
-          <div className="container mx-auto h-16 px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-3 relative">
+          <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 section-padding">
             {/* 좌측: 브랜드 + 데스크탑 네비 */}
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex min-w-0 items-center gap-6 xl:gap-10">
               {/* 브랜드: e편한세상 구름 로고 + 단지명 */}
               <NavLink
                   to={brandHref}
                   onClick={onBrandClick}
                   aria-label={brand}
                   className={cn(
-                      "flex h-10 min-w-0 shrink-0 items-center gap-2 sm:gap-2.5 px-1 sm:px-2",
-                      textMain,
-                      isBrandActive && !overHeroMobile && "text-primary",
-                      isMobile && overHeroMobile && "hover:text-white/90"
+                      "flex h-10 min-w-0 shrink-0 items-center gap-2 sm:gap-2.5",
+                      textMain
                   )}
               >
                 {brandLogo && (
@@ -275,12 +264,12 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                         draggable={false}
                     />
                 )}
-                <span className="truncate text-[clamp(14px,2.4vw,18px)] font-bold leading-none tracking-tight">
+                <span className="truncate text-[15px] sm:text-[17px] font-extrabold leading-none tracking-[-0.03em]">
                   {brand}
                 </span>
               </NavLink>
 
-              <nav className="hidden xl:flex items-center gap-0.5 min-w-0">
+              <nav className="hidden xl:flex items-center gap-7 min-w-0">
                 {nav.map((item, idx) => {
                   const routeActive =
                       !!item.href &&
@@ -288,48 +277,26 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
 
                   return item.href ? (
                       <NavLink key={`${item.label}-${idx}`} to={item.href}>
-                        <Button
+                        <button
                             type="button"
-                            variant="ghost"
                             disabled={item.disabled}
-                            className={cn(
-                                "rounded-xl px-3 py-2 text-sm transition-colors min-w-0",
-                                "max-w-[20ch] truncate",
-                                routeActive ? navActive : navIdle
-                            )}
-                            title={item.label}
+                            className={cn(NAV_LINK, routeActive ? navActive : navIdle)}
                         >
-                          <span className="truncate">{item.label}</span>
-                          {item.badge && (
-                              <span className="ml-2 rounded-md px-1.5 py-0.5 text-[10px] leading-none bg-primary/10 text-primary">
-                          {item.badge}
-                        </span>
-                          )}
-                        </Button>
+                          {item.label}
+                          {item.badge && <span className={NAV_BADGE}>{item.badge}</span>}
+                        </button>
                       </NavLink>
                   ) : (
-                      <Button
+                      <button
                           key={`${item.label}-${idx}`}
                           type="button"
-                          variant="ghost"
                           disabled={item.disabled}
                           onClick={() => handleScrollOrRoute(item, idx)}
-                          className={cn(
-                              "rounded-xl px-3 py-2 text-sm transition-colors min-w-0",
-                              "max-w-[20ch] truncate",
-                              navIdle
-                          )}
-                          title={item.label}
+                          className={cn(NAV_LINK, navIdle)}
                       >
-                    <span className={cn("truncate", isMobile && overHeroMobile && "drop-shadow")}>
-                      {item.label}
-                    </span>
-                        {item.badge && (
-                            <span className="ml-2 rounded-md px-1.5 py-0.5 text-[10px] leading-none bg-primary/10 text-primary">
-                        {item.badge}
-                      </span>
-                        )}
-                      </Button>
+                        {item.label}
+                        {item.badge && <span className={NAV_BADGE}>{item.badge}</span>}
+                      </button>
                   )
                 })}
               </nav>
@@ -338,12 +305,11 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
             {/* 우측: 액션들 */}
             <div className="flex items-center gap-2 shrink-0">
               {contactLabel && (
-                  <Button
+                  <button
                       type="button"
-                      variant="default"
                       className={cn(
-                          "hidden sm:inline-flex cursor-pointer rounded-xl",
-                          "bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
+                          "hidden sm:inline-flex cursor-pointer items-center gap-2 text-[15px] font-bold tracking-[0.02em] transition-colors",
+                          overHero ? "text-white hover:text-white/80" : "text-ink hover:text-brand"
                       )}
                       onClick={() =>
                           smartDial("010-4539-8505", {
@@ -353,8 +319,8 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                           })
                       }
                   >
-                    <Phone className="mr-2 h-4 w-4" /> {contactLabel}
-                  </Button>
+                    <Phone className="h-[15px] w-[15px] text-brand" strokeWidth={2.25} /> {contactLabel}
+                  </button>
               )}
 
               {rightSlot}
@@ -364,7 +330,7 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                   nav={nav}
                   contactLabel={contactLabel}
                   onItemClick={onItemClick}
-                  overHeroMobile={isMobile && overHeroMobile}
+                  overHeroMobile={overHero}
                   footerLinks={mobileFooterLinks}
                   currentPath={location.pathname}
                   brandHref={brandHref}
@@ -378,7 +344,7 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
         <div
             aria-hidden
             style={{ height: `var(--nav-h, ${navH}px)` }}
-            className={cn("w-full", isMobile && overHeroMobile ? "hidden" : "block")}
+            className={cn("w-full", overHero ? "hidden" : "block")}
         />
       </>
   )
@@ -424,10 +390,8 @@ const MobileMenu: React.FC<{
               type="button"
               aria-label="메뉴 열기"
               className={cn(
-                  "xl:hidden -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors",
-                  overHeroMobile
-                      ? "text-white hover:bg-white/15 active:bg-white/25"
-                      : "text-gray-900 hover:bg-gray-100 active:bg-gray-200"
+                  "xl:hidden -mr-2 inline-flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-70",
+                  overHeroMobile ? "text-white" : "text-ink"
               )}
           >
             {/* 표준 3줄 햄버거: 테두리·배경 없이 선만 */}
@@ -437,28 +401,28 @@ const MobileMenu: React.FC<{
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="1.6"
                 strokeLinecap="round"
                 aria-hidden
-                className={cn(overHeroMobile && "drop-shadow")}
             >
               <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" />
             </svg>
           </button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="w-[340px] sm:w-[400px] px-5">
-          <SheetHeader>
+        <SheetContent side="right" className="w-[320px] sm:w-[380px] gap-0 border-l-0 px-7 pt-6">
+          <SheetHeader className="p-0">
             <SheetTitle className="sr-only">{brand}</SheetTitle>
+            <p className="label-caps text-neutral-400">Menu</p>
           </SheetHeader>
 
-          <div className="mt-2 overflow-y-auto max-h-[calc(100vh-160px)] pb-6">
+          <div className="mt-6 overflow-y-auto max-h-[calc(100vh-150px)] pb-6">
             {nav.map((section, idx) => {
               const isGroup = !!section.children?.length
               const isOpen = !!openMap[idx]
 
               return (
-                  <div key={`${section.label}-${idx}`} className="py-4">
+                  <div key={`${section.label}-${idx}`} className="border-b border-neutral-100 py-[18px]">
                     {isGroup ? (
                         <button
                             type="button"
@@ -467,9 +431,9 @@ const MobileMenu: React.FC<{
                         >
                           <h3
                               className={cn(
-                                  "text-[28px] leading-[1.2] font-extrabold tracking-tight",
+                                  "text-[21px] leading-[1.2] font-bold tracking-[-0.03em]",
                                   isOpen || isRouteActive(section.href)
-                                      ? "text-orange-500"
+                                      ? "text-brand"
                                       : "text-gray-900"
                               )}
                           >
@@ -488,12 +452,12 @@ const MobileMenu: React.FC<{
                                 type="button"
                                 disabled={section.disabled}
                                 className={cn(
-                                    "w-full text-left text-[28px] leading-[1.2] font-extrabold tracking-tight",
+                                    "w-full text-left text-[21px] leading-[1.2] font-bold tracking-[-0.03em]",
                                     isRouteActive(section.href)
-                                        ? "text-orange-500"
+                                        ? "text-brand"
                                         : section.disabled
                                             ? "text-gray-300"
-                                            : "text-gray-900 hover:text-orange-500"
+                                            : "text-gray-900 hover:text-brand"
                                 )}
                             >
                               {section.label}
@@ -507,8 +471,8 @@ const MobileMenu: React.FC<{
                               disabled={section.disabled}
                               onClick={() => onScrollOrRoute(section)}
                               className={cn(
-                                  "w-full text-left text-[28px] leading-[1.2] font-extrabold tracking-tight",
-                                  section.disabled ? "text-gray-300" : "text-gray-900 hover:text-orange-500"
+                                  "w-full text-left text-[21px] leading-[1.2] font-bold tracking-[-0.03em]",
+                                  section.disabled ? "text-gray-300" : "text-gray-900 hover:text-brand"
                               )}
                           >
                             {section.label}
@@ -526,9 +490,9 @@ const MobileMenu: React.FC<{
                                           type="button"
                                           disabled={child.disabled}
                                           className={cn(
-                                              "block w-full text-left text-[20px] leading-6",
+                                              "block w-full text-left text-[16px] leading-6",
                                               isRouteActive(child.href)
-                                                  ? "text-orange-500"
+                                                  ? "text-brand"
                                                   : child.disabled
                                                       ? "text-gray-300"
                                                       : "text-gray-700 hover:text-gray-900"
@@ -545,7 +509,7 @@ const MobileMenu: React.FC<{
                                         disabled={child.disabled}
                                         onClick={() => onItemClick?.(child, ci)}
                                         className={cn(
-                                            "block w-full text-left text-[20px] leading-6",
+                                            "block w-full text-left text-[16px] leading-6",
                                             child.disabled
                                                 ? "text-gray-300"
                                                 : "text-gray-700 hover:text-gray-900"
@@ -563,11 +527,11 @@ const MobileMenu: React.FC<{
             })}
 
             {contactLabel && (
-                <div className="mt-6">
+                <div className="mt-8">
                   <SheetClose asChild>
                     <Button
                         type="button"
-                        className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
+                        className="h-12 w-full rounded-none bg-ink text-[14px] font-semibold tracking-[0.02em] text-white shadow-none hover:bg-black"
                         onClick={() =>
                             smartDial("010-4539-8505", {
                               desktopApp: "facetime",

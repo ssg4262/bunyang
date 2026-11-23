@@ -27,7 +27,7 @@ import {
     Check,
     AlertTriangle,
     X,
-    ArrowDown,
+    ArrowRight,
 } from "lucide-react";
 
 /* ───────────────────────── 설정 ───────────────────────── */
@@ -68,7 +68,7 @@ const BottomAlert: React.FC<BottomAlertProps> = ({
                 open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
             )}
         >
-            <div className="pointer-events-auto w-full max-w-[560px] rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-black/5">
+            <div className="pointer-events-auto w-full max-w-[560px] bg-white px-4 py-3.5 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/10">
                 <div className="flex items-start gap-3">
                     <div
                         className={cn(
@@ -97,7 +97,7 @@ const BottomAlert: React.FC<BottomAlertProps> = ({
                     <button
                         type="button"
                         onClick={() => onOpenChange(false)}
-                        className="ml-2 rounded-xl p-1.5 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
+                        className="ml-2 p-1.5 text-zinc-500 hover:text-zinc-900"
                     >
                         <X className="h-4 w-4" />
                     </button>
@@ -269,94 +269,81 @@ const smoothScrollTo = (
         (4) policyBox 가로 넘침 방지: break-words + whitespace-normal
 ──────────────────────────────────────────────────────── */
 const UI = {
-    wrap: cn(
-        "w-full max-w-[560px] rounded-3xl overflow-hidden",
-    ),
+    wrap: cn("w-full max-w-[560px] gap-0 rounded-none border-0 bg-white py-0 shadow-none overflow-hidden"),
 
-    header: "px-6 pt-6 pb-4 bg-white",
-    title: "text-[22px] font-extrabold tracking-tight text-orange-600",
-    desc: "mt-1 text-[14px] leading-6 text-zinc-600",
-    content: "px-6 pb-6 pt-2 space-y-6",
+    header: "px-6 md:px-10 pt-8 md:pt-10 pb-0 bg-white",
+    title: "text-[22px] font-extrabold tracking-[-0.03em] text-ink",
+    desc: "mt-1 text-[14px] leading-6 text-neutral-500",
+    content: "px-5 md:px-10 pb-7 pt-7 md:pt-10 space-y-6",
 
-    label: "text-[13px] font-semibold text-zinc-800",
+    label: "text-[13px] font-semibold text-ink",
     field: cn(
-        "relative rounded-2xl bg-white",
-        "border border-zinc-200/80",
-        "transition",
-        "focus-within:border-zinc-900/20 focus-within:ring-4 focus-within:ring-zinc-900/5"
+        "relative bg-white",
+        "border border-neutral-300",
+        "transition-colors",
+        "focus-within:border-ink"
     ),
     input: cn(
-        "h-12 w-full rounded-2xl border-0 bg-transparent pl-11 pr-4",
-        "text-[15px] text-zinc-950 placeholder:text-zinc-400",
+        "h-[52px] w-full rounded-none border-0 bg-transparent pl-11 pr-4 shadow-none",
+        "text-[15px] text-ink placeholder:text-neutral-400",
         "focus-visible:ring-0 focus-visible:ring-offset-0"
     ),
     icon:
-        "pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400",
+        "pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400",
 
-    agreeBox: cn("rounded-2xl bg-white", "border border-zinc-200/80 overflow-hidden"),
-    divider: "h-px bg-zinc-200/70",
+    agreeBox: cn("bg-white", "border border-neutral-300 overflow-hidden"),
+    divider: "h-px bg-line",
 
     // ✅ row: 모바일에서 텍스트가 길면 깨짐 → items-start + min-w-0 + overflow 처리
     row: cn(
-        "flex items-center justify-between gap-2 px-4 py-3",
+        "flex items-center justify-between gap-2 px-3.5 sm:px-4 py-3.5",
         "transition-colors"
     ),
-    rowLeft: "flex items-start gap-3 min-w-0 flex-1",
+    rowLeft: "flex items-start gap-3 min-w-0 flex-1 cursor-pointer",
     rowTitle:
-        "flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-zinc-900 leading-5 break-keep",
-    rowSub: "mt-1 text-[12px] leading-5 text-zinc-500 whitespace-normal break-words",
+        "flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-ink leading-5 break-keep",
+    rowSub: "mt-1 text-[12px] leading-5 text-neutral-500 whitespace-normal break-words",
 
     check: cn(
-        "h-5 w-5 rounded-full shrink-0",
-        "border-zinc-300",
-        "data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500",
+        "h-5 w-5 rounded-none shrink-0",
+        "border-neutral-400",
+        "data-[state=checked]:border-ink data-[state=checked]:bg-ink",
         "data-[state=checked]:text-white"
     ),
 
-    requiredPill:
-        "inline-flex items-center rounded-full bg-orange-500/10 px-1.5 py-0.5 text-[12px] font-extrabold text-orange-600 shrink-0",
+    requiredPill: "text-[12px] font-bold text-brand shrink-0",
 
     // ✅ 보기 버튼: shrink-0로 눌림/줄바꿈 깨짐 방지
     viewBtn: cn(
-        "inline-flex items-center rounded-full px-1 py-1 shrink-0 whitespace-nowrap",
-        "text-[13px] font-semibold",
-        "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
+        "inline-flex items-center px-1 py-1 shrink-0 whitespace-nowrap",
+        "text-[13px] font-medium underline underline-offset-4",
+        "text-neutral-500 hover:text-ink"
     ),
 
     // ✅ 전문 박스: break-words + 보여지는 영역 가로 넘침 방지
     policyBox:
-        "mx-4 mb-4 rounded-2xl bg-white px-4 py-3 text-xs leading-6 text-zinc-600 border border-zinc-200/70 break-words whitespace-normal",
+        "mx-4 mb-4 bg-surface px-4 py-3 text-xs leading-6 text-neutral-600 break-words whitespace-normal",
 
     submit: (active: boolean) =>
         cn(
-            "h-12 w-full rounded-2xl font-extrabold text-[15px] tracking-tight",
+            "h-14 w-full rounded-none font-semibold text-[15px] tracking-[0.04em]",
             "shadow-none",
             active
-                ? "bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700"
-                : "bg-zinc-200 text-zinc-700",
+                ? "bg-brand text-white hover:bg-brand-dark active:bg-brand-dark"
+                : "bg-neutral-200 text-neutral-500",
             "disabled:opacity-60 disabled:cursor-not-allowed"
         ),
 
-    footer: "px-4 pb-6 pt-0",
-    footLink: "text-[13px] font-extrabold text-orange-600 hover:underline",
+    footer: "px-5 md:px-10 pb-7 md:pb-10 pt-0",
+    footLink: "text-[13px] font-bold text-brand hover:underline",
 
     msgErr:
-        "rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 border border-red-200/80",
+        "bg-red-50 px-4 py-3 text-sm font-medium text-red-700 border border-red-200/80",
     msgOk:
-        "rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 border border-emerald-200/80",
-
-    fab: cn(
-        "fixed right-5 bottom-5 md:right-6 md:bottom-6 z-[70]",
-        "inline-flex items-center gap-2 rounded-full px-4 py-3 shadow-xl",
-        "bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-800",
-        "ring-1 ring-black/5",
-        "transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0",
-        "touch-manipulation select-none"
-    ),
-    fabHidden: "pointer-events-none opacity-0 translate-y-4",
-    fabIcon: "h-4 w-4",
-    fabText: "text-[13px] font-extrabold",
+        "bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 border border-emerald-200/80",
 };
+
+const CALL_HREF = "tel:01045398505";
 
 export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                                                   className,
@@ -377,6 +364,16 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
         io.observe(el);
         return () => io.disconnect();
     }, []);
+
+    // 첫 화면(히어로)에는 자체 버튼이 있으므로, 조금 내려온 뒤부터 보임
+    const [pastHero, setPastHero] = React.useState(false);
+    React.useEffect(() => {
+        const onScroll = () => setPastHero(window.scrollY > 480);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+    const fabVisible = pastHero && !formInView;
 
     const [name, setName] = React.useState("");
     const [phone, setPhone] = React.useState("");
@@ -516,16 +513,18 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                     <form onSubmit={handleSubmit} noValidate>
                         <Honeypot ref={hpRef} />
 
-                        <CardHeader className={UI.header}>
-                            <CardTitle className={UI.title}>{title}</CardTitle>
-                            <CardDescription className={UI.desc}>{description}</CardDescription>
-                        </CardHeader>
+                        {(title || description) && (
+                            <CardHeader className={UI.header}>
+                                {title && <CardTitle className={UI.title}>{title}</CardTitle>}
+                                {description && <CardDescription className={UI.desc}>{description}</CardDescription>}
+                            </CardHeader>
+                        )}
 
                         <CardContent className={UI.content}>
                             {/* 이름 */}
                             <div className="space-y-2">
                                 <Label htmlFor="lead-name" className={UI.label}>
-                                    이름 <span className="text-red-500">*</span>
+                                    이름 <span className="text-brand">*</span>
                                 </Label>
                                 <div className={UI.field}>
                                     <User2 className={UI.icon} />
@@ -543,7 +542,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                             {/* 전화번호 */}
                             <div className="space-y-2">
                                 <Label htmlFor="lead-phone" className={UI.label}>
-                                    전화번호 <span className="text-red-500">*</span>
+                                    전화번호 <span className="text-brand">*</span>
                                 </Label>
                                 <div className={UI.field}>
                                     <PhoneIcon className={UI.icon} />
@@ -599,7 +598,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 </div>
                                             </label>
 
-                                            <AccordionTrigger className="p-0 hover:no-underline">
+                                            <AccordionTrigger className="p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
                         <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
@@ -639,7 +638,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 </div>
                                             </label>
 
-                                            <AccordionTrigger className="p-0 hover:no-underline">
+                                            <AccordionTrigger className="p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
                         <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
@@ -683,18 +682,63 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                 </Card>
             </div>
 
-            <button
-                type="button"
-                onClick={scrollToSection}
-                onTouchStart={() => {}}
-                className={cn(UI.fab, "transition-all", formInView && UI.fabHidden)}
-                tabIndex={formInView ? -1 : 0}
-                aria-hidden={formInView}
-                aria-label="관심 고객 등록 영역으로 이동"
+            {/* 모바일: 하단 고정 바 */}
+            <div
+                className={cn(
+                    "fixed inset-x-0 bottom-0 z-40 flex md:hidden transition-all duration-300",
+                    "pb-[env(safe-area-inset-bottom)] bg-ink",
+                    fabVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
+                )}
+                aria-hidden={!fabVisible}
             >
-                <ArrowDown className={UI.fabIcon} />
-                <span className={UI.fabText}>관심고객 등록</span>
-            </button>
+                <a
+                    href={CALL_HREF}
+                    tabIndex={fabVisible ? 0 : -1}
+                    className="flex h-14 flex-1 items-center justify-center gap-2 bg-ink text-[14px] font-semibold tracking-[0.02em] text-white active:bg-black"
+                >
+                    <PhoneIcon className="h-4 w-4" strokeWidth={2} />
+                    전화상담
+                </a>
+                <button
+                    type="button"
+                    onClick={scrollToSection}
+                    onTouchStart={() => {}}
+                    tabIndex={fabVisible ? 0 : -1}
+                    aria-label="관심 고객 등록 영역으로 이동"
+                    className="flex h-14 flex-1 items-center justify-center gap-2 bg-brand text-[14px] font-semibold tracking-[0.02em] text-white active:bg-brand-dark"
+                >
+                    관심고객 등록
+                    <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+            </div>
+
+            {/* 데스크톱: 우하단 세로 버튼 */}
+            <div
+                className={cn(
+                    "fixed right-6 bottom-6 z-40 hidden md:flex flex-col gap-2 transition-all duration-300",
+                    fabVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+                )}
+                aria-hidden={!fabVisible}
+            >
+                <a
+                    href={CALL_HREF}
+                    tabIndex={fabVisible ? 0 : -1}
+                    className="flex h-12 items-center gap-2 bg-ink px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-black"
+                >
+                    <PhoneIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    전화상담
+                </a>
+                <button
+                    type="button"
+                    onClick={scrollToSection}
+                    tabIndex={fabVisible ? 0 : -1}
+                    aria-label="관심 고객 등록 영역으로 이동"
+                    className="flex h-12 cursor-pointer items-center justify-between gap-2 bg-brand px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-brand-dark"
+                >
+                    관심고객 등록
+                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+                </button>
+            </div>
 
             <BottomAlert
                 open={alertOpen}

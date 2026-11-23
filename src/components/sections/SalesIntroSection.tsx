@@ -55,119 +55,89 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
 
                                                                         patternUrl,
                                                                     }) => {
-    const rightAlignCls =
-        rightAlign === "left" ? "items-start text-left" : "items-center text-center"
+    void rightAlign
 
     return (
-        <section
-            id="intro"
-            className={cn("relative w-full bg-background text-foreground", className)}
-        >
-            {/* 모바일 1컬럼, 데스크탑 2컬럼 / 양쪽 동일한 px/py로 간격 일치 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-                {/* ============== 왼쪽: 기존 인트로 (구현/비율 그대로 유지) ============== */}
-                <div className="container mx-auto w-full max-w-5xl px-6 py-10 md:py-14 lg:py-16">
-                    {/* 배지들 */}
-                    <div className="flex flex-wrap gap-2">
-                        {badges.map((b, i) => (
-                            <span
-                                key={i}
-                                className="inline-flex items-center rounded-full bg-orange-500 px-3 py-1 text-[12px] font-semibold text-white"
-                            >
-                {b}
-              </span>
-                        ))}
-                    </div>
-
-                    {/* 타이틀 */}
-                    <div className="mt-5 space-y-2">
-                        <p className="text-muted-foreground text-sm md:text-base">{eyebrow}</p>
-                        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight break-keep">
+        <section id="intro" className={cn("relative w-full bg-white text-ink", className)}>
+            <div className="mx-auto max-w-7xl section-padding py-16 md:py-28">
+                <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
+                    {/* ============== 왼쪽: 단지 소개 ============== */}
+                    <div>
+                        <p className="text-[13px] md:text-[14px] font-medium tracking-[0.02em] text-neutral-500">{eyebrow}</p>
+                        <h1 className="heading-display mt-3 md:mt-4 text-[30px] md:text-[44px] lg:text-[52px]">
                             {title}
                         </h1>
-                    </div>
+                        <div aria-hidden className="mt-5 md:mt-6 h-px w-12 bg-brand" />
 
-                    {/* 전화 */}
-                    <div className="mt-6">
-                        <a
-                            href={`tel:${phone.replace(/[^0-9]/g, "")}`}
-                            className="inline-block text-2xl md:text-3xl font-extrabold tracking-tight text-red-600 hover:text-red-700"
-                        >
-                            분양문의 {phone}
-                        </a>
-                    </div>
-
-                    {/* 이미지 */}
-                    <div className="mt-8">
-                        <img
-                            src={heroImage as any}
-                            alt=""
-                            className="w-full max-w-[680px] object-cover rounded-none"
-                            draggable={false}
-                        />
-                    </div>
-                </div>
-
-                {/* ============== 오른쪽: 따옴표 + 헤드라인 + 서브 (+선택 이미지) ============== */}
-                {/* sticky 제거 → 왼쪽과 함께 자연스럽게 스크롤 */}
-                <div
-                    className={cn(
-                        "px-6 py-10 md:py-14 lg:py-16", // ← 왼쪽과 같은 세팅으로 간격 일치
-                        patternUrl ? "relative" : ""
-                    )}
-                    style={
-                        patternUrl
-                            ? ({
-                                backgroundImage: `url("${patternUrl}")`,
-                                backgroundRepeat: "repeat",
-                                backgroundSize: "560px auto",
-                                backgroundPosition: "center",
-                            } as React.CSSProperties)
-                            : undefined
-                    }
-                >
-                    <div className={cn("w-full max-w-[980px] mx-auto flex flex-col gap-4", rightAlignCls)}>
-                        {/* 작은 따옴표 */}
-                        <span
-                            aria-hidden
-                            className="select-none font-serif text-[48px] md:text-[56px] leading-[0.6] text-orange-500"
-                        >
-              &ldquo;
-            </span>
-
-                        {/* 메인 헤드라인 */}
-                        <h2
-                            className={cn(
-                                "whitespace-pre-line font-extrabold tracking-tight break-keep",
-                                "text-[22px] sm:text-[28px] md:text-[34px] lg:text-[38px]",
-                                "leading-[1.35] text-neutral-800"
+                        {/* 상태 + 전화 */}
+                        <div className="mt-7 md:mt-9 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-y border-line py-5 md:py-6">
+                            <div>
+                                <p className="text-[12px] font-medium tracking-[0.04em] text-neutral-500">분양문의</p>
+                                <a
+                                    href={`tel:${phone.replace(/[^0-9]/g, "")}`}
+                                    className="mt-1 block text-[28px] md:text-[34px] font-extrabold leading-none tracking-[-0.03em] text-ink transition-colors hover:text-brand"
+                                >
+                                    {phone}
+                                </a>
+                            </div>
+                            {badges.length > 0 && (
+                                <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] font-semibold text-ink">
+                                    {badges.map((b, i) => (
+                                        <li key={i} className="inline-flex items-center gap-1.5">
+                                            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-brand" />
+                                            {b}
+                                        </li>
+                                    ))}
+                                </ul>
                             )}
-                        >
+                        </div>
+
+                        {/* 이미지 */}
+                        <div className="mt-8 md:mt-10">
+                            <img
+                                src={heroImage as string}
+                                alt=""
+                                className="w-full object-cover"
+                                draggable={false}
+                            />
+                        </div>
+                    </div>
+
+                    {/* ============== 오른쪽: 헤드라인 + 서브 + 이미지 ============== */}
+                    <div
+                        className={cn(patternUrl ? "relative" : "")}
+                        style={
+                            patternUrl
+                                ? ({
+                                    backgroundImage: `url("${patternUrl}")`,
+                                    backgroundRepeat: "repeat",
+                                    backgroundSize: "560px auto",
+                                    backgroundPosition: "center",
+                                } as React.CSSProperties)
+                                : undefined
+                        }
+                    >
+                        <p className="label-caps text-neutral-500">Location</p>
+                        <h2 className="mt-3 md:mt-4 whitespace-pre-line text-[24px] md:text-[32px] lg:text-[36px] font-bold leading-[1.28] tracking-[-0.035em] text-ink">
                             {rightTitle}
                         </h2>
-
-                        {/* 서브 카피 */}
                         {rightSubtitle && (
-                            <p className="text-neutral-500 text-[14px] md:text-[16px] mt-1">
+                            <p className="mt-4 text-[14.5px] md:text-[17px] leading-relaxed text-neutral-500">
                                 {rightSubtitle}
                             </p>
                         )}
 
-                        {/* (선택) 하단 이미지 */}
                         {rightImageSrc && (
-                            <div className={cn("w-full mt-6", rightAlign === "center" ? "mx-auto" : "")}>
+                            <div className="mt-8 md:mt-10 w-full">
                                 <img
-                                    src={rightImageSrc as any}
+                                    src={rightImageSrc as string}
                                     alt={rightImageAlt}
-                                    className="w-full h-auto object-cover rounded-none select-none"
+                                    className="w-full h-auto object-cover select-none"
                                     draggable={false}
                                 />
                             </div>
                         )}
                     </div>
-
-                    {/* 필요하면 밝기/톤 오버레이 */}
-                    {/* <div className="pointer-events-none absolute inset-0 bg-white/0" /> */}
                 </div>
             </div>
         </section>

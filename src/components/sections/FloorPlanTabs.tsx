@@ -1,6 +1,8 @@
 // src/components/sections/FloorPlanTabs.tsx
 "use client";
 
+import { VIEWER_BAR, VIEWER_CONTENT, VIEWER_ICON_BTN } from "@/components/sections/viewerStyles"
+import { TAB_LIST, TAB_TRIGGER } from "@/components/sections/tabStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -10,10 +12,10 @@ import {
     TabsTrigger,
     TabsContent,
 } from "@/components/ui/tabs";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Maximize2, X } from "lucide-react";
+import { Maximize2, X, ZoomIn, ZoomOut } from "lucide-react";
 
 /* ======================== Types ======================== */
 export type FloorRow = {
@@ -53,6 +55,9 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                                                             }) => {
     const [tab, setTab] = React.useState<FloorInfo["id"]>(defaultTab);
     const [open, setOpen] = React.useState(false);
+    const [zoom, setZoom] = React.useState(false);
+    // 팝업을 닫으면 확대 상태 초기화
+    React.useEffect(() => { if (!open) setZoom(false); }, [open]);
 
     // 현재 선택된 층 정보
     const current = React.useMemo(
@@ -63,20 +68,21 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
     return (
         <section
             className={cn(
-                "container w-full max-w-6xl mx-auto px-4 md:px-6",
+                "mx-auto w-full max-w-7xl section-padding",
                 className
             )}
         >
             <Tabs value={tab} onValueChange={(v) => setTab(v as FloorInfo["id"])}>
                 {/* 헤더 */}
-                <div className="flex flex-col items-center">
-                    <SectionHeader eyebrow="FLOOR PLAN" title="상가 평면도" size="md" className="mb-4 md:mb-6" />
+                <div>
+                    <SectionHeader title="상가 평면도" size="md" className="mb-5 md:mb-6" />
 
                     {/* 탭 리스트: 모바일 전체 너비 + 스크롤 */}
-                    <div className="sm:max-w-md w-full">
+                    <div className="w-full">
                         <TabsList
                             className={cn(
-                                "h-10 w-full justify-start overflow-x-auto whitespace-nowrap rounded-xl bg-muted/50 p-1.5",
+                                TAB_LIST,
+                                "overflow-x-auto overflow-y-hidden whitespace-nowrap",
                                 "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                             )}
                         >
@@ -84,7 +90,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                                 <TabsTrigger
                                     key={f.id}
                                     value={f.id}
-                                    className="rounded-lg px-3 text-xs sm:text-sm md:text-base data-[state=active]:bg-background"
+                                    className={cn(TAB_TRIGGER, "px-1")}
                                 >
                                     {f.label}
                                 </TabsTrigger>
@@ -95,10 +101,10 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
 
                 {/* 컨텐츠 */}
                 {floors.map((f) => (
-                    <TabsContent key={f.id} value={f.id} className="mt-0">
-                        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5 lg:gap-7">
+                    <TabsContent key={f.id} value={f.id} className="mt-7 md:mt-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-8 lg:gap-12">
                             {/* 이미지 카드 */}
-                            <figure className="relative rounded-2xl overflow-hidden border bg-card">
+                            <figure className="relative overflow-hidden bg-surface">
                                 <div
                                     role="button"
                                     tabIndex={0}
@@ -115,18 +121,18 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                                     <img
                                         src={f.image}
                                         alt={f.alt ?? `${f.label} 평면도`}
-                                        className="w-full h-[280px] xs:h-[320px] sm:h-[380px] lg:h-[540px] xl:h-[640px] object-contain bg-muted"
+                                        className="w-full h-[280px] xs:h-[320px] sm:h-[380px] lg:h-[540px] xl:h-[600px] object-contain bg-surface"
                                         draggable={false}
                                     />
                                 </div>
 
                                 {/* 오른쪽 상단 확대 버튼 */}
-                                <div className="absolute right-3 top-3">
+                                <div className="absolute right-0 top-0">
                                     <Button
                                         type="button"
                                         size="icon"
                                         variant="secondary"
-                                        className="rounded-lg shadow-sm bg-background/90 hover:bg-background"
+                                        className="h-10 w-10 rounded-none bg-ink text-white shadow-none hover:bg-black"
                                         onClick={() => setOpen(true)}
                                         aria-label={`${f.label} 상세 이미지 보기`}
                                     >
@@ -136,22 +142,22 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                             </figure>
 
                             {/* 표 카드 (더 크게) */}
-                            <div className="rounded-2xl border bg-card overflow-hidden flex flex-col">
+                            <div className="overflow-hidden flex flex-col">
                                 {/* 카드 헤더 */}
-                                <div className="px-4 sm:px-5 py-3.5 border-b flex items-center justify-between gap-2">
-                                    <h3 className="text-sm sm:text-lg md:text-xl font-semibold">
+                                <div className="pb-3 border-b-2 border-ink flex items-end justify-between gap-2">
+                                    <h3 className="text-[17px] md:text-[19px] font-bold tracking-[-0.03em]">
                                         {f.label} 단위표 (가격 제외)
                                     </h3>
-                                    <span className="text-[11px] sm:text-xs md:text-sm text-muted-foreground">
+                                    <span className="text-[12px] md:text-[13px] text-neutral-500">
                                         총 {f.rows.length.toLocaleString()}호
                                     </span>
                                 </div>
 
                                 {/* 표 + 스크롤 (높이 업) */}
                                 <ScrollArea className="w-full max-h-[340px] sm:max-h-[380px] md:max-h-[440px] lg:max-h-[520px]">
-                                    <table className="w-full text-xs sm:text-sm md:text-base table-fixed">
-                                        <thead className="sticky top-0 z-10 bg-muted/80 backdrop-blur">
-                                        <tr className="border-b text-muted-foreground">
+                                    <table className="w-full text-[14px] md:text-[15px] table-fixed">
+                                        <thead className="sticky top-0 z-10 bg-white">
+                                        <tr className="border-b border-line text-[12px] text-neutral-500">
                                             <th className="text-left font-medium p-2.5 sm:p-3 w-[25%]">
                                                 호
                                             </th>
@@ -167,7 +173,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                                         {f.rows.map((r) => (
                                             <tr
                                                 key={r.no}
-                                                className="border-b last:border-0 hover:bg-muted/20"
+                                                className="border-b border-line last:border-0 hover:bg-surface"
                                             >
                                                 <td className="p-2.5 sm:p-3 font-semibold whitespace-nowrap">
                                                     {r.no}
@@ -192,42 +198,69 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                     </TabsContent>
                 ))}
 
-                {/* 상세 이미지 모달: 원본 100% + 스크롤 */}
+                {/* 상세 이미지: 전체 화면 뷰어 (이미지를 누르면 원본 크기 + 스크롤) */}
                 {current && (
                     <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogContent
-                            className={cn(
-                                "p-0 gap-0 overflow-hidden",
-                                // 일반 모달 폭 (너무 커지면 부담이니 뷰포트 기준 96%)
-                                "w-full max-w-[96vw] sm:max-w-[92vw] lg:max-w-6xl",
-                                "[&>button:last-of-type]:hidden"
-                            )}
-                        >
+                        <DialogContent showCloseButton={false} className={VIEWER_CONTENT}>
                             {/* 상단 바 */}
-                            <div className="flex items-center justify-between px-4 py-3 border-b bg-background/95 backdrop-blur">
-                                <span className="text-sm sm:text-base font-medium">
-                                    {current.label} 상세 이미지 (원본)
-                                </span>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="rounded-lg"
-                                    onClick={() => setOpen(false)}
-                                    aria-label="닫기"
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
+                            <div className={VIEWER_BAR}>
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <span className="label-caps text-white">{current.label}</span>
+                                    <span aria-hidden className="h-3 w-px bg-white/20" />
+                                    <DialogTitle className="truncate text-[13px] md:text-[14px] font-normal text-white/70">
+                                        상가 평면도 상세
+                                    </DialogTitle>
+                                </div>
+                                <div className="flex items-center">
+                                    <button
+                                        type="button"
+                                        className={VIEWER_ICON_BTN}
+                                        onClick={() => setZoom((z) => !z)}
+                                        title={zoom ? "화면에 맞추기" : "확대"}
+                                        aria-label={zoom ? "화면에 맞추기" : "확대"}
+                                    >
+                                        {zoom ? (
+                                            <ZoomOut className="h-5 w-5" strokeWidth={1.5} />
+                                        ) : (
+                                            <ZoomIn className="h-5 w-5" strokeWidth={1.5} />
+                                        )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={VIEWER_ICON_BTN}
+                                        onClick={() => setOpen(false)}
+                                        aria-label="닫기"
+                                        title="닫기"
+                                    >
+                                        <X className="h-[22px] w-[22px]" strokeWidth={1.5} />
+                                    </button>
+                                </div>
                             </div>
 
-                            {/* 이미지 영역: 높이만 제한 + 내부 스크롤로 원본 그대로 보기 */}
-                            <div className="bg-background max-h-[calc(100vh-3.5rem)] sm:max-h-[calc(100vh-4rem)] overflow-auto">
+                            {/* 이미지 영역: 기본은 화면에 맞춤, 누르면 원본 크기 + 스크롤 */}
+                            <div
+                                className={cn(
+                                    "min-h-0 flex-1 overflow-auto",
+                                    !zoom && "flex items-center justify-center md:px-10"
+                                )}
+                            >
                                 <img
                                     src={current.image}
                                     alt={current.alt ?? `${current.label} 평면도 상세`}
-                                    className="block select-none"
+                                    onClick={() => setZoom((z) => !z)}
+                                    className={cn(
+                                        "select-none animate-in fade-in-0 duration-300",
+                                        zoom
+                                            ? "block max-w-none cursor-zoom-out"
+                                            : "max-h-full max-w-full cursor-zoom-in object-contain"
+                                    )}
                                     draggable={false}
                                 />
                             </div>
+
+                            <p className="shrink-0 px-5 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] text-center text-[12px] text-white/40">
+                                {zoom ? "이미지를 다시 누르면 화면에 맞춰집니다" : "이미지를 누르면 원본 크기로 확대됩니다"}
+                            </p>
                         </DialogContent>
                     </Dialog>
                 )}

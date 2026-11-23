@@ -6,12 +6,11 @@ import { cn } from "@/lib/utils"
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Download, Maximize2, X } from "lucide-react"
+import { Download, Maximize2, X, ZoomIn, ZoomOut } from "lucide-react"
+import { VIEWER_BAR, VIEWER_CONTENT, VIEWER_ICON_BTN } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 
 type SitePlanSectionProps = {
@@ -41,10 +40,13 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                                                     size = "md",
                                                                 }) => {
     const [open, setOpen] = React.useState(false)
+    const [zoom, setZoom] = React.useState(false)
+    // 팝업을 닫으면 확대 상태 초기화
+    React.useEffect(() => { if (!open) setZoom(false) }, [open])
 
     return (
-        <section className={cn("w-full bg-white py-10 md:py-14", className)}>
-            <div className="container mx-auto max-w-6xl px-4 md:px-6">
+        <section className={cn("w-full bg-white py-12 md:py-20", className)}>
+            <div className="mx-auto max-w-7xl section-padding">
                 <SectionHeader eyebrow={eyebrow} title={title} size={size} />
 
                 {/* 이미지 카드 (클릭 시 상세보기) */}
@@ -54,7 +56,7 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                             type="button"
                             className={cn(
                                 "group w-full overflow-hidden bg-white",
-                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
                             )}
                             aria-label={`${title} 상세보기`}
                             title="클릭하여 크게 보기"
@@ -63,11 +65,11 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                 <img
                                     src={image}
                                     alt={alt || title}
-                                    className="block w-full h-auto select-none transition-transform duration-300 group-hover:scale-[1.01]"
+                                    className="block w-full h-auto select-none"
                                     loading="lazy"
                                     draggable={false}
                                 />
-                                <div className="pointer-events-none absolute right-3 top-3 rounded-md bg-black/45 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                <div className="pointer-events-none absolute right-0 top-0 bg-ink px-3 py-2 text-[12px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                   <span className="inline-flex items-center gap-1">
                     <Maximize2 className="h-3.5 w-3.5" />
                     크게 보기
@@ -75,65 +77,88 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                 </div>
                             </div>
                             {note && (
-                                <div className="px-1 pt-3 text-[12px] md:text-[13px] leading-relaxed text-gray-500 text-left">
+                                <div className="pt-3 text-[12px] md:text-[13px] leading-relaxed text-neutral-400 text-left">
                                     {note}
                                 </div>
                             )}
                         </button>
                     </DialogTrigger>
 
-                    {/* 상세보기 모달 */}
-                    <DialogContent className="max-w-[min(1200px,92vw)] p-0">
-                        <DialogHeader className="px-4 pt-4 pb-2">
-                            <DialogTitle className="text-base md:text-lg">{title}</DialogTitle>
-                        </DialogHeader>
-
-                        {/* 이미지 영역: 최대 높이 맞춰서 스크롤 가능 */}
-                        <div className="relative mx-4 mb-4 rounded-lg border bg-background">
-                            <div className="max-h-[82vh] overflow-auto">
-                                <img
-                                    src={image}
-                                    alt={alt || title}
-                                    className="block w-full h-auto object-contain"
-                                    draggable={false}
-                                />
-                            </div>
-
-                            {/* 상단 오른쪽 액션 */}
-                            <div className="pointer-events-none absolute right-2 top-2 flex gap-2">
+                    {/* 상세보기: 전체 화면 뷰어 (이미지를 누르면 확대/축소) */}
+                    <DialogContent showCloseButton={false} className={VIEWER_CONTENT}>
+                        <div className={VIEWER_BAR}>
+                            <DialogTitle className="truncate text-[15px] md:text-[16px] font-semibold tracking-[-0.02em] text-white">
+                                {title}
+                            </DialogTitle>
+                            <div className="flex items-center">
+                                <button
+                                    type="button"
+                                    className={VIEWER_ICON_BTN}
+                                    onClick={() => setZoom((z) => !z)}
+                                    title={zoom ? "화면에 맞추기" : "확대"}
+                                    aria-label={zoom ? "화면에 맞추기" : "확대"}
+                                >
+                                    {zoom ? (
+                                        <ZoomOut className="h-5 w-5" strokeWidth={1.5} />
+                                    ) : (
+                                        <ZoomIn className="h-5 w-5" strokeWidth={1.5} />
+                                    )}
+                                </button>
                                 <a
                                     href={image}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="pointer-events-auto"
+                                    className={cn(VIEWER_ICON_BTN, "hidden sm:inline-flex")}
                                     title="새 탭에서 원본 열기"
+                                    aria-label="새 탭에서 원본 열기"
                                 >
-                                    <Button variant="secondary" size="sm">
-                                        원본 보기
-                                    </Button>
+                                    <Maximize2 className="h-[18px] w-[18px]" strokeWidth={1.5} />
                                 </a>
                                 <a
                                     href={image}
                                     download
-                                    className="pointer-events-auto"
+                                    className={VIEWER_ICON_BTN}
                                     title="이미지 다운로드"
+                                    aria-label="이미지 다운로드"
                                 >
-                                    <Button variant="secondary" size="icon">
-                                        <Download className="h-4 w-4" />
-                                    </Button>
+                                    <Download className="h-5 w-5" strokeWidth={1.5} />
                                 </a>
-                                <Button
+                                <button
                                     type="button"
-                                    variant="secondary"
-                                    size="icon"
-                                    className="pointer-events-auto"
+                                    className={VIEWER_ICON_BTN}
                                     onClick={() => setOpen(false)}
                                     title="닫기"
+                                    aria-label="닫기"
                                 >
-                                    <X className="h-4 w-4" />
-                                </Button>
+                                    <X className="h-[22px] w-[22px]" strokeWidth={1.5} />
+                                </button>
                             </div>
                         </div>
+
+                        {/* 이미지 영역: 기본은 화면에 맞춤, 누르면 크게 + 스크롤 */}
+                        <div
+                            className={cn(
+                                "min-h-0 flex-1 overflow-auto",
+                                !zoom && "flex items-center justify-center md:px-10"
+                            )}
+                        >
+                            <img
+                                src={image}
+                                alt={alt || title}
+                                onClick={() => setZoom((z) => !z)}
+                                className={cn(
+                                    "select-none animate-in fade-in-0 duration-300",
+                                    zoom
+                                        ? "block w-[240%] max-w-none cursor-zoom-out sm:w-[170%] lg:w-[130%]"
+                                        : "max-h-full max-w-full cursor-zoom-in object-contain"
+                                )}
+                                draggable={false}
+                            />
+                        </div>
+
+                        <p className="shrink-0 px-5 pt-3 pb-[max(0.9rem,env(safe-area-inset-bottom))] text-center text-[12px] text-white/40">
+                            {zoom ? "이미지를 다시 누르면 화면에 맞춰집니다" : "이미지를 누르면 확대됩니다"}
+                        </p>
                     </DialogContent>
                 </Dialog>
             </div>

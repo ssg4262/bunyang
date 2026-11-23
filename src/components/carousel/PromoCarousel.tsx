@@ -3,8 +3,7 @@
 
 import React from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, Phone } from "lucide-react"
 import {smartDial} from "@/lib/smartDial.ts";
 
 export type CarouselSlide = {
@@ -36,6 +35,10 @@ export type PromoCarouselProps = {
     topOffsetPx?: number
     /** 높이 모드: 100svh-네브바 or 부모 높이 꽉 채우기(오버레이 시 사용) */
     heightMode?: HeightMode
+    /** 슬라이드 위 작은 라벨 줄에 표시할 단지명 */
+    projectName?: string
+    /** '관심고객 등록' 버튼 클릭 시 (없으면 버튼 숨김) */
+    onRegisterClick?: () => void
 }
 
 export const PromoCarousel: React.FC<PromoCarouselProps> = ({
@@ -48,9 +51,11 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                                                 onSlideChange,
                                                                 topOffsetPx = 0,
                                                                 heightMode = "fillParent", // ⬅ 기본값: 부모 높이 채우기(오버레이용)
+                                                                projectName,
+                                                                onRegisterClick,
                                                             }) => {
     const [index, setIndex] = React.useState(() => clampIndex(initial, slides.length))
-    const [controls, setControls] = React.useState(false)
+    const [, setControls] = React.useState(false)
     const timerRef = React.useRef<number | null>(null)
     const hideControlsRef = React.useRef<number | null>(null)
     const wrapRef = React.useRef<HTMLDivElement | null>(null)
@@ -156,9 +161,8 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
             style={styleVar}
             className={cn(
                 "relative overflow-hidden select-none group",
-                "rounded-none",
                 heightClass,
-                "border border-white/10 bg-black",
+                "bg-black",
                 className
             )}
         >
@@ -182,50 +186,64 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                             draggable={false}
                         />
 
-                        {/* 어둡게 그라데이션 오버레이 */}
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.35)_40%,rgba(0,0,0,0.6)_100%)]" />
+                        {/* 글자가 읽히도록: 아래쪽과 왼쪽을 어둡게 */}
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.1)_30%,rgba(0,0,0,0.78)_68%,rgba(0,0,0,0.9)_100%)] md:bg-[linear-gradient(180deg,rgba(0,0,0,0.38)_0%,rgba(0,0,0,0.12)_38%,rgba(0,0,0,0.72)_100%)]" />
+                        <div className="absolute inset-0 hidden md:block bg-[linear-gradient(90deg,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0)_60%)]" />
 
                         {/* 콘텐츠 */}
-                        <div className="relative z-10 h-full w-full px-5 md:px-10 pb-[env(safe-area-inset-bottom)] pt-[var(--head-safe)]">
-                            <div className="h-full max-w-4xl flex flex-col justify-end md:justify-center gap-4 py-8">
-                                {s.badge && (
-                                    <span className="w-fit rounded-md border border-white/20 bg-white/10 px-2 py-1 text-[11px] tracking-wide text-white/90">
-                    {s.badge}
-                  </span>
-                                )}
-                                <h2 className="whitespace-pre-line text-2xl md:text-4xl lg:text-5xl font-bold leading-tight text-white drop-shadow">
+                        <div className="relative z-10 mx-auto h-full w-full max-w-7xl section-padding pb-[env(safe-area-inset-bottom)] pt-[var(--head-safe)]">
+                            <div className="flex h-full max-w-3xl flex-col justify-end md:justify-center pb-20 md:pb-10">
+                                {/* 번호 — 선 — 단지명 */}
+                                <div className="flex items-center gap-3 text-white/70">
+                                    <span className="label-caps tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                                    <span aria-hidden className="h-px w-10 bg-white/40" />
+                                    <span className="text-[12px] md:text-[13px] font-medium tracking-[0.06em]">
+                                        {projectName ?? s.badge}
+                                    </span>
+                                    {projectName && s.badge && (
+                                        <span className="text-[11px] font-bold tracking-[0.04em] text-brand">{s.badge}</span>
+                                    )}
+                                </div>
+
+                                <h2 className="heading-display mt-4 md:mt-5 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[56px] text-white">
                                     {s.headline}
                                 </h2>
                                 {s.sub && (
-                                    <p className="text-sm md:text-base text-white/80 max-w-2xl">
+                                    <p className="mt-4 md:mt-5 max-w-xl text-[13.5px] md:text-[17px] font-light leading-relaxed text-white/75">
                                         {s.sub}
                                     </p>
                                 )}
-                                { s.ctaLabel && (
-                                    <div className="pt-2">
-                                        <Button
-                                            onClick={() =>
-                                                smartDial("010-4539-8505", {
-                                                    desktopApp: "facetime",
-                                                    onFail: () =>
-                                                        alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
-                                                })
-                                            }
-                                            type="button"
-                                            size="lg"
-                                            data-carousel-interactive="true"
-                                            // 밝은(화이트) CTA 스타일
-                                            className={cn(
-                                                "rounded-xl cursor-pointer",
-                                                "bg-white text-black",                 // 핵심: 밝게
-                                                "hover:bg-white/90 active:bg-white/80",
-                                                "shadow-lg ring-1 ring-black/10",      // 또렷함
-                                                "dark:bg-white dark:text-black",        // 다크모드에서도 밝게
-                                                "font-bold"
-                                                )}
-                                        >
-                                            {s.ctaLabel}
-                                        </Button>
+
+                                {(s.ctaLabel || onRegisterClick) && (
+                                    <div className="mt-6 md:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-2.5">
+                                        {onRegisterClick && (
+                                            <button
+                                                type="button"
+                                                data-carousel-interactive="true"
+                                                onClick={onRegisterClick}
+                                                className="inline-flex h-[52px] cursor-pointer items-center justify-center gap-2 bg-brand px-7 text-[14px] font-semibold tracking-[0.04em] text-white transition-colors hover:bg-brand-dark"
+                                            >
+                                                관심고객 등록
+                                                <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+                                            </button>
+                                        )}
+                                        {s.ctaLabel && (
+                                            <button
+                                                type="button"
+                                                data-carousel-interactive="true"
+                                                onClick={() =>
+                                                    smartDial("010-4539-8505", {
+                                                        desktopApp: "facetime",
+                                                        onFail: () =>
+                                                            alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
+                                                    })
+                                                }
+                                                className="inline-flex h-[52px] cursor-pointer items-center justify-center gap-2 bg-white px-7 text-[14px] font-bold tracking-[0.02em] text-ink transition-colors hover:bg-white/90"
+                                            >
+                                                <Phone className="h-4 w-4" strokeWidth={2} />
+                                                {s.ctaLabel}
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -234,46 +252,58 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                 ))}
             </div>
 
-            {/* arrows: 데스크톱은 hover 시, 모바일은 터치 시 잠깐 노출 */}
-            {showArrows && count > 1 && (
-                <>
-                    <button
-                        type="button"
-                        aria-label="이전 슬라이드"
-                        onClick={() => { prev(); showControls(1500) }}
-                        data-carousel-interactive="true"
-                        className={cn(baseArrow, "left-3 md:left-4 z-20", controls ? visibleArrow : hiddenArrow)}
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="다음 슬라이드"
-                        onClick={() => { next(); showControls(1500) }}
-                        data-carousel-interactive="true"
-                        className={cn(baseArrow, "right-3 md:right-4 z-20", controls ? visibleArrow : hiddenArrow)}
-                    >
-                        <ChevronRight className="h-5 w-5" />
-                    </button>
-                </>
-            )}
+            {/* arrows + 번호: 오른쪽 아래 */}
+            {count > 1 && (showArrows || showIndicators) && (
+                <div className="absolute bottom-6 md:bottom-10 inset-x-0 z-20 pointer-events-none">
+                    <div className="mx-auto flex max-w-7xl items-center justify-between section-padding">
+                        {showIndicators ? (
+                            <div className="pointer-events-auto flex items-center gap-2">
+                                {slides.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        aria-label={`${i + 1}번째로 이동`}
+                                        onClick={() => { go(i); showControls(1500) }}
+                                        data-carousel-interactive="true"
+                                        className="group/ind flex h-6 items-center"
+                                    >
+                                        <span
+                                            className={cn(
+                                                "block h-[2px] transition-all duration-300",
+                                                i === index ? "w-12 bg-white" : "w-6 bg-white/35 group-hover/ind:bg-white/60"
+                                            )}
+                                        />
+                                    </button>
+                                ))}
+                                <span className="ml-2 label-caps tabular-nums text-white/70">
+                                    {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+                                </span>
+                            </div>
+                        ) : <span />}
 
-            {/* indicators */}
-            {showIndicators && count > 1 && (
-                <div className="absolute bottom-3 md:bottom-5 left-0 right-0 flex items-center justify-center gap-2 z-20">
-                    {slides.map((_, i) => (
-                        <button
-                            key={i}
-                            type="button"
-                            aria-label={`${i + 1}번째로 이동`}
-                            onClick={() => { go(i); showControls(1500) }}
-                            data-carousel-interactive="true"
-                            className={cn(
-                                "h-1.5 w-6 rounded-full transition-all",
-                                i === index ? "bg-white/90 w-8" : "bg-white/40 hover:bg-white/60"
-                            )}
-                        />
-                    ))}
+                        {showArrows && (
+                            <div className="pointer-events-auto hidden md:flex items-center">
+                                <button
+                                    type="button"
+                                    aria-label="이전 슬라이드"
+                                    onClick={() => { prev(); showControls(1500) }}
+                                    data-carousel-interactive="true"
+                                    className={baseArrow}
+                                >
+                                    <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
+                                </button>
+                                <button
+                                    type="button"
+                                    aria-label="다음 슬라이드"
+                                    onClick={() => { next(); showControls(1500) }}
+                                    data-carousel-interactive="true"
+                                    className={cn(baseArrow, "-ml-px")}
+                                >
+                                    <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </section>
@@ -281,10 +311,8 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
 }
 
 const baseArrow =
-    "absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-10 w-10 rounded-full " +
-    "bg-white/85 text-black shadow-lg ring-1 ring-black/10 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-opacity duration-200"
-const hiddenArrow = "opacity-0 pointer-events-none"
-const visibleArrow = "opacity-100 pointer-events-auto"
+    "inline-flex h-12 w-12 items-center justify-center border border-white/30 text-white transition-colors " +
+    "hover:bg-white hover:text-black focus:outline-none focus-visible:bg-white focus-visible:text-black"
 
 function normalizeIndex(i: number, len: number) {
     if (len === 0) return 0

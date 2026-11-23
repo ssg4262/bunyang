@@ -9,6 +9,7 @@
 // - 좌우 화살표: 모바일/데스크탑 모두 항상 표시
 // - 스와이프: 손가락/포인터 이동 추적하여 자연스러운 드래그 이동
 
+import { VIEWER_ARROW, VIEWER_BAR, VIEWER_CONTENT, VIEWER_COUNT, VIEWER_ICON_BTN, pad2 } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,7 @@ import {
     Dialog,
     DialogContent,
     DialogClose,
-    DialogOverlay,
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, Phone } from "lucide-react";
 
@@ -49,7 +50,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                                                                     items,
                                                                     title = "상가분양안내",
                                                                     className,
-                                                                    paddingXClass = "px-4 md:px-6",
+                                                                    paddingXClass = "section-padding",
                                                                     mobileHeightClass = "h-auto",
                                                                     desktopHeightClass = "h-auto",
                                                                     autoMs = 0,
@@ -74,22 +75,22 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
 
     return (
         <section
-            className={cn("container mx-auto max-w-6xl w-full pt-16 md:pt-24 pb-10 md:pb-14", paddingXClass, className)}
+            className={cn("mx-auto max-w-7xl w-full pt-16 md:pt-28 pb-12 md:pb-20", paddingXClass, className)}
         >
             {/* 타이틀 */}
-            <header className="mb-6 md:mb-10 flex flex-col items-center">
+            <header className="mb-9 md:mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <SectionHeader
                     eyebrow="COMMERCIAL"
                     title={title}
                     description="원하시는 호실·평형·분양가를 빠르게 상담받아 보세요."
-                    className="mb-5 md:mb-6"
+                    className="mb-0 md:mb-0"
                 />
                 <a
                     href="tel:01045398505"
                     onClick={(e) => { if (onCallClick) { e.preventDefault(); handleCall(); } }}
-                    className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-sm hover:bg-orange-600"
+                    className="inline-flex h-[52px] shrink-0 items-center justify-center gap-2 bg-ink px-7 text-[14px] font-semibold tracking-[0.02em] text-white transition-colors hover:bg-black"
                 >
-                    <Phone className="h-4 w-4" />
+                    <Phone className="h-4 w-4" strokeWidth={2} />
                     상가분양문의 010-4539-8505
                 </a>
             </header>
@@ -122,25 +123,10 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                 />
             </div>
 
-            {/* 라이트박스: 완전 풀스크린 + 투명 배경 */}
+            {/* 라이트박스: 전체 화면 어두운 뷰어 (다른 팝업과 같은 모양) */}
             <Dialog open={open} onOpenChange={setOpen}>
-                {/* 투명 Overlay: 뒤 배경 어둡게 하지 않음 */}
-                <DialogOverlay
-                    className={cn(
-                        "fixed inset-0 z-50 bg-transparent",
-                        "data-[state=open]:animate-in data-[state=closed]:animate-out",
-                        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                    )}
-                />
-                {/* Content도 투명 + 풀스크린 */}
-                <DialogContent
-                    className={cn(
-                        "fixed inset-0 left-0 top-0 translate-x-0 translate-y-0",
-                        "w-screen h-screen max-w-none max-h-none",
-                        "p-0 bg-transparent text-white border-0 rounded-none shadow-none",
-                        "[&>button]:hidden" // shadcn 기본 닫기버튼 숨김
-                    )}
-                >
+                <DialogContent showCloseButton={false} className={VIEWER_CONTENT}>
+                    <DialogTitle className="sr-only">{title} 이미지 보기</DialogTitle>
                     <Lightbox
                         photos={items}
                         index={lightIdx}
@@ -255,8 +241,6 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                 "touch-pan-y overscroll-none",
                 heightClass ?? "h-auto"
             )}
-            // 캡션 잘림 방지: 가로만 숨기고 세로는 보이게
-            style={{ overflowX: "hidden", overflowY: "visible" }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -280,11 +264,11 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                 onCall?.();
                             }}
                             className={cn(
-                                "absolute right-2 top-2 z-20",
-                                "inline-flex items-center gap-1 rounded-full px-3 py-1.5",
-                                "text-xs md:text-sm font-semibold",
-                                "bg-red-600 text-white shadow ring-1 ring-black/10 hover:bg-red-700",
-                                "focus:outline-none focus:ring-2 focus:ring-red-400/60"
+                                "absolute right-0 top-0 z-20",
+                                "inline-flex items-center gap-1.5 px-3.5 py-2",
+                                "text-[12px] md:text-[13px] font-semibold tracking-[0.02em]",
+                                "bg-ink text-white hover:bg-black",
+                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
                             )}
                             data-carousel-interactive="true"
                             aria-label="분양문의 전화걸기"
@@ -301,7 +285,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                 onOpenLightbox?.(i);
                             }}
                             className={cn(
-                                "relative z-10 block w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary/50 overflow-hidden",
+                                "relative z-10 block w-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 overflow-hidden",
                                 rounded ? "rounded-2xl" : "rounded-none"
                             )}
                             data-carousel-interactive="true"
@@ -316,14 +300,14 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 
                         {/* 이미지 '아래' 캡션 */}
                         {showCaption && (it.title || it.subtitle) && (
-                            <div className="mt-2">
+                            <div className="mt-4 flex items-baseline gap-3">
                                 {it.title && (
-                                    <h3 className="text-sm md:text-base font-semibold">
+                                    <h3 className="text-[16px] md:text-[18px] font-bold tracking-[-0.03em] text-ink">
                                         {it.title}
                                     </h3>
                                 )}
                                 {it.subtitle && (
-                                    <p className="text-xs md:text-sm text-muted-foreground">
+                                    <p className="text-[13px] md:text-[14px] text-neutral-500">
                                         {it.subtitle}
                                     </p>
                                 )}
@@ -343,7 +327,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         data-carousel-interactive="true"
                         className={cn(
                             arrowBase,
-                            "left-3 md:left-4 z-[5]",
+                            "left-0 z-[5]",
                             "opacity-100 pointer-events-auto"
                         )}
                     >
@@ -356,7 +340,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                         data-carousel-interactive="true"
                         className={cn(
                             arrowBase,
-                            "right-3 md:right-4 z-[5]",
+                            "right-0 z-[5]",
                             "opacity-100 pointer-events-auto"
                         )}
                     >
@@ -367,8 +351,8 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 
             {/* 하단 인디케이터 */}
             {count > itemsPerView && (
-                <div className="mt-3 flex items-center justify-center">
-                    <div className="rounded-full border border-border/60 bg-background/80 px-2 py-1 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm">
+                <div className="mt-5 flex items-center justify-start">
+                    <div className="flex items-center gap-1.5">
                         {Array.from({ length: pages }).map((_, p) => (
                             <button
                                 key={p}
@@ -378,10 +362,10 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                                 onClick={() => setIndex(p)}
                                 data-carousel-interactive="true"
                                 className={cn(
-                                    "mx-1 inline-block h-2 w-6 rounded-full transition-all",
+                                    "inline-block h-[2px] transition-all",
                                     p === index
-                                        ? "bg-foreground w-8"
-                                        : "bg-foreground/40 hover:bg-foreground/60"
+                                        ? "bg-ink w-10"
+                                        : "bg-neutral-300 w-5 hover:bg-neutral-500"
                                 )}
                             />
                         ))}
@@ -393,7 +377,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
 };
 
 const arrowBase =
-    "absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-10 w-10 rounded-full bg-white/85 text-black shadow-lg ring-1 ring-black/10 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-opacity duration-200";
+    "absolute top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-11 w-11 bg-black/55 text-white hover:bg-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 transition-colors duration-200";
 
 /* -------------------------------- 라이트박스 -------------------------------- */
 interface LightboxProps {
@@ -535,7 +519,7 @@ const Lightbox: React.FC<LightboxProps> = ({
 
     return (
         <div
-            className="relative w-screen h-screen touch-none select-none overflow-hidden"
+            className="relative h-full w-full touch-none select-none overflow-hidden outline-none"
             tabIndex={0}
             onKeyDown={onKey}
             onPointerDown={onPointerDown}
@@ -546,19 +530,30 @@ const Lightbox: React.FC<LightboxProps> = ({
             {/* 상단 바 + 우상단 분양문의 */}
             <div
                 className={cn(
-                    "absolute inset-x-0 top-0 z-20 flex items-center justify-between",
-                    "p-2 md:p-3 pt-[env(safe-area-inset-top)] transition-opacity",
+                    "absolute inset-x-0 top-0 z-20 transition-opacity",
+                    "bg-gradient-to-b from-black/70 to-transparent",
+                    VIEWER_BAR,
                     uiVisible ? "opacity-100" : "opacity-0"
                 )}
             >
-                <div
-                    className="text-xs md:text-sm text-white/85 drop-shadow"
-                    aria-live="polite"
-                >
-                    {index + 1} / {photos.length}
+                <div className="flex min-w-0 items-center gap-3" aria-live="polite">
+                    <span className={VIEWER_COUNT}>
+                        {pad2(index + 1)}
+                        <span className="text-white/35"> / {pad2(photos.length)}</span>
+                    </span>
+                    {(p.title || p.subtitle) && (
+                        <>
+                            <span aria-hidden className="h-3 w-px bg-white/20" />
+                            <span className="truncate text-[13px] md:text-[14px] text-white/70">
+                                {p.title}
+                                {p.title && p.subtitle && <span className="mx-1.5 text-white/30">·</span>}
+                                {p.subtitle}
+                            </span>
+                        </>
+                    )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                     <button
                         type="button"
                         data-lb-interactive="true"
@@ -567,9 +562,9 @@ const Lightbox: React.FC<LightboxProps> = ({
                             onCall?.();
                         }}
                         className={cn(
-                            "hidden sm:inline-flex items-center gap-1 rounded-full px-3 py-1.5",
-                            "text-xs md:text-sm font-semibold bg-red-600 text-white drop-shadow",
-                            "shadow ring-1 ring-black/10 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400/60"
+                            "hidden sm:inline-flex h-9 items-center gap-1.5 px-4 mr-1",
+                            "text-[13px] font-semibold tracking-[0.02em] bg-brand text-white",
+                            "hover:bg-brand-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                         )}
                         aria-label="분양문의 전화걸기"
                     >
@@ -585,10 +580,10 @@ const Lightbox: React.FC<LightboxProps> = ({
                                 e.stopPropagation();
                                 onClose();
                             }}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
+                            className={VIEWER_ICON_BTN}
                             aria-label="닫기"
                         >
-                            <X className="h-5 w-5" />
+                            <X className="h-[22px] w-[22px]" strokeWidth={1.5} />
                         </button>
                     </DialogClose>
                 </div>
@@ -609,7 +604,7 @@ const Lightbox: React.FC<LightboxProps> = ({
                         // 모바일: 거의 꽉 차게
                         "max-w-[100vw] max-h-[100svh]",
                         // 데스크탑: 너무 커서 스크롤 안 생기도록 살짝 여유
-                        "md:max-w-[92vw] md:max-h-[88vh]",
+                        "md:max-w-[84vw] md:max-h-[84vh]",
                         "w-auto h-auto object-contain",
                         loaded ? "opacity-100" : "opacity-0",
                         "transition-transform duration-150 ease-out"
@@ -639,9 +634,9 @@ const LBNav: React.FC<{ onPrev: () => void; onNext: () => void }> = ({
                 e.stopPropagation();
                 onPrev();
             }}
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow ring-1 ring-black/10 hover:bg-white"
+            className={cn(VIEWER_ARROW, "left-3 md:left-8 z-30")}
         >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
         </button>
         <button
             type="button"
@@ -651,9 +646,9 @@ const LBNav: React.FC<{ onPrev: () => void; onNext: () => void }> = ({
                 e.stopPropagation();
                 onNext();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-black shadow ring-1 ring-black/10 hover:bg-white"
+            className={cn(VIEWER_ARROW, "right-3 md:right-8 z-30")}
         >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
         </button>
     </>
 );

@@ -1,11 +1,11 @@
 // src/components/sections/HousePhotoRail.tsx
 "use client"
 
+import { VIEWER_ARROW, VIEWER_BAR, VIEWER_CONTENT, VIEWER_COUNT, VIEWER_ICON_BTN, pad2 } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react"
 
@@ -48,6 +48,11 @@ export type HousePhotoRailProps = {
 }
 
 /* ======================== Component ======================== */
+const FILTER_BTN =
+    "relative whitespace-nowrap pb-2 text-[14px] md:text-[15px] font-semibold transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px"
+const FILTER_ON = "text-white after:bg-white"
+const FILTER_OFF = "text-white/40 hover:text-white after:bg-transparent"
+
 export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                                                      photos,
                                                                      className,
@@ -173,6 +178,22 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
         touchRef.current = null
     }
 
+    // 팝업에서 현재 사진의 썸네일이 가운데 오도록 스크롤
+    const thumbRailRef = React.useRef<HTMLDivElement>(null)
+    React.useEffect(() => {
+        if (!open) return
+        const center = () => {
+            const rail = thumbRailRef.current
+            const el = rail?.children[lightIdx] as HTMLElement | undefined
+            if (!rail || !el) return
+            rail.scrollLeft = el.offsetLeft - (rail.clientWidth - el.clientWidth) / 2
+        }
+        center()
+        // 팝업이 막 열릴 때는 아직 DOM이 없을 수 있어 한 번 더 시도
+        const t = window.setTimeout(center, 80)
+        return () => window.clearTimeout(t)
+    }, [lightIdx, open])
+
     const openAt = (i: number) => {
         if (disableLightbox) return
         setLightIdx(i)
@@ -235,47 +256,42 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
     }, [rooms.length, updateFilterArrows])
 
     return (
-        <section className={cn("w-full py-16 md:py-24 bg-gray-50", className)}>
+        <section className={cn("w-full py-16 md:py-28 bg-[#0e0e0e] text-white", className)}>
             {/* ===== 헤더 ===== */}
-            <div className="container mx-auto max-w-6xl px-4 md:px-6">
+            <div className="mx-auto max-w-7xl section-padding">
                 {/* 타이틀 / 데스크탑 필터 */}
-                <div className="flex flex-col items-center">
-                    <SectionHeader eyebrow="GALLERY" title="갤러리" className="mb-6 md:mb-8" />
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 md:gap-6">
+                    <SectionHeader dark eyebrow="GALLERY" title="갤러리" className="mb-6 md:mb-10 md:w-auto" />
 
-                    {/* 데스크탑: 랩핑 버튼 */}
-                    <div className="hidden md:flex flex-wrap gap-2 justify-center">
+                    {/* 데스크탑: 글자 필터 */}
+                    <div className="hidden md:flex flex-wrap gap-7 mb-10">
                         {rooms.map((r) => (
-                            <Button
+                            <button
                                 key={r}
-                                variant={filter === r ? "default" : "outline"}
-                                className={cn(
-                                    "h-8 rounded-2xl px-3",
-                                    filter === r
-                                        ? "shadow-sm"
-                                        : "border-border/50 text-foreground/80 hover:text-foreground"
-                                )}
+                                type="button"
+                                className={cn(FILTER_BTN, filter === r ? FILTER_ON : FILTER_OFF)}
                                 onClick={() => setFilter(r)}
                             >
                                 {r}
-                            </Button>
+                            </button>
                         ))}
                     </div>
                 </div>
 
                 {/* 모바일: 가로 스크롤 칩 레일 */}
-                <div className="relative md:hidden mt-3">
+                <div className="relative md:hidden">
                     {/* 좌/우 페이드 그라데이션 (오버플로우 있을 때만) */}
                     <div
                         className={cn(
                             "pointer-events-none absolute left-0 top-0 h-full w-6 z-10",
-                            "bg-gradient-to-r from-background to-transparent transition-opacity",
+                            "bg-gradient-to-r from-[#0e0e0e] to-transparent transition-opacity",
                             canScrollFilters ? "opacity-100" : "opacity-0"
                         )}
                     />
                     <div
                         className={cn(
                             "pointer-events-none absolute right-0 top-0 h-full w-6 z-10",
-                            "bg-gradient-to-l from-background to-transparent transition-opacity",
+                            "bg-gradient-to-l from-[#0e0e0e] to-transparent transition-opacity",
                             canScrollFilters ? "opacity-100" : "opacity-0"
                         )}
                     />
@@ -283,32 +299,27 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                     <div
                         ref={filterRailRef}
                         className={cn(
-                            "flex items-center gap-2 overflow-x-auto",
-                            "snap-x snap-mandatory px-1",
+                            "flex items-center gap-6 overflow-x-auto",
+                            "snap-x snap-mandatory",
                             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                     >
                         {rooms.map((r) => (
-                            <Button
+                            <button
                                 key={`m-${r}`}
-                                variant={filter === r ? "default" : "outline"}
-                                className={cn(
-                                    "h-9 rounded-2xl px-3 whitespace-nowrap snap-start",
-                                    filter === r
-                                        ? "shadow-sm"
-                                        : "border-border/50 text-foreground/80"
-                                )}
+                                type="button"
+                                className={cn(FILTER_BTN, "snap-start", filter === r ? FILTER_ON : FILTER_OFF)}
                                 onClick={() => setFilter(r)}
                             >
                                 {r}
-                            </Button>
+                            </button>
                         ))}
                     </div>
                 </div>
             </div>
 
             {/* ===== 가로 스냅 레일 ===== */}
-            <div className="container mx-auto max-w-6xl px-4 mt-4">
+            <div className="mx-auto max-w-7xl section-padding mt-6 md:mt-0">
                 <div className="relative">
                     {/* 좌/우 버튼: 항상 DOM에 두고 투명도만 토글 */}
                     <div
@@ -321,7 +332,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            className="pointer-events-auto rounded-full bg-background/70 backdrop-blur hover:bg-background"
+                            className="pointer-events-auto h-11 w-11 rounded-none bg-black/55 text-white hover:bg-white hover:text-black"
                             onClick={() => scrollBy(-window.innerWidth * 0.8)}
                             aria-label="왼쪽으로"
                         >
@@ -338,7 +349,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            className="pointer-events-auto rounded-full bg-background/70 backdrop-blur hover:bg-background"
+                            className="pointer-events-auto h-11 w-11 rounded-none bg-black/55 text-white hover:bg-white hover:text-black"
                             onClick={() => scrollBy(window.innerWidth * 0.8)}
                             aria-label="오른쪽으로"
                         >
@@ -349,9 +360,9 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                     <div
                         ref={railRef}
                         className={cn(
-                            "group relative flex gap-4 overflow-x-auto overflow-y-hidden",
+                            "group relative flex gap-3 md:gap-4 overflow-x-auto overflow-y-hidden",
                             "scroll-smooth snap-x snap-mandatory",
-                            "px-0 py-1 select-none cursor-grab",
+                            "px-0 select-none cursor-grab",
                             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                         onMouseDown={onMouseDown}
@@ -364,8 +375,8 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                 key={p.id}
                                 className={cn(
                                     "snap-start shrink-0 overflow-hidden",
-                                    "rounded-2xl bg-white shadow-sm transition hover:shadow-lg",
-                                    subtleBorder && "border border-black/5 dark:border-white/10"
+                                    "bg-neutral-900",
+                                    subtleBorder && ""
                                 )}
                                 style={{
                                     height: `clamp(200px, ${cardHeight}px, 50vh)`,
@@ -386,17 +397,15 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                     />
 
                                     {/* 상단 라벨 */}
-                                    <div className="pointer-events-none absolute left-2 top-2">
-                                        <Badge variant="secondary">{p.room}</Badge>
+                                    <div className="pointer-events-none absolute left-0 top-0 bg-black/60 px-3 py-1.5 text-[11px] font-medium tracking-[0.06em] text-white">
+                                        {p.room}
                                     </div>
 
                                     {/* 하단 캡션 그라데이션 */}
-                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2">
-                                        <div className="rounded-xl bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
-                                            <p className="truncate text-sm font-medium text-white">
-                                                {p.caption ?? p.alt}
-                                            </p>
-                                        </div>
+                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-10 text-left">
+                                        <p className="truncate text-[14px] font-medium text-white">
+                                            {p.caption ?? p.alt}
+                                        </p>
                                     </div>
                                 </button>
                             </figure>
@@ -405,90 +414,112 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                 </div>
             </div>
 
-            {/* ===== Lightbox ===== */}
+            {/* ===== Lightbox: 전체 화면 뷰어 ===== */}
             {!disableLightbox && (
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent
-                        className="max-w-5xl w-[96vw] p-0 overflow-hidden [&>button]:hidden"
+                        showCloseButton={false}
+                        className={VIEWER_CONTENT}
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
                     >
+                        <DialogTitle className="sr-only">갤러리 사진 보기</DialogTitle>
+
                         {/* 상단 바 */}
-                        <div className="flex items-center justify-between px-3 py-2 border-b bg-background/80 backdrop-blur">
-                            <div className="flex items-center gap-2 min-w-0">
-                                <Badge>{filtered[lightIdx]?.room}</Badge>
-                                <span className="text-sm font-medium truncate max-w-[60vw]">
-                  {filtered[lightIdx]?.caption ?? filtered[lightIdx]?.alt}
-                </span>
+                        <div className={VIEWER_BAR}>
+                            <div className="flex min-w-0 items-center gap-3">
+                                <span className={VIEWER_COUNT}>
+                                    {pad2(lightIdx + 1)}
+                                    <span className="text-white/35"> / {pad2(filtered.length)}</span>
+                                </span>
+                                <span aria-hidden className="h-3 w-px bg-white/20" />
+                                <span className="truncate text-[13px] md:text-[14px] text-white/70">
+                                    {filtered[lightIdx]?.room}
+                                    <span className="mx-1.5 text-white/30">·</span>
+                                    {filtered[lightIdx]?.caption ?? filtered[lightIdx]?.alt}
+                                </span>
                             </div>
-                            <div className="flex items-center gap-1">
-                                <Button size="icon" variant="ghost" asChild className="rounded-lg" title="새 탭에서 보기">
-                                    <a href={filtered[lightIdx]?.src} target="_blank" rel="noreferrer">
-                                        <Maximize2 className="h-4 w-4" />
-                                    </a>
-                                </Button>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="rounded-lg"
+                            <div className="flex items-center">
+                                <a
+                                    href={filtered[lightIdx]?.src}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={VIEWER_ICON_BTN}
+                                    title="새 탭에서 보기"
+                                    aria-label="새 탭에서 보기"
+                                >
+                                    <Maximize2 className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                                </a>
+                                <button
+                                    type="button"
+                                    className={VIEWER_ICON_BTN}
                                     onClick={() => setOpen(false)}
                                     title="닫기"
+                                    aria-label="닫기"
                                 >
-                                    <X className="h-4 w-4" />
-                                </Button>
+                                    <X className="h-[22px] w-[22px]" strokeWidth={1.5} />
+                                </button>
                             </div>
                         </div>
 
                         {/* 이미지 영역 */}
-                        <div className="relative bg-black/80">
+                        <div className="relative flex min-h-0 flex-1 items-center justify-center md:px-24">
                             <button
-                                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-2 hover:bg-black/60"
+                                type="button"
+                                className={cn(VIEWER_ARROW, "left-3 md:left-8")}
                                 onClick={() =>
                                     setLightIdx((i) => (i - 1 + filtered.length) % Math.max(filtered.length, 1))
                                 }
                                 aria-label="이전"
                             >
-                                <ChevronLeft className="h-6 w-6 text-white" />
+                                <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
                             </button>
                             <button
-                                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-2 hover:bg-black/60"
+                                type="button"
+                                className={cn(VIEWER_ARROW, "right-3 md:right-8")}
                                 onClick={() => setLightIdx((i) => (i + 1) % Math.max(filtered.length, 1))}
                                 aria-label="다음"
                             >
-                                <ChevronRight className="h-6 w-6 text-white" />
+                                <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
                             </button>
 
                             <img
+                                key={filtered[lightIdx]?.id}
                                 src={filtered[lightIdx]?.src}
                                 alt={filtered[lightIdx]?.alt}
-                                className="mx-auto max-h-[78svh] w-auto object-contain select-none"
+                                className="max-h-full max-w-full object-contain select-none animate-in fade-in-0 duration-300"
                                 draggable={false}
                             />
                         </div>
 
                         {/* 썸네일 바 */}
-                        <div className="flex gap-2 overflow-x-auto border-t p-3">
-                            {filtered.map((p, i) => (
-                                <button
-                                    key={`thumb-${p.id}`}
-                                    onClick={() => setLightIdx(i)}
-                                    className={cn(
-                                        "flex-shrink-0 overflow-hidden rounded-lg border",
-                                        i === lightIdx
-                                            ? "border-orange-500 ring-2 ring-orange-500/30"
-                                            : "border-transparent"
-                                    )}
-                                    style={{ height: thumbHeight, width: Math.round(thumbHeight * (3 / 2)) }}
-                                    aria-label={`${p.room} 미리보기`}
-                                >
-                                    <img
-                                        src={p.src}
-                                        alt={p.alt}
-                                        className="h-full w-full object-cover"
-                                        draggable={false}
-                                    />
-                                </button>
-                            ))}
+                        <div className="shrink-0 px-5 md:px-8 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                            <div ref={thumbRailRef} className="relative mx-auto flex w-fit max-w-full gap-1.5 overflow-x-auto scrollbar-hide">
+                                {filtered.map((p, i) => (
+                                    <button
+                                        key={`thumb-${p.id}`}
+                                        type="button"
+                                        onClick={() => setLightIdx(i)}
+                                        className={cn(
+                                            "relative flex-shrink-0 overflow-hidden transition-opacity",
+                                            "after:absolute after:inset-x-0 after:bottom-0 after:h-[2px]",
+                                            i === lightIdx
+                                                ? "opacity-100 after:bg-white"
+                                                : "opacity-35 hover:opacity-80 after:bg-transparent"
+                                        )}
+                                        style={{ height: Math.min(thumbHeight, 56), width: Math.round(Math.min(thumbHeight, 56) * (3 / 2)) }}
+                                        aria-label={`${p.room} 미리보기`}
+                                        aria-current={i === lightIdx}
+                                    >
+                                        <img
+                                            src={p.src}
+                                            alt={p.alt}
+                                            className="h-full w-full object-cover"
+                                            draggable={false}
+                                        />
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </DialogContent>
                 </Dialog>

@@ -114,10 +114,63 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    word-break: keep-all;
+  }
+  ::selection {
+    background-color: #111;
+    color: #fff;
   }
 }
+
+/* ───── 디자인 토큰 (호반써밋 사이트와 같은 계열: 흑백 + 포인트 1색) ───── */
+@theme inline {
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --color-brand: #fc671a;        /* e편한세상 로고 주황 */
+  --color-brand-dark: #e4560c;
+  --color-ink: #111111;
+  --color-surface: #f6f5f3;
+  --color-line: #e4e2de;
+}
+
+/* 큰 제목: 굵고 자간 좁게 */
+.heading-display {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+/* 작은 영문/라벨: 대문자 + 넓은 자간 */
+.label-caps {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* 좌우 여백 */
+.section-padding {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+@media (min-width: 768px) {
+  .section-padding { padding-left: 3rem; padding-right: 3rem; }
+}
+@media (min-width: 1280px) {
+  .section-padding { padding-left: 4rem; padding-right: 4rem; }
+}
+
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
 .font-gowoon-dodum {
   font-family: 'GowoonDodum', sans-serif;

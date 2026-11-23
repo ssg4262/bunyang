@@ -230,28 +230,28 @@ export const HouseTypeSelector: React.FC = () => {
         : `${active.details.공급.toFixed(1)}m²${typeSuffix}`
 
     return (
-        <section className="w-full bg-white py-16 md:py-24 text-center">
-            <div className="container mx-auto px-4 md:px-6 max-w-6xl flex flex-col items-center">
+        <section className="w-full bg-white py-16 md:py-28">
+            <div className="mx-auto max-w-7xl section-padding">
                 <SectionHeader
                     eyebrow="UNIT PLAN"
                     title="세대평면도"
                     description="동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어. 중·대형 평면으로 구성된 총 322세대 일반분양 공동주택"
                 />
 
-                {/* 탭 바 */}
-                <div className="relative w-full rounded-2xl bg-gray-100 p-1">
+                {/* 탭 바: 밑줄형, 가로 스크롤 */}
+                <div className="relative w-full border-b border-line">
                     <button
                         onClick={() => scrollBy("left")}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-r from-gray-100 to-transparent h-full flex items-center rounded-l-2xl"
+                        className="absolute left-0 top-0 z-10 flex h-full w-7 items-start justify-start bg-white pt-0.5 md:hidden"
                         aria-label="이전 타입들 보기"
                     >
-                        <ChevronLeft className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
+                        <ChevronLeft className="h-5 w-5 text-neutral-400" strokeWidth={1.5} />
                     </button>
 
                     <div
                         ref={scrollRef}
                         className={cn(
-                            "flex gap-1 overflow-x-auto snap-x snap-mandatory scroll-smooth px-6",
+                            "flex gap-6 md:gap-8 overflow-x-auto scroll-smooth mx-7 md:mx-0",
                             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                     >
@@ -260,10 +260,11 @@ export const HouseTypeSelector: React.FC = () => {
                                 key={t.label}
                                 onClick={() => setSelected(i)}
                                 className={cn(
-                                    "flex-shrink-0 rounded-xl px-4 md:px-5 py-2.5 text-sm md:text-base font-semibold transition-all snap-start whitespace-nowrap",
+                                    "relative flex-shrink-0 whitespace-nowrap pb-3.5 text-[15px] md:text-[17px] font-semibold transition-colors",
+                                    "after:absolute after:inset-x-0 after:-bottom-px after:h-[2px]",
                                     i === selected
-                                        ? "bg-orange-500 text-white shadow-sm"
-                                        : "text-gray-600 hover:bg-white hover:text-gray-900"
+                                        ? "text-ink after:bg-ink"
+                                        : "text-neutral-400 hover:text-ink after:bg-transparent"
                                 )}
                             >
                                 {t.label}
@@ -273,49 +274,60 @@ export const HouseTypeSelector: React.FC = () => {
 
                     <button
                         onClick={() => scrollBy("right")}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-l from-gray-100 to-transparent h-full flex items-center rounded-r-2xl"
+                        className="absolute right-0 top-0 z-10 flex h-full w-7 items-start justify-end bg-white pt-0.5 md:hidden"
                         aria-label="다음 타입들 보기"
                     >
-                        <ChevronRight className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
+                        <ChevronRight className="h-5 w-5 text-neutral-400" strokeWidth={1.5} />
                     </button>
                 </div>
 
-                {/* 선택 정보 (공급 기준) */}
-                <div className="mt-10 md:mt-12 flex flex-col items-center gap-2">
-                    <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">{headlineText}</h3>
-                    <p className="rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-orange-600">{active.units}세대</p>
-                </div>
+                <div className="mt-9 md:mt-14 grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-9 lg:gap-16 items-start">
+                    {/* 이미지 */}
+                    <div className="order-2 lg:order-1 w-full">
+                        <img
+                            src={active.image}
+                            alt={active.label}
+                            className="w-full"
+                            draggable={false}
+                        />
+                    </div>
 
-                {/* 단위 토글 (공급 기준으로 표기 안내) */}
-                <div className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-600">
-                    <span>㎡ (공급면적)</span>
-                    <Switch checked={usePyung} onCheckedChange={setUsePyung} />
-                    <span>평 (공급면적)</span>
-                </div>
+                    {/* 선택 정보 (공급 기준) */}
+                    <div className="order-1 lg:order-2 lg:sticky lg:top-24">
+                        <p className="label-caps text-neutral-500">Type</p>
+                        <div className="mt-2 flex items-end justify-between gap-4">
+                            <h3 className="heading-display text-[40px] md:text-[56px] text-ink">{headlineText}</h3>
+                            <p className="pb-1.5 text-[15px] font-semibold text-brand">{active.units}세대</p>
+                        </div>
 
-                {/* 이미지 */}
-                <div className="mt-8 md:mt-10 w-full flex justify-center">
-                    <img
-                        src={active.image}
-                        alt={active.label}
-                        className="w-full max-w-3xl mx-auto rounded-md"
-                        draggable={false}
-                    />
-                </div>
+                        {/* 단위 토글 (공급 기준으로 표기 안내) */}
+                        <div className="mt-5 flex items-center gap-2.5 text-[13px] text-neutral-500">
+                            <span className={cn(!usePyung && "font-semibold text-ink")}>㎡</span>
+                            <Switch checked={usePyung} onCheckedChange={setUsePyung} />
+                            <span className={cn(usePyung && "font-semibold text-ink")}>평</span>
+                            <span className="text-neutral-400">(공급면적 기준)</span>
+                        </div>
 
-                {/* 상세 면적 */}
-                <div className="mt-8 md:mt-10 w-full max-w-4xl border-y border-gray-200 py-5 text-left text-gray-700 text-sm md:text-base">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-8 px-5 md:px-6">
-                        <div>주거 전용면적 <span className="font-semibold">{convert(active.details.전용)}</span></div>
-                        <div>주거 공용면적 <span className="font-semibold">{convert(active.details.주거공용)}</span></div>
-                        <div>공급면적 <span className="font-semibold">{convert(active.details.공급)}</span></div>
-                        <div>기타 공용면적 <span className="font-semibold">{convert(active.details.기타공용)}</span></div>
-                        <div>계약면적 <span className="font-semibold">{convert(active.details.계약)}</span></div>
+                        {/* 상세 면적 */}
+                        <dl className="mt-7 border-t-2 border-ink text-[14.5px] md:text-[15px]">
+                            {([
+                                ["주거 전용면적", active.details.전용],
+                                ["주거 공용면적", active.details.주거공용],
+                                ["공급면적", active.details.공급],
+                                ["기타 공용면적", active.details.기타공용],
+                                ["계약면적", active.details.계약],
+                            ] as const).map(([label, value]) => (
+                                <div key={label} className="flex items-baseline justify-between border-b border-line py-3.5">
+                                    <dt className="text-neutral-500">{label}</dt>
+                                    <dd className="font-semibold tabular-nums text-ink">{convert(value)}</dd>
+                                </div>
+                            ))}
+                        </dl>
                     </div>
                 </div>
 
                 {/* 유의사항 */}
-                <div className="mt-6 w-full max-w-4xl px-1 text-left text-gray-500 text-[12px] md:text-[13px] leading-relaxed space-y-1 break-keep">
+                <div className="mt-10 md:mt-14 w-full text-left text-neutral-400 text-[12px] md:text-[13px] leading-relaxed space-y-1 break-keep">
                     <p>* 유니트 및 면적은 소비자의 이해를 돕기 위한 것으로 건축설계변경 및 그 이외의 사유로 변경될 수 있습니다.</p>
                     <p>* 본 홈페이지에 사용된 아이소메트릭 및 평면도는 소비자의 이해를 돕기 위한 것으로 건축설계변경 또는 그 외의 사유로 인해 변경될 수 있습니다.</p>
                     <p>* 일부 품목은 분양가 제외품목이오니 주택전시관에서 반드시 확인하시기 바랍니다.</p>

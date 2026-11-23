@@ -3,7 +3,6 @@
 
 import React from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { Phone, MapPin, ArrowUp } from "lucide-react"
 import elifeCloud from "@/assets/logo/elife-cloud.png"
 import {smartDial} from "@/lib/smartDial.ts";
@@ -59,102 +58,106 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
     return (
         <footer
             className={cn(
-                "bg-background text-foreground",
-                showTopDivider && "border-t border-border/60",
+                "bg-[#0e0e0e] text-white",
+                showTopDivider && "border-t border-white/10",
                 className
             )}
             aria-label="사이트 푸터"
         >
             {/* 상단 영역: 브랜드/연락처 + 네비게이션 */}
-            <div className="container mx-auto px-6 py-10 md:py-14 lg:py-16">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-12">
+            <div className="mx-auto max-w-7xl section-padding py-12 md:py-16">
+                <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
                     {/* Brand & Contact */}
-                    <div className="flex flex-col gap-4 md:col-span-1">
+                    <div className="flex flex-col gap-6">
                         <div>
-                            <div className="flex items-center gap-2">
-                                <img src={elifeCloud} alt="" className="h-5 md:h-6 w-auto shrink-0 select-none" draggable={false} />
-                                <h3 className="text-xl md:text-2xl font-extrabold tracking-tight">{brand}</h3>
+                            <div className="flex items-center gap-2.5">
+                                <img src={elifeCloud} alt="" className="h-5 w-auto shrink-0 select-none" draggable={false} />
+                                <h3 className="text-[18px] md:text-[20px] font-extrabold tracking-[-0.03em]">{brand}</h3>
                             </div>
                             {tagline && (
-                                <p className="mt-1 text-sm text-muted-foreground">{tagline}</p>
+                                <p className="mt-2 text-[13px] text-white/50">{tagline}</p>
                             )}
                         </div>
 
-                        <div className="mt-2 grid gap-2">
-                            <Button type="button" variant="default" className="rounded-xl justify-start cursor-pointer bg-red-600 hover:bg-red-700 text-white"
-                                    onClick={() =>
-                                        smartDial("010-4539-8505", {
-                                            desktopApp: "facetime",
-                                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
-                                        })}
-                            >
-                                <Phone className="mr-2 h-4 w-4 "  />
-                                분양문의 {phone}
-                            </Button>
-                            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                                <div className="space-y-0.5">
-                                    {addressLines.map((line, i) => (
-                                        <div key={i}>{line}</div>
-                                    ))}
-                                </div>
+                        <div className="flex items-start gap-2 text-[13px] leading-relaxed text-white/60">
+                            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/40" strokeWidth={1.5} />
+                            <div className="space-y-0.5">
+                                {addressLines.map((line, i) => (
+                                    <div key={i}>{line}</div>
+                                ))}
                             </div>
-                        </div>
-
-                        {/* 맨 위로 */}
-                        <div className="pt-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="rounded-xl"
-                                onClick={scrollTop}
-                            >
-                                <ArrowUp className="mr-2 h-4 w-4" />
-                                맨 위로
-                            </Button>
                         </div>
                     </div>
 
                     {/* Nav groups */}
                     {navGroups.map((g, idx) => (
                         <div key={idx} className="flex flex-col gap-3">
-                            <h4 className="text-sm font-semibold tracking-wide text-muted-foreground">
-                                {g.title}
-                            </h4>
+                            <h4 className="label-caps text-white/40">{g.title}</h4>
                             <div className="grid gap-2">
                                 {g.items.map((label, i) => (
-                                    <Button
+                                    <button
                                         key={i}
                                         type="button"
-                                        variant="ghost"
-                                        className="justify-start rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                                        className="text-left text-[14px] text-white/70 transition-colors hover:text-white"
                                         onClick={() => onClickGhost(label)}
                                     >
                                         {label}
-                                    </Button>
+                                    </button>
                                 ))}
                             </div>
                         </div>
                     ))}
+
+                    {/* 전화 + 맨 위로 */}
+                    <div className="flex flex-col gap-5 md:items-end">
+                        <button
+                            type="button"
+                            className="cursor-pointer text-left md:text-right"
+                            onClick={() =>
+                                smartDial("010-4539-8505", {
+                                    desktopApp: "facetime",
+                                    onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
+                                })}
+                        >
+                            <span className="flex items-center gap-1.5 text-[12px] font-medium tracking-[0.04em] text-white/50 md:justify-end">
+                                <Phone className="h-3.5 w-3.5 text-brand" strokeWidth={2} />
+                                분양문의
+                            </span>
+                            <span className="mt-1 block text-[28px] md:text-[32px] font-extrabold leading-none tracking-[-0.03em] text-white transition-colors hover:text-brand">
+                                {phone}
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={scrollTop}
+                            className="inline-flex h-11 w-fit cursor-pointer items-center gap-2 border border-white/25 px-5 text-[13px] font-medium text-white/80 transition-colors hover:border-white hover:text-white"
+                        >
+                            <ArrowUp className="h-4 w-4" strokeWidth={1.5} />
+                            맨 위로
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* 하단 바: 사업자 표기/디스클레이머/카피라이트 */}
-            <div className="border-t border-border/60">
-                <div className="container mx-auto px-6 py-6 md:py-8">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div className="text-xs text-muted-foreground space-y-0.5">
-                            <div>{bizName}</div>
-                            <div>{bizRep}</div>
-                            <div>{bizRegNo}</div>
-                        </div>
+            <div className="border-t border-white/10">
+                <div className="mx-auto max-w-7xl section-padding py-7 md:py-8">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                        {(bizName || bizRep || bizRegNo) && (
+                            <div className="text-xs text-white/40 space-y-0.5">
+                                {bizName && <div>{bizName}</div>}
+                                {bizRep && <div>{bizRep}</div>}
+                                {bizRegNo && <div>{bizRegNo}</div>}
+                            </div>
+                        )}
 
-                        <div className="text-[11px] md:text-xs text-muted-foreground md:text-right leading-relaxed">
+                        <div className="max-w-3xl text-[11px] md:text-xs text-white/40 leading-relaxed">
                             {bottomNote}
                         </div>
                     </div>
 
-                    <div className="mt-4 text-xs text-muted-foreground">
+                    <div className="mt-5 text-[11px] md:text-xs text-white/30">
                         © {year} {brand}. All rights reserved.
                     </div>
                 </div>

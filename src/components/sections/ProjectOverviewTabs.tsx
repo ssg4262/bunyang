@@ -1,6 +1,7 @@
 // src/components/sections/ProjectOverviewTabs.tsx
 "use client"
 
+import { TAB_LIST, TAB_TRIGGER } from "@/components/sections/tabStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import * as React from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
@@ -45,7 +46,7 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
     const [usePyeong, setUsePyeong] = React.useState(false)
 
     return (
-        <section className={cn("container mx-auto max-w-6xl px-4 md:px-6 py-16 md:py-24", className)}>
+        <section className={cn("mx-auto max-w-7xl section-padding py-16 md:py-28", className)}>
             <SectionHeader
                 eyebrow="OVERVIEW"
                 title="사업개요"
@@ -54,38 +55,38 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
 
             {/* 탭 */}
             <Tabs defaultValue={defaultTab} className="w-full">
-                <TabsList className="w-full justify-center gap-1 bg-muted/60 rounded-xl p-1">
-                    <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow">
+                <TabsList className={TAB_LIST}>
+                    <TabsTrigger value="overview" className={TAB_TRIGGER}>
                         사업개요
                     </TabsTrigger>
-                    <TabsTrigger value="perspective" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow">
+                    <TabsTrigger value="perspective" className={TAB_TRIGGER}>
                         투시도
                     </TabsTrigger>
-                    <TabsTrigger value="brand" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow">
+                    <TabsTrigger value="brand" className={TAB_TRIGGER}>
                         브랜드
                     </TabsTrigger>
                 </TabsList>
 
                 {/* ───────── 사업개요 ───────── */}
-                <TabsContent value="overview" className="mt-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TabsContent value="overview" className="mt-8 md:mt-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
                         {/* 좌: 히어로 */}
-                        <figure className="rounded-xl overflow-hidden border border-border/60 bg-muted/30">
+                        <figure className="overflow-hidden bg-surface">
                             <img src={overviewHero} alt="" className="w-full h-full object-cover" draggable={false} />
                         </figure>
 
                         {/* 우: 표 + 단위 토글 */}
-                        <div className="rounded-xl border bg-background">
-                            <div className="flex items-center justify-between px-4 md:px-5 py-3 border-b">
-                                <h3 className="font-semibold">타입별 면적표</h3>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <span className={cn("px-2 py-1 rounded-md", !usePyeong && "bg-muted")}>㎡(전용/공급)</span>
-                                    <label className="inline-flex items-center gap-2 text-muted-foreground">
+                        <div>
+                            <div className="flex items-end justify-between gap-3 border-b-2 border-ink pb-3">
+                                <h3 className="text-[17px] md:text-[19px] font-bold tracking-[-0.03em]">타입별 면적표</h3>
+                                <div className="flex items-center gap-3 text-[13px]">
+                                    <span className={cn(!usePyeong ? "font-semibold text-ink" : "text-neutral-400")}>㎡(전용/공급)</span>
+                                    <label className="inline-flex cursor-pointer items-center gap-1.5 text-neutral-500">
                                         <input
                                             type="checkbox"
                                             checked={usePyeong}
                                             onChange={(e) => setUsePyeong(e.target.checked)}
-                                            className="h-4 w-4 accent-primary"
+                                            className="h-4 w-4 accent-[#fc671a]"
                                         />
                                         평(공급기준)
                                     </label>
@@ -98,10 +99,10 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                                     "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                                 )}
                             >
-                                <table className="min-w-[700px] w-full text-sm">
-                                    <thead className="bg-muted/60">
-                                    <tr className="[&>th]:px-3 [&>th]:py-2 [&>th]:text-left [&>th]:font-semibold">
-                                        <th className="w-[72px]">타입</th>
+                                <table className="w-full text-[13px] sm:text-[14px] tabular-nums">
+                                    <thead>
+                                    <tr className="[&>th]:px-1.5 sm:[&>th]:px-2 [&>th]:py-3 [&>th]:text-left [&>th]:text-[12px] [&>th]:font-medium [&>th]:text-neutral-500 [&>th]:whitespace-nowrap">
+                                        <th className="w-[60px] sm:w-[72px]">타입</th>
                                         <th>세대수</th>
                                         <th>{usePyeong ? "전용(평)" : "전용(㎡)"}</th>
                                         <th>{usePyeong ? "공급(평)" : "공급(㎡)"}</th>
@@ -113,28 +114,28 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                                         const ex = usePyeong ? m2ToPyeong(r.areaExclusive) : r.areaExclusive
                                         const sup = usePyeong ? m2ToPyeong(r.areaSupply) : r.areaSupply
                                         return (
-                                            <tr key={`${r.type}-${i}`} className="border-t">
-                                                <td className="px-3 py-2 whitespace-nowrap">
+                                            <tr key={`${r.type}-${i}`} className="border-t border-line">
+                                                <td className="px-1.5 sm:px-2 py-2.5 whitespace-nowrap">
                             <span className="inline-flex items-center gap-2" title={r.type}>
                               {r.color && (
-                                  <span className="inline-block h-3 w-3 rounded-sm" style={{ backgroundColor: r.color }} />
+                                  <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: r.color }} />
                               )}
-                                <span className="font-medium">{r.type}</span>
+                                <span className="font-semibold">{r.type}</span>
                             </span>
                                                 </td>
-                                                <td className="px-3 py-2">{fmt(r.households, 0)}세대</td>
-                                                <td className="px-3 py-2">{fmt(ex)}</td>
-                                                <td className="px-3 py-2">{fmt(sup)}</td>
-                                                <td className="px-3 py-2">{r.ratio ? `${fmt(r.ratio)}%` : "—"}</td>
+                                                <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">{fmt(r.households, 0)}세대</td>
+                                                <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">{fmt(ex)}</td>
+                                                <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">{fmt(sup)}</td>
+                                                <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">{r.ratio ? `${fmt(r.ratio)}%` : "—"}</td>
                                             </tr>
                                         )
                                     })}
-                                    <tr className="border-t bg-muted/40">
-                                        <td className="px-3 py-2 font-semibold">합계</td>
-                                        <td className="px-3 py-2 font-semibold">322세대</td>
-                                        <td className="px-3 py-2">—</td>
-                                        <td className="px-3 py-2">—</td>
-                                        <td className="px-3 py-2 font-semibold">100%</td>
+                                    <tr className="border-t border-ink bg-surface">
+                                        <td className="px-1.5 sm:px-2 py-3 font-bold">합계</td>
+                                        <td className="px-1.5 sm:px-2 py-3 font-bold">322세대</td>
+                                        <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">—</td>
+                                        <td className="px-1.5 sm:px-2 py-2.5 text-neutral-700 whitespace-nowrap">—</td>
+                                        <td className="px-1.5 sm:px-2 py-3 font-bold">100%</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -143,21 +144,21 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                     </div>
 
                     {/* 스펙 */}
-                    <div className="mt-8 rounded-xl border bg-background">
-                        <div className="px-4 md:px-6 py-4 border-b">
-                            <h3 className="font-semibold">사업개요</h3>
+                    <div className="mt-12 md:mt-16">
+                        <div className="border-b-2 border-ink pb-3">
+                            <h3 className="text-[17px] md:text-[19px] font-bold tracking-[-0.03em]">사업개요</h3>
                         </div>
-                        <div className="p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+                        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10">
                             {specList.map((s, i) => (
-                                <div key={i} className="flex items-center justify-between border-b sm:border-none pb-3 sm:pb-0">
-                                    <span className="text-muted-foreground">{s.label}</span>
-                                    <span className="font-medium text-right">{s.value}</span>
+                                <div key={i} className="flex items-baseline justify-between gap-4 border-b border-line py-3.5 text-[14px] md:text-[15px]">
+                                    <dt className="shrink-0 text-neutral-500">{s.label}</dt>
+                                    <dd className="font-semibold text-right text-ink">{s.value}</dd>
                                 </div>
                             ))}
-                        </div>
+                        </dl>
 
-                        <div className="px-4 md:px-6 pb-5 mt-2">
-                            <ul className="text-[12px] leading-relaxed text-muted-foreground space-y-1">
+                        <div className="mt-6">
+                            <ul className="text-[12px] leading-relaxed text-neutral-400 space-y-1">
                                 <li>※ 유니트 및 면적은 소비자의 이해를 돕기 위한 것으로 건축설계변경 등에 따라 변경될 수 있습니다.</li>
                                 <li>※ 본 페이지의 이미지와 도면은 소비자의 이해를 돕기 위한 것으로 변경될 수 있습니다.</li>
                                 <li>※ 일부 품목은 분양가 제외 품목일 수 있으니 주택전시관에서 반드시 확인하시기 바랍니다.</li>
@@ -169,7 +170,7 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                 </TabsContent>
 
                 {/* ───────── 투시도 ───────── */}
-                <TabsContent value="perspective" className="mt-8">
+                <TabsContent value="perspective" className="mt-8 md:mt-12">
                     {perspectiveImages.length === 0 ? (
                         <EmptyState label="등록된 투시도가 없습니다." />
                     ) : (
@@ -178,12 +179,12 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                 </TabsContent>
 
                 {/* ───────── 브랜드 ───────── */}
-                <TabsContent value="brand" className="mt-8">
+                <TabsContent value="brand" className="mt-8 md:mt-12">
                     {brandImages.length === 0 ? (
                         <EmptyState label="등록된 브랜드 자료가 없습니다." />
                     ) : brandImages.length === 1 ? (
                         // ✅ 1장일 때: 중앙 정렬 + 크게
-                        <figure className="mx-auto w-full max-w-5xl md:max-w-6xl rounded-2xl overflow-hidden border shadow-sm">
+                        <figure className="w-full overflow-hidden">
                             <img
                                 src={brandImages[0]}
                                 alt=""
@@ -202,13 +203,13 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
 
 /* ───────── 보조 UI ───────── */
 const EmptyState: React.FC<{ label: string }> = ({ label }) => (
-    <div className="rounded-xl border bg-muted/20 p-10 text-center text-muted-foreground">{label}</div>
+    <div className="bg-surface p-10 text-center text-neutral-500">{label}</div>
 )
 
 const ImageMasonry: React.FC<{ images: string[] }> = ({ images }) => (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         {images.map((src, i) => (
-            <figure key={i} className="rounded-xl overflow-hidden border">
+            <figure key={i} className="overflow-hidden bg-surface">
                 <img src={src} alt="" className="w-full h-full object-cover" draggable={false} />
             </figure>
         ))}

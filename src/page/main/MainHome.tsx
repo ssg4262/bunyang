@@ -36,6 +36,7 @@ import sanga4F from "@/assets/sanga/sanga4F.png"
 
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
 import { PromoFooter } from "@/components/footer/PromoFooter.tsx"
 import { HouseTypeSelector } from "@/components/sections/HouseTypeSelector.tsx"
@@ -111,9 +112,9 @@ export const MainHome: React.FC = () => {
 
     return (
         <>
-            <header className="relative h-[100svh] min-h-screen font-gowoon-dodum">
+            <header data-hero className="relative h-[100svh] min-h-[640px]">
                 {/* 네브바: 캐러셀 위 ‘포함’(오버레이) */}
-                <div className="absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-black/35 to-transparent">
+                <div className="absolute inset-x-0 top-0 z-30">
                     <PromoNavbar
                         brand="e편한세상 동대구역 센텀스퀘어"
                         brandHref="/"
@@ -156,6 +157,8 @@ export const MainHome: React.FC = () => {
                     <PromoCarousel
                         heightMode="fillParent"
                         topOffsetPx={navH}
+                        projectName="e편한세상 동대구역 센텀스퀘어"
+                        onRegisterClick={() => scrollToEl(customerFormRef.current)}
                         slides={[
                             {
                                 image: mainCarousel,
@@ -212,7 +215,7 @@ export const MainHome: React.FC = () => {
                     image={dangebatch}
                     alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
-                    className="pt-16 md:pt-24 border-t border-gray-100"
+                    className="pt-16 md:pt-28"
                 />
             </div>
 
@@ -416,7 +419,7 @@ export const MainHome: React.FC = () => {
                     image={pr6}
                     alt="e편한세상 동대구역 센텀스퀘어 PR"
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
-                    className="pt-16 md:pt-24 border-t border-gray-100"
+                    className="pt-16 md:pt-28"
                 />
 
                 <SitePlanSection
@@ -453,12 +456,32 @@ export const MainHome: React.FC = () => {
 
                 <section
                     ref={customerFormRef}
-                    className="bg-gray-50"
+                    className="bg-[#0e0e0e] text-white"
                 >
-                    <div className="container mx-auto max-w-6xl px-4 md:px-6 py-16 md:py-24">
-                        <div className="grid grid-cols-1 place-items-center">
+                    <div className="mx-auto max-w-7xl section-padding py-16 md:py-28">
+                        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-20">
+                            <div>
+                                <SectionHeader
+                                    dark
+                                    eyebrow="REGISTRATION"
+                                    title="관심고객 등록"
+                                    description="분양 소식과 상담을 가장 빠르게 받아보세요."
+                                    className="mb-9 md:mb-12"
+                                />
+                                <div className="border-t border-white/15 pt-6">
+                                    <p className="text-[12px] font-medium tracking-[0.04em] text-white/50">분양문의</p>
+                                    <a
+                                        href="tel:01045398505"
+                                        className="mt-1 block text-[30px] md:text-[40px] font-extrabold leading-tight tracking-[-0.03em] text-white transition-colors hover:text-brand"
+                                    >
+                                        010-4539-8505
+                                    </a>
+                                </div>
+                            </div>
                             <InterestedCustomerForm
-                                className="w-full max-w-[560px]"
+                                title=""
+                                description=""
+                                className="w-full max-w-[560px] lg:justify-self-end"
                                 onSubmit={async (data) => {
                                     // 예시: 실제 API 호출로 교체
                                     // await fetch("/api/leads", { method: "POST", body: JSON.stringify(data) })
