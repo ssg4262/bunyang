@@ -29,7 +29,7 @@ export type PromoFooterProps = {
 export const PromoFooter: React.FC<PromoFooterProps> = ({
                                                             brand = "e편한세상 동대구역 센텀스퀘어",
                                                             tagline = "동대구 최중심 라이프",
-                                                            phone = "053-760-4818",
+                                                            phone = "010-4539-8505",
                                                             addressLines = ["대구광역시 동구 동대구역 앞 일대"],
                                                             bizName = "시행 · 시공: (주)예시건설",
                                                             bizRep = "대표: 홍길동",
@@ -82,9 +82,9 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                         <div className="mt-2 grid gap-2">
                             <Button type="button" variant="default" className="rounded-xl justify-start cursor-pointer bg-red-600 hover:bg-red-700 text-white"
                                     onClick={() =>
-                                        smartDial("053-760-4818", {
+                                        smartDial("010-4539-8505", {
                                             desktopApp: "facetime",
-                                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
                                         })}
                             >
                                 <Phone className="mr-2 h-4 w-4 "  />

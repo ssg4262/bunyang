@@ -205,10 +205,10 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                     <div className="pt-2">
                                         <Button
                                             onClick={() =>
-                                                smartDial("053-760-4818", {
+                                                smartDial("010-4539-8505", {
                                                     desktopApp: "facetime",
                                                     onFail: () =>
-                                                        alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                                        alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
                                                 })
                                             }
                                             type="button"

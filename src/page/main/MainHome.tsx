@@ -125,7 +125,7 @@ export const MainHome: React.FC = () => {
                             { label: "상가분양안내" },
                             {label: "관심고객등록" ,badge: "상시문의가능"}
                         ]}
-                        contactLabel="분양문의 053-760-4818"
+                        contactLabel="분양문의 010-4539-8505"
                         onHeightChange={(h) => setNavH(h)}
                         // ✅ 메뉴 클릭 시 각 섹션으로 스크롤 (같은 페이지 내)
                         onItemClick={(item) => {
@@ -163,7 +163,7 @@ export const MainHome: React.FC = () => {
                                     "동대구역을 품은 센트럴 라이프\n동대구역, 신세계백화점\n바로 앞 신축아파트\n이편한세상 동대구역 센텀스퀘어",
                                 sub: "지하5~지상24층, 4개동 총 322세대 — 84㎡ 중심, 대지면적 9,260.50㎡ 포함",
                                 badge: "분양중",
-                                ctaLabel: "분양문의 053-760-4818",
+                                ctaLabel: "분양문의 010-4539-8505",
                             },
                             {
                                 image: mainCarousel2,
@@ -171,7 +171,7 @@ export const MainHome: React.FC = () => {
                                     "3년 거주 후 매도시 분양가를 보장받는 대구 최초 안심보호단지",
                                 sub: "발코니 확장 및 화장대,냉장고장,가스쿡탑,현관팬트리 시스템선반 무상제공",
                                 badge: "분양중",
-                                ctaLabel: "분양문의 053-760-4818",
+                                ctaLabel: "분양문의 010-4539-8505",
                             },
                         ]}
                         autoMs={6000}
@@ -186,7 +186,7 @@ export const MainHome: React.FC = () => {
                 eyebrow="동대구 최중심을 누리는 특별한 삶"
                 title="e편한세상 동대구역 센텀스퀘어"
                 badges={["분양중", "공사완료"]}
-                phone="053-760-4818"
+                phone="010-4539-8505"
                 rightImageSrc={yeoksae}
                 rightImageAlt="주변시설 비주얼"
             />
@@ -470,7 +470,7 @@ export const MainHome: React.FC = () => {
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
                 tagline="동대구 최중심 라이프"
-                phone="053-760-4818"
+                phone="010-4539-8505"
                 addressLines={[
                     "대구 동구 신천동 328-1",
                     "e편한세상 동대구역 센텀스퀘어 분양홍보관",

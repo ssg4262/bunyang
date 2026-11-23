@@ -334,10 +334,10 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                           "bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
                       )}
                       onClick={() =>
-                          smartDial("053-760-4818", {
+                          smartDial("010-4539-8505", {
                             desktopApp: "facetime",
                             onFail: () =>
-                                alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
                           })
                       }
                   >
@@ -543,10 +543,10 @@ const MobileMenu: React.FC<{
                         type="button"
                         className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
                         onClick={() =>
-                            smartDial("053-760-4818", {
+                            smartDial("010-4539-8505", {
                               desktopApp: "facetime",
                               onFail: () =>
-                                  alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 053-760-4818"),
+                                  alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
                             })
                         }
                     >

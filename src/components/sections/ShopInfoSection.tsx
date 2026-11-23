@@ -68,7 +68,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
 
     const handleCall = () => {
         onCallClick?.();
-        if (!onCallClick) window.location.href = "tel:0537604818";
+        if (!onCallClick) window.location.href = "tel:01045398505";
     };
 
     return (
@@ -82,7 +82,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                 </h1>
                 {/* 붉은 CTA 텍스트(크게) */}
                 <div className="mt-2 text-2xl md:text-3xl font-extrabold text-red-600">
-                    상가분양문의 053-760-4818
+                    상가분양문의 010-4539-8505
                 </div>
                 <div className="mt-4 rounded-xl border border-zinc-200/80 dark:border-white/10 p-3 text-xs text-muted-foreground">
                     원하시는 호실·평형·분양가를 빠르게 상담받아 보세요.
@@ -285,7 +285,7 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                             aria-label="분양문의 전화걸기"
                         >
                             <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                            <span>분양문의 053-760-4818</span>
+                            <span>분양문의 010-4539-8505</span>
                         </button>
 
                         {/* 이미지(클릭 → 라이트박스) */}
@@ -569,7 +569,7 @@ const Lightbox: React.FC<LightboxProps> = ({
                         aria-label="분양문의 전화걸기"
                     >
                         <Phone className="h-4 w-4" />
-                        <span>분양문의 053-760-4818</span>
+                        <span>분양문의 010-4539-8505</span>
                     </button>
 
                     <DialogClose asChild>

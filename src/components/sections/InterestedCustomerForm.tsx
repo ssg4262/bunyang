@@ -34,6 +34,7 @@ import {
 /* ───────────────────────── 설정 ───────────────────────── */
 const GAS_ENDPOINT =
     "https://script.google.com/macros/s/AKfycbxw7lRX8_N5Hom92xIfnanQkiNNIFhB8cZKX3IfSEPEticif_v2l-8Ki0xG8Eex_6Em/exec";
+const GAS_PROJECT = "edaegu-eplus";
 const SECTION_ID = "interested-customer-form";
 
 /* ───────────────────────── BottomAlert (알림창) ───────────────────────── */
@@ -171,6 +172,8 @@ async function submitToGoogleSheet(payload: {
     const formData = new FormData();
     formData.append("name", payload.name);
     formData.append("phone", payload.phone);
+    // GAS에서 이 값으로 시트 분기 → "동대구역 e편한세상" 시트(3번째)
+    formData.append("project", GAS_PROJECT);
 
     await fetch(GAS_ENDPOINT, {
         method: "POST",

@@ -40,7 +40,7 @@ export const PrMainHome: React.FC = () => {
                     { label: "프리미엄" },
                     // { label: "오시는길" },
                 ]}
-                contactLabel="분양문의 053-760-4818"
+                contactLabel="분양문의 010-4539-8505"
                 onHeightChange={(h) => setNavH(h)}
                 onItemClick={(item) => {
                     const key = item.label.replace(/\s/g, "")
@@ -73,7 +73,7 @@ export const PrMainHome: React.FC = () => {
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"
                 tagline="동대구 최중심 라이프"
-                phone="053-760-4818"
+                phone="010-4539-8505"
                 addressLines={[
                     "대구 동구 신천동 328-1",
                     "e편한세상 동대구역 센텀스퀘어 분양홍보관",
