@@ -1,6 +1,7 @@
 // src/components/sections/HousePhotoRail.tsx
 "use client"
 
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -234,23 +235,15 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
     }, [rooms.length, updateFilterArrows])
 
     return (
-        <section className={cn("w-full py-10 md:py-14", className)}>
+        <section className={cn("w-full py-16 md:py-24 bg-gray-50", className)}>
             {/* ===== 헤더 ===== */}
-            <div className="container mx-auto max-w-6xl px-4">
+            <div className="container mx-auto max-w-6xl px-4 md:px-6">
                 {/* 타이틀 / 데스크탑 필터 */}
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-                    <div className="min-w-0">
-                        <p className="text-xs md:text-sm text-muted-foreground/80">실내 사진</p>
-                        <h2
-                            className="mt-1 text-2xl md:text-3xl font-extrabold tracking-tight
-                         break-keep whitespace-nowrap md:whitespace-normal"
-                        >
-                            갤러리
-                        </h2>
-                    </div>
+                <div className="flex flex-col items-center">
+                    <SectionHeader eyebrow="GALLERY" title="갤러리" className="mb-6 md:mb-8" />
 
                     {/* 데스크탑: 랩핑 버튼 */}
-                    <div className="hidden md:flex flex-wrap gap-2 justify-end shrink-0">
+                    <div className="hidden md:flex flex-wrap gap-2 justify-center">
                         {rooms.map((r) => (
                             <Button
                                 key={r}

@@ -82,28 +82,19 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                     {/* 타이틀 */}
                     <div className="mt-5 space-y-2">
                         <p className="text-muted-foreground text-sm md:text-base">{eyebrow}</p>
-                        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight">
+                        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight break-keep">
                             {title}
                         </h1>
                     </div>
 
-                    {/* 액션 */}
-                    <div className="mt-6 flex flex-wrap items-center gap-3">
-                        {/*<Button type="button" variant="outline" className="rounded-xl">*/}
-                        {/*    <Star className="mr-2 h-4 w-4" />*/}
-                        {/*    관심고객 등록*/}
-                        {/*</Button>*/}
-                        {/*<Button type="button" variant="ghost" className="rounded-xl">*/}
-                        {/*    <Share2 className="mr-2 h-4 w-4" />*/}
-                        {/*    SNS 공유*/}
-                        {/*</Button>*/}
-                    </div>
-
                     {/* 전화 */}
-                    <div className="mt-5 flex items-end gap-2">
-                        <div className="mt-2 text-2xl md:text-3xl font-extrabold text-red-600">
-                            분양문의    {phone}
-                        </div>
+                    <div className="mt-6">
+                        <a
+                            href={`tel:${phone.replace(/[^0-9]/g, "")}`}
+                            className="inline-block text-2xl md:text-3xl font-extrabold tracking-tight text-red-600 hover:text-red-700"
+                        >
+                            분양문의 {phone}
+                        </a>
                     </div>
 
                     {/* 이미지 */}
@@ -139,7 +130,7 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                         {/* 작은 따옴표 */}
                         <span
                             aria-hidden
-                            className="select-none text-[28px] md:text-[32px] leading-none text-neutral-400"
+                            className="select-none font-serif text-[48px] md:text-[56px] leading-[0.6] text-orange-500"
                         >
               &ldquo;
             </span>
@@ -147,7 +138,7 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                         {/* 메인 헤드라인 */}
                         <h2
                             className={cn(
-                                "whitespace-pre-line font-extrabold tracking-tight",
+                                "whitespace-pre-line font-extrabold tracking-tight break-keep",
                                 "text-[22px] sm:text-[28px] md:text-[34px] lg:text-[38px]",
                                 "leading-[1.35] text-neutral-800"
                             )}

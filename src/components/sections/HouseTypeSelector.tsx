@@ -1,6 +1,7 @@
 // src/components/sections/HouseTypeSelector.tsx
 "use client"
 
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import React, { useRef } from "react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
@@ -229,22 +230,19 @@ export const HouseTypeSelector: React.FC = () => {
         : `${active.details.공급.toFixed(1)}m²${typeSuffix}`
 
     return (
-        <section className="w-full bg-white py-12 md:py-16 text-center">
-            <div className="container mx-auto px-6 max-w-6xl flex flex-col items-center">
-                {/* 헤드라인 */}
-                <div className="text-center mb-8 md:mb-10">
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어.
-                        중·대형 평면으로 구성된 총 322세대 일반분양 공동주택
-                    </p>
-                    <h2 className="mt-2 text-2xl md:text-4xl font-extrabold tracking-tight">세대평면도</h2>
-                </div>
+        <section className="w-full bg-white py-16 md:py-24 text-center">
+            <div className="container mx-auto px-4 md:px-6 max-w-6xl flex flex-col items-center">
+                <SectionHeader
+                    eyebrow="UNIT PLAN"
+                    title="세대평면도"
+                    description="동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어. 중·대형 평면으로 구성된 총 322세대 일반분양 공동주택"
+                />
 
                 {/* 탭 바 */}
-                <div className="relative w-full border-y border-gray-200 bg-gray-50">
+                <div className="relative w-full rounded-2xl bg-gray-100 p-1">
                     <button
                         onClick={() => scrollBy("left")}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-r from-gray-50 to-transparent h-full flex items-center"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-r from-gray-100 to-transparent h-full flex items-center rounded-l-2xl"
                         aria-label="이전 타입들 보기"
                     >
                         <ChevronLeft className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
@@ -253,7 +251,7 @@ export const HouseTypeSelector: React.FC = () => {
                     <div
                         ref={scrollRef}
                         className={cn(
-                            "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+                            "flex gap-1 overflow-x-auto snap-x snap-mandatory scroll-smooth px-6",
                             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                     >
@@ -262,10 +260,10 @@ export const HouseTypeSelector: React.FC = () => {
                                 key={t.label}
                                 onClick={() => setSelected(i)}
                                 className={cn(
-                                    "flex-shrink-0 px-6 py-3 text-sm md:text-base font-medium transition-all snap-start whitespace-nowrap",
+                                    "flex-shrink-0 rounded-xl px-4 md:px-5 py-2.5 text-sm md:text-base font-semibold transition-all snap-start whitespace-nowrap",
                                     i === selected
-                                        ? "bg-[#FF5A1F] text-white"
-                                        : "text-gray-600 hover:text-gray-800"
+                                        ? "bg-orange-500 text-white shadow-sm"
+                                        : "text-gray-600 hover:bg-white hover:text-gray-900"
                                 )}
                             >
                                 {t.label}
@@ -275,7 +273,7 @@ export const HouseTypeSelector: React.FC = () => {
 
                     <button
                         onClick={() => scrollBy("right")}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-l from-gray-50 to-transparent h-full flex items-center"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 px-2 bg-gradient-to-l from-gray-100 to-transparent h-full flex items-center rounded-r-2xl"
                         aria-label="다음 타입들 보기"
                     >
                         <ChevronRight className="text-gray-400 hover:text-orange-500 transition h-5 w-5" />
@@ -283,20 +281,20 @@ export const HouseTypeSelector: React.FC = () => {
                 </div>
 
                 {/* 선택 정보 (공급 기준) */}
-                <div className="mt-12 flex flex-col items-center gap-3">
-                    <h3 className="text-4xl md:text-5xl font-extrabold text-gray-800">{headlineText}</h3>
-                    <p className="text-gray-500 text-lg">{active.units}세대</p>
+                <div className="mt-10 md:mt-12 flex flex-col items-center gap-2">
+                    <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">{headlineText}</h3>
+                    <p className="rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-orange-600">{active.units}세대</p>
                 </div>
 
                 {/* 단위 토글 (공급 기준으로 표기 안내) */}
-                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
+                <div className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-600">
                     <span>㎡ (공급면적)</span>
                     <Switch checked={usePyung} onCheckedChange={setUsePyung} />
                     <span>평 (공급면적)</span>
                 </div>
 
                 {/* 이미지 */}
-                <div className="mt-12 w-full flex justify-center">
+                <div className="mt-8 md:mt-10 w-full flex justify-center">
                     <img
                         src={active.image}
                         alt={active.label}
@@ -306,8 +304,8 @@ export const HouseTypeSelector: React.FC = () => {
                 </div>
 
                 {/* 상세 면적 */}
-                <div className="mt-12 w-full max-w-4xl border-t border-b border-gray-300 py-6 text-left text-gray-700 text-sm md:text-base">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-8 px-4">
+                <div className="mt-8 md:mt-10 w-full max-w-4xl border-y border-gray-200 py-5 text-left text-gray-700 text-sm md:text-base">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-8 px-5 md:px-6">
                         <div>주거 전용면적 <span className="font-semibold">{convert(active.details.전용)}</span></div>
                         <div>주거 공용면적 <span className="font-semibold">{convert(active.details.주거공용)}</span></div>
                         <div>공급면적 <span className="font-semibold">{convert(active.details.공급)}</span></div>
@@ -317,7 +315,7 @@ export const HouseTypeSelector: React.FC = () => {
                 </div>
 
                 {/* 유의사항 */}
-                <div className="mt-8 w-full max-w-4xl border-t border-gray-200 pt-5 text-left text-gray-500 text-[13px] leading-relaxed space-y-1">
+                <div className="mt-6 w-full max-w-4xl px-1 text-left text-gray-500 text-[12px] md:text-[13px] leading-relaxed space-y-1 break-keep">
                     <p>* 유니트 및 면적은 소비자의 이해를 돕기 위한 것으로 건축설계변경 및 그 이외의 사유로 변경될 수 있습니다.</p>
                     <p>* 본 홈페이지에 사용된 아이소메트릭 및 평면도는 소비자의 이해를 돕기 위한 것으로 건축설계변경 또는 그 외의 사유로 인해 변경될 수 있습니다.</p>
                     <p>* 일부 품목은 분양가 제외품목이오니 주택전시관에서 반드시 확인하시기 바랍니다.</p>

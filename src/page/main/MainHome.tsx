@@ -206,11 +206,13 @@ export const MainHome: React.FC = () => {
             {/* ✅ 스크롤 타깃: 단지정보(첫 섹션으로 점프) */}
             <div ref={complexInfoRef}>
                 <SitePlanSection
+                    eyebrow="COMPLEX"
+                    size="lg"
                     title="단지 배치도"
                     image={dangebatch}
                     alt="e편한세상 동대구역 센텀스퀘어 단지 배치도"
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
-                    className="pt-0"
+                    className="pt-16 md:pt-24 border-t border-gray-100"
                 />
             </div>
 
@@ -403,16 +405,18 @@ export const MainHome: React.FC = () => {
 
 
 
-                ]} defaultTab="B1" className="mt-6" />
+                ]} defaultTab="B1" className="pb-16 md:pb-24" />
             </div>
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
                 <SitePlanSection
+                    eyebrow="PREMIUM"
+                    size="lg"
                     title="프리미엄 무상제공 품목"
                     image={pr6}
                     alt="e편한세상 동대구역 센텀스퀘어 PR"
                     note={<>* 실제 시공 시 변경될 수 있으니 현장에서 확인하시기 바랍니다.</>}
-                    className="pt-0"
+                    className="pt-16 md:pt-24 border-t border-gray-100"
                 />
 
                 <SitePlanSection
@@ -449,8 +453,9 @@ export const MainHome: React.FC = () => {
 
                 <section
                     ref={customerFormRef}
+                    className="bg-gray-50"
                 >
-                    <div className="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+                    <div className="container mx-auto max-w-6xl px-4 md:px-6 py-16 md:py-24">
                         <div className="grid grid-cols-1 place-items-center">
                             <InterestedCustomerForm
                                 className="w-full max-w-[560px]"

@@ -13,7 +13,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { Menu, Phone, ChevronDown, ChevronUp } from "lucide-react"
+import { Phone, ChevronDown, ChevronUp } from "lucide-react"
 import { smartDial } from "@/lib/smartDial"
 
 /* ───────────────────────── 타입 ───────────────────────── */
@@ -268,7 +268,7 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                 <NavLink to={brandHref}>{brand}</NavLink>
               </Button>
 
-              <nav className="hidden md:flex items-center gap-1 min-w-0">
+              <nav className="hidden xl:flex items-center gap-0.5 min-w-0">
                 {nav.map((item, idx) => {
                   const routeActive =
                       !!item.href &&
@@ -408,17 +408,18 @@ const MobileMenu: React.FC<{
   return (
       <Sheet>
         <SheetTrigger asChild>
-          <Button
-              variant="outline"
-              size="icon"
+          <button
+              type="button"
               className={cn(
-                  "md:hidden rounded-xl",
-                  overHeroMobile && "border-white/30 text-white bg-white/10 hover:bg-white/20"
+                  "xl:hidden group -mr-1 inline-flex h-10 w-10 flex-col items-end justify-center gap-[6px] px-2",
+                  overHeroMobile ? "text-white" : "text-gray-900"
               )}
           >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Open menu</span>
-          </Button>
+            {/* 테두리 없는 2줄 아이콘 (아래 줄이 짧음) */}
+            <span className="block h-[2px] w-6 rounded-full bg-current" />
+            <span className="block h-[2px] w-4 rounded-full bg-current transition-all duration-200 group-hover:w-6" />
+            <span className="sr-only">메뉴 열기</span>
+          </button>
         </SheetTrigger>
 
         <SheetContent side="right" className="w-[340px] sm:w-[400px] px-5">

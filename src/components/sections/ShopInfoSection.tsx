@@ -9,6 +9,7 @@
 // - 좌우 화살표: 모바일/데스크탑 모두 항상 표시
 // - 스와이프: 손가락/포인터 이동 추적하여 자연스러운 드래그 이동
 
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -48,7 +49,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                                                                     items,
                                                                     title = "상가분양안내",
                                                                     className,
-                                                                    paddingXClass = "px-4 md:px-8 lg:px-12",
+                                                                    paddingXClass = "px-4 md:px-6",
                                                                     mobileHeightClass = "h-auto",
                                                                     desktopHeightClass = "h-auto",
                                                                     autoMs = 0,
@@ -73,20 +74,24 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
 
     return (
         <section
-            className={cn("w-full py-4 md:py-6", paddingXClass, className)}
+            className={cn("container mx-auto max-w-6xl w-full pt-16 md:pt-24 pb-10 md:pb-14", paddingXClass, className)}
         >
             {/* 타이틀 */}
-            <header className="mb-3 md:mb-5">
-                <h1 className="mt-1 text-3xl md:text-5xl font-semibold tracking-tight">
-                    {title}
-                </h1>
-                {/* 붉은 CTA 텍스트(크게) */}
-                <div className="mt-2 text-2xl md:text-3xl font-extrabold text-red-600">
+            <header className="mb-6 md:mb-10 flex flex-col items-center">
+                <SectionHeader
+                    eyebrow="COMMERCIAL"
+                    title={title}
+                    description="원하시는 호실·평형·분양가를 빠르게 상담받아 보세요."
+                    className="mb-5 md:mb-6"
+                />
+                <a
+                    href="tel:01045398505"
+                    onClick={(e) => { if (onCallClick) { e.preventDefault(); handleCall(); } }}
+                    className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-sm hover:bg-orange-600"
+                >
+                    <Phone className="h-4 w-4" />
                     상가분양문의 010-4539-8505
-                </div>
-                <div className="mt-4 rounded-xl border border-zinc-200/80 dark:border-white/10 p-3 text-xs text-muted-foreground">
-                    원하시는 호실·평형·분양가를 빠르게 상담받아 보세요.
-                </div>
+                </a>
             </header>
 
             {/* 모바일 1-up 캐러셀 */}

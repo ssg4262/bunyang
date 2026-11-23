@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Download, Maximize2, X } from "lucide-react"
+import { SectionHeader } from "@/components/sections/SectionHeader"
 
 type SitePlanSectionProps = {
     /** 섹션 상단 제목 (예: "단지 배치도") */
@@ -24,6 +25,10 @@ type SitePlanSectionProps = {
     note?: React.ReactNode
     /** 컨테이너 클래스 커스터마이즈 */
     className?: string
+    /** 제목 위 작은 라벨 (묶음 이름) */
+    eyebrow?: string
+    /** lg: 묶음의 첫 섹션, md: 이어지는 하위 섹션 */
+    size?: "lg" | "md"
 }
 
 export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
@@ -32,18 +37,15 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                                                     alt = "",
                                                                     note,
                                                                     className,
+                                                                    eyebrow,
+                                                                    size = "md",
                                                                 }) => {
     const [open, setOpen] = React.useState(false)
 
     return (
         <section className={cn("w-full bg-white py-10 md:py-14", className)}>
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
-                {/* 제목 */}
-                <div className="mb-5 md:mb-6 flex items-center justify-between gap-3">
-                    <h2 className="text-[22px] md:text-2xl font-bold tracking-tight text-gray-900">
-                        {title}
-                    </h2>
-                </div>
+                <SectionHeader eyebrow={eyebrow} title={title} size={size} />
 
                 {/* 이미지 카드 (클릭 시 상세보기) */}
                 <Dialog open={open} onOpenChange={setOpen}>
@@ -73,7 +75,7 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                 </div>
                             </div>
                             {note && (
-                                <div className="px-4 md:px-5 py-3 md:py-4 border-t text-[12px] md:text-[13px] leading-relaxed text-gray-500 text-left">
+                                <div className="px-1 pt-3 text-[12px] md:text-[13px] leading-relaxed text-gray-500 text-left">
                                     {note}
                                 </div>
                             )}

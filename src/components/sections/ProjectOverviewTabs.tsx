@@ -1,6 +1,7 @@
 // src/components/sections/ProjectOverviewTabs.tsx
 "use client"
 
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import * as React from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
@@ -44,14 +45,12 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
     const [usePyeong, setUsePyeong] = React.useState(false)
 
     return (
-        <section className={cn("container mx-auto px-4 md:px-6 py-10 md:py-14", className)}>
-            {/* 헤더 */}
-            <div className="text-center mb-8 md:mb-10">
-                <p className="text-sm md:text-base text-muted-foreground">
-                    동대구역을 품은 센트럴 라이프, e편한세상 동대구역 센텀스퀘어 중·대형 평면 구성 공동주택 총 322세대 일반분양
-                </p>
-                <h2 className="mt-2 text-2xl md:text-4xl font-extrabold tracking-tight">사업개요</h2>
-            </div>
+        <section className={cn("container mx-auto max-w-6xl px-4 md:px-6 py-16 md:py-24", className)}>
+            <SectionHeader
+                eyebrow="OVERVIEW"
+                title="사업개요"
+                description="동대구역을 품은 센트럴 라이프, e편한세상 동대구역 센텀스퀘어 중·대형 평면 구성 공동주택 총 322세대 일반분양"
+            />
 
             {/* 탭 */}
             <Tabs defaultValue={defaultTab} className="w-full">

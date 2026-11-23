@@ -27,7 +27,6 @@ import {
     Check,
     AlertTriangle,
     X,
-    ChevronRight,
     ArrowDown,
 } from "lucide-react";
 
@@ -299,27 +298,27 @@ const UI = {
 
     // ✅ row: 모바일에서 텍스트가 길면 깨짐 → items-start + min-w-0 + overflow 처리
     row: cn(
-        "flex items-start justify-between gap-3 px-4 py-3",
+        "flex items-center justify-between gap-2 px-4 py-3",
         "transition-colors"
     ),
     rowLeft: "flex items-start gap-3 min-w-0 flex-1",
     rowTitle:
-        "text-[14px] font-semibold text-zinc-900 leading-5 whitespace-normal break-words",
+        "flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-zinc-900 leading-5 break-keep",
     rowSub: "mt-1 text-[12px] leading-5 text-zinc-500 whitespace-normal break-words",
 
     check: cn(
         "h-5 w-5 rounded-full shrink-0",
         "border-zinc-300",
-        "data-[state=checked]:border-emerald-600 data-[state=checked]:bg-emerald-600",
+        "data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500",
         "data-[state=checked]:text-white"
     ),
 
     requiredPill:
-        "inline-flex items-center rounded-full bg-emerald-500/12 px-2 py-0.5 text-[12px] font-extrabold text-emerald-700 shrink-0",
+        "inline-flex items-center rounded-full bg-orange-500/10 px-1.5 py-0.5 text-[12px] font-extrabold text-orange-600 shrink-0",
 
     // ✅ 보기 버튼: shrink-0로 눌림/줄바꿈 깨짐 방지
     viewBtn: cn(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 shrink-0",
+        "inline-flex items-center rounded-full px-1 py-1 shrink-0 whitespace-nowrap",
         "text-[13px] font-semibold",
         "text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100"
     ),
@@ -330,16 +329,16 @@ const UI = {
 
     submit: (active: boolean) =>
         cn(
-            "h-12 w-full rounded-md font-extrabold text-[15px] tracking-tight",
+            "h-12 w-full rounded-2xl font-extrabold text-[15px] tracking-tight",
             "shadow-none",
             active
-                ? "bg-emerald-400 text-zinc-950 hover:bg-emerald-300 active:bg-emerald-500"
+                ? "bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700"
                 : "bg-zinc-200 text-zinc-700",
             "disabled:opacity-60 disabled:cursor-not-allowed"
         ),
 
     footer: "px-4 pb-6 pt-0",
-    footLink: "text-[13px] font-extrabold text-emerald-600 hover:underline",
+    footLink: "text-[13px] font-extrabold text-orange-600 hover:underline",
 
     msgErr:
         "rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 border border-red-200/80",
@@ -354,6 +353,7 @@ const UI = {
         "transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0",
         "touch-manipulation select-none"
     ),
+    fabHidden: "pointer-events-none opacity-0 translate-y-4",
     fabIcon: "h-4 w-4",
     fabText: "text-[13px] font-extrabold",
 };
@@ -365,6 +365,19 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                                                   description = "분양 소식과 상담을 가장 빠르게 받아보세요.",
                                                                                   submitLabel = "다음",
                                                                               }) => {
+    // 폼이나 그 아래(푸터)가 화면에 보이면 떠 있는 '관심고객 등록' 버튼을 숨김
+    const [formInView, setFormInView] = React.useState(false);
+    React.useEffect(() => {
+        const el = document.getElementById(SECTION_ID);
+        if (!el || typeof IntersectionObserver === "undefined") return;
+        const io = new IntersectionObserver(
+            ([entry]) => setFormInView(entry.isIntersecting || entry.boundingClientRect.top < 0),
+            { threshold: 0.15 }
+        );
+        io.observe(el);
+        return () => io.disconnect();
+    }, []);
+
     const [name, setName] = React.useState("");
     const [phone, setPhone] = React.useState("");
     const [collectUse, setCollectUse] = React.useState(false);
@@ -581,15 +594,13 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 <div className="min-w-0">
                                                     <p className={UI.rowTitle}>
                                                         <span className={UI.requiredPill}>필수</span>
-                                                        <span className="ml-2">개인정보 수집·이용 동의</span>
+                                                        <span>개인정보 수집·이용 동의</span>
                                                     </p>
                                                 </div>
                                             </label>
 
                                             <AccordionTrigger className="p-0 hover:no-underline">
-                        <span className={UI.viewBtn}>
-                          보기 <ChevronRight className="h-4 w-4" />
-                        </span>
+                        <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
 
@@ -623,15 +634,13 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 <div className="min-w-0">
                                                     <p className={UI.rowTitle}>
                                                         <span className={UI.requiredPill}>필수</span>
-                                                        <span className="ml-2">개인정보 처리의 위탁 동의</span>
+                                                        <span>개인정보 처리의 위탁 동의</span>
                                                     </p>
                                                 </div>
                                             </label>
 
                                             <AccordionTrigger className="p-0 hover:no-underline">
-                        <span className={UI.viewBtn}>
-                          보기 <ChevronRight className="h-4 w-4" />
-                        </span>
+                        <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
 
@@ -678,7 +687,9 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                 type="button"
                 onClick={scrollToSection}
                 onTouchStart={() => {}}
-                className={UI.fab}
+                className={cn(UI.fab, "transition-all", formInView && UI.fabHidden)}
+                tabIndex={formInView ? -1 : 0}
+                aria-hidden={formInView}
                 aria-label="관심 고객 등록 영역으로 이동"
             >
                 <ArrowDown className={UI.fabIcon} />

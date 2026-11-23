@@ -1,6 +1,7 @@
 // src/components/sections/FloorPlanTabs.tsx
 "use client";
 
+import { SectionHeader } from "@/components/sections/SectionHeader"
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -62,19 +63,14 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
     return (
         <section
             className={cn(
-                "w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10",
+                "container w-full max-w-6xl mx-auto px-4 md:px-6",
                 className
             )}
         >
             <Tabs value={tab} onValueChange={(v) => setTab(v as FloorInfo["id"])}>
                 {/* 헤더 */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p className="text-xs text-muted-foreground">층별 정보</p>
-                        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-                            상가 평면도
-                        </h2>
-                    </div>
+                <div className="flex flex-col items-center">
+                    <SectionHeader eyebrow="FLOOR PLAN" title="상가 평면도" size="md" className="mb-4 md:mb-6" />
 
                     {/* 탭 리스트: 모바일 전체 너비 + 스크롤 */}
                     <div className="sm:max-w-md w-full">
