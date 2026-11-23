@@ -1,6 +1,7 @@
 // src/components/sections/InterestedCustomerForm.tsx
 "use client";
 
+import { smartDial } from "@/lib/smartDial";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -68,7 +69,13 @@ const BottomAlert: React.FC<BottomAlertProps> = ({
                 open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
             )}
         >
-            <div className="pointer-events-auto w-full max-w-[560px] bg-white px-4 py-3.5 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/10">
+            <div
+                className={cn(
+                    "w-full max-w-[560px] bg-white px-4 py-3.5 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/10",
+                    // 닫혀 있을 때는 터치를 가로채지 않게 (투명한 채로 아래 버튼을 덮던 문제)
+                    open ? "pointer-events-auto" : "pointer-events-none"
+                )}
+            >
                 <div className="flex items-start gap-3">
                     <div
                         className={cn(
@@ -475,31 +482,59 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
     const ctaActive =
         allChecked && name.trim().length >= 2 && KOREA_PHONE_RE.test(phone.trim());
 
+    // 전화상담: 사이트의 다른 전화 버튼과 같은 방식으로 걸기
+    // (휴대폰은 전화 앱, PC는 FaceTime → 안 되면 번호 안내)
+    const onCallClick = React.useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        smartDial("010-4539-8505", {
+            desktopApp: "facetime",
+            onFail: () => alert("앱을 찾을 수 없습니다. tel로 직접 걸어주세요: 010-4539-8505"),
+        });
+    }, []);
+
     const scrollToSection = React.useCallback(() => {
-        const el =
+        const find = () =>
             (document.getElementById(SECTION_ID) as HTMLElement | null) ??
             (sectionRef.current as HTMLElement | null);
+        const el = find();
         if (!el) return;
 
+        // 위에 고정된 헤더에 폼이 가리지 않도록 헤더 높이만큼 여유를 둠
+        const headerH =
+            (document.querySelector("header.fixed") as HTMLElement | null)?.getBoundingClientRect().height ?? 64;
+        const offset = Math.round(headerH) + 12;
+
         const scroller = getScrollParent(el);
-        const targetTop = calcTargetTop(scroller, el, 14);
+        smoothScrollTo(scroller, calcTargetTop(scroller, el, offset), 560);
 
-        smoothScrollTo(scroller, targetTop, 560);
+        // 내려가는 동안 아직 안 불러온 이미지들이 펼쳐지면 폼 위치가 계속 밀림
+        // → 몇 초 동안 위치를 다시 맞춤 (사용자가 직접 스크롤/터치하면 즉시 중단)
+        let tries = 0;
+        let cancelled = false;
+        const cleanup = () => {
+            window.removeEventListener("wheel", cancel);
+            window.removeEventListener("touchstart", cancel);
+            window.removeEventListener("keydown", cancel);
+        };
+        const cancel = () => {
+            cancelled = true;
+            cleanup();
+        };
+        window.addEventListener("wheel", cancel, { passive: true });
+        window.addEventListener("touchstart", cancel, { passive: true });
+        window.addEventListener("keydown", cancel);
 
-        window.setTimeout(() => {
-            const el2 =
-                (document.getElementById(SECTION_ID) as HTMLElement | null) ??
-                (sectionRef.current as HTMLElement | null);
-            if (!el2) return;
-
-            const scroller2 = getScrollParent(el2);
-            const targetTop2 = calcTargetTop(scroller2, el2, 14);
-            const cur = getScrollTop(scroller2);
-
-            if (Math.abs(cur - targetTop2) > 2) {
-                setScrollTop(scroller2, targetTop2);
-            }
-        }, 700);
+        const fix = () => {
+            if (cancelled) return;
+            const el2 = find();
+            if (!el2) return cleanup();
+            const sc = getScrollParent(el2);
+            const target = calcTargetTop(sc, el2, offset);
+            if (Math.abs(getScrollTop(sc) - target) > 2) setScrollTop(sc, target);
+            if (++tries < 12) window.setTimeout(fix, 350);
+            else cleanup();
+        };
+        window.setTimeout(fix, 700);
     }, []);
 
     return (
@@ -693,8 +728,10 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
             >
                 <a
                     href={CALL_HREF}
+                    onClick={onCallClick}
+                    onTouchStart={() => {}}
                     tabIndex={fabVisible ? 0 : -1}
-                    className="flex h-14 flex-1 items-center justify-center gap-2 bg-ink text-[14px] font-semibold tracking-[0.02em] text-white active:bg-black"
+                    className="flex h-14 flex-1 touch-manipulation items-center justify-center gap-2 bg-ink text-[14px] font-semibold tracking-[0.02em] text-white active:bg-black"
                 >
                     <PhoneIcon className="h-4 w-4" strokeWidth={2} />
                     전화상담
@@ -705,7 +742,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                     onTouchStart={() => {}}
                     tabIndex={fabVisible ? 0 : -1}
                     aria-label="관심 고객 등록 영역으로 이동"
-                    className="flex h-14 flex-1 items-center justify-center gap-2 bg-brand text-[14px] font-semibold tracking-[0.02em] text-white active:bg-brand-dark"
+                    className="flex h-14 flex-1 touch-manipulation items-center justify-center gap-2 bg-brand text-[14px] font-semibold tracking-[0.02em] text-white active:bg-brand-dark"
                 >
                     관심고객 등록
                     <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
@@ -722,8 +759,9 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
             >
                 <a
                     href={CALL_HREF}
+                    onClick={onCallClick}
                     tabIndex={fabVisible ? 0 : -1}
-                    className="flex h-12 items-center gap-2 bg-ink px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-black"
+                    className="flex h-12 cursor-pointer items-center gap-2 bg-ink px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-black"
                 >
                     <PhoneIcon className="h-3.5 w-3.5" strokeWidth={2} />
                     전화상담

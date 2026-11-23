@@ -75,9 +75,34 @@ export const MainHome: React.FC = () => {
     const scrollToEl = React.useCallback(
         (el: HTMLElement | null) => {
             if (!el) return
-            const top =
+            const calc = () =>
                 el.getBoundingClientRect().top + window.scrollY - (navH || 64) - 12
-            window.scrollTo({ top, behavior: "smooth" })
+            window.scrollTo({ top: calc(), behavior: "smooth" })
+
+            // 내려가는 동안 아직 안 불러온 이미지가 펼쳐지면 목표 위치가 밀림
+            // → 몇 초 동안 위치를 다시 맞춤 (사용자가 직접 스크롤/터치하면 즉시 중단)
+            let tries = 0
+            let cancelled = false
+            const cleanup = () => {
+                window.removeEventListener("wheel", cancel)
+                window.removeEventListener("touchstart", cancel)
+                window.removeEventListener("keydown", cancel)
+            }
+            const cancel = () => {
+                cancelled = true
+                cleanup()
+            }
+            window.addEventListener("wheel", cancel, { passive: true })
+            window.addEventListener("touchstart", cancel, { passive: true })
+            window.addEventListener("keydown", cancel)
+            const fix = () => {
+                if (cancelled) return
+                const top = calc()
+                if (Math.abs(window.scrollY - top) > 2) window.scrollTo({ top, behavior: "auto" })
+                if (++tries < 10) window.setTimeout(fix, 350)
+                else cleanup()
+            }
+            window.setTimeout(fix, 1000)
         },
         [navH]
     )
