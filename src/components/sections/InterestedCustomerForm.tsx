@@ -427,7 +427,8 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
         const digits = phone.replace(/[^0-9]/g, "");
         const payload: LeadData = {
             name: name.trim(),
-            phone: digits,
+            // 하이픈 포함으로 전송 → 시트에서 숫자로 바뀌어 앞자리 0이 사라지는 문제 방지
+            phone: formatKoreanPhone(digits),
             consent: { collectUse, outsource },
         };
 
