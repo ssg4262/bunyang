@@ -4,7 +4,8 @@
 import React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Phone, MapPin, ArrowUp, Building2 } from "lucide-react"
+import { Phone, MapPin, ArrowUp } from "lucide-react"
+import elifeCloud from "@/assets/logo/elife-cloud.png"
 import {smartDial} from "@/lib/smartDial.ts";
 
 export type FooterNavGroup = {
@@ -71,7 +72,7 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                     <div className="flex flex-col gap-4 md:col-span-1">
                         <div>
                             <div className="flex items-center gap-2">
-                                <Building2 className="h-6 w-6" />
+                                <img src={elifeCloud} alt="" className="h-5 md:h-6 w-auto shrink-0 select-none" draggable={false} />
                                 <h3 className="text-xl md:text-2xl font-extrabold tracking-tight">{brand}</h3>
                             </div>
                             {tagline && (

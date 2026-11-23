@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Phone, ChevronDown, ChevronUp } from "lucide-react"
 import { smartDial } from "@/lib/smartDial"
+import elifeCloud from "@/assets/logo/elife-cloud.png"
 
 /* ───────────────────────── 타입 ───────────────────────── */
 export type NavItem = {
@@ -29,6 +30,8 @@ export type NavItem = {
 
 export type PromoNavbarProps = {
   brand?: string
+  /** 브랜드 텍스트 앞에 붙는 로고 이미지 (기본: e편한세상 구름 로고, null이면 숨김) */
+  brandLogo?: string | null
   /** 브랜드 클릭 시 이동할 경로 (예: "/bunyang") */
   brandHref?: string
   /** 데스크탑 상단 네비 + 모바일 패널 섹션/항목 (children 지원) */
@@ -50,6 +53,7 @@ export type PromoNavbarProps = {
 /* ───────────────────────── 본컴포넌트 ───────────────────────── */
 export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                                                           brand = "분양홍보",
+                                                          brandLogo = elifeCloud,
                                                           brandHref = "/bunyang",
                                                           nav,
                                                           contactLabel,
@@ -251,22 +255,30 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
           <div className="container mx-auto h-16 px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-3 relative">
             {/* 좌측: 브랜드 + 데스크탑 네비 */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <Button
-                  type="button"
-                  variant="ghost"
-                  asChild
+              {/* 브랜드: e편한세상 구름 로고 + 단지명 */}
+              <NavLink
+                  to={brandHref}
+                  onClick={onBrandClick}
+                  aria-label={brand}
                   className={cn(
-                      "h-10 px-2 sm:px-3 font-semibold",
-                      "text-[clamp(14px,2.4vw,18px)] leading-tight",
+                      "flex h-10 min-w-0 shrink-0 items-center gap-2 sm:gap-2.5 px-1 sm:px-2",
                       textMain,
                       isBrandActive && !overHeroMobile && "text-primary",
-                      isMobile && overHeroMobile && "hover:text-white/90",
-                      "whitespace-pre-wrap break-keep"
+                      isMobile && overHeroMobile && "hover:text-white/90"
                   )}
-                  onClick={onBrandClick}
               >
-                <NavLink to={brandHref}>{brand}</NavLink>
-              </Button>
+                {brandLogo && (
+                    <img
+                        src={brandLogo}
+                        alt=""
+                        className="h-[18px] sm:h-5 w-auto shrink-0 select-none"
+                        draggable={false}
+                    />
+                )}
+                <span className="truncate text-[clamp(14px,2.4vw,18px)] font-bold leading-none tracking-tight">
+                  {brand}
+                </span>
+              </NavLink>
 
               <nav className="hidden xl:flex items-center gap-0.5 min-w-0">
                 {nav.map((item, idx) => {
@@ -410,15 +422,28 @@ const MobileMenu: React.FC<{
         <SheetTrigger asChild>
           <button
               type="button"
+              aria-label="메뉴 열기"
               className={cn(
-                  "xl:hidden group -mr-1 inline-flex h-10 w-10 flex-col items-end justify-center gap-[6px] px-2",
-                  overHeroMobile ? "text-white" : "text-gray-900"
+                  "xl:hidden -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors",
+                  overHeroMobile
+                      ? "text-white hover:bg-white/15 active:bg-white/25"
+                      : "text-gray-900 hover:bg-gray-100 active:bg-gray-200"
               )}
           >
-            {/* 테두리 없는 2줄 아이콘 (아래 줄이 짧음) */}
-            <span className="block h-[2px] w-6 rounded-full bg-current" />
-            <span className="block h-[2px] w-4 rounded-full bg-current transition-all duration-200 group-hover:w-6" />
-            <span className="sr-only">메뉴 열기</span>
+            {/* 표준 3줄 햄버거: 테두리·배경 없이 선만 */}
+            <svg
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                aria-hidden
+                className={cn(overHeroMobile && "drop-shadow")}
+            >
+              <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17" />
+            </svg>
           </button>
         </SheetTrigger>
 
