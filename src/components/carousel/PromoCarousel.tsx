@@ -190,7 +190,7 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
 
                         {/* 글자가 읽히도록: 아래쪽과 왼쪽을 어둡게 */}
                         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.1)_30%,rgba(0,0,0,0.78)_68%,rgba(0,0,0,0.9)_100%)] md:bg-[linear-gradient(180deg,rgba(0,0,0,0.38)_0%,rgba(0,0,0,0.12)_38%,rgba(0,0,0,0.72)_100%)]" />
-                        <div className="absolute inset-0 hidden md:block bg-[linear-gradient(90deg,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0)_60%)]" />
+                        <div className="absolute inset-0 hidden md:block bg-[linear-gradient(90deg,rgba(0,0,0,0.7)_0%,rgba(0,0,0,0.45)_45%,rgba(0,0,0,0)_75%)]" />
 
                         {/* 콘텐츠 */}
                         <div className="relative z-10 mx-auto h-full w-full max-w-7xl section-padding pb-[env(safe-area-inset-bottom)] pt-[var(--head-safe)]">
@@ -211,9 +211,12 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                     {renderEmphasis(s.headline)}
                                 </h2>
                                 {s.highlight && (
-                                    <p className="mt-5 md:mt-7 self-start bg-brand px-4 md:px-6 py-2.5 md:py-3 text-[16px] sm:text-[20px] lg:text-[26px] font-bold leading-[1.4] [text-wrap:balance] tracking-[-0.03em] text-white">
-                                        {s.highlight}
-                                    </p>
+                                    <>
+                                        <span aria-hidden className="mt-5 md:mt-7 block h-px w-14 bg-white/45" />
+                                        <p className="heading-display mt-5 md:mt-7 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[56px] text-white">
+                                            {renderEmphasis(s.highlight)}
+                                        </p>
+                                    </>
                                 )}
                                 {s.sub && (
                                     <p className="mt-4 md:mt-5 max-w-xl text-[14px] md:text-[17px] font-light leading-relaxed text-white/75">
