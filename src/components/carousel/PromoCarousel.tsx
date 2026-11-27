@@ -9,6 +9,8 @@ import {smartDial} from "@/lib/smartDial.ts";
 export type CarouselSlide = {
     image: string // 배경 이미지 URL
     headline: string
+    /** 제목 아래 주황 띠로 강조할 문구 */
+    highlight?: string
     sub?: string
     badge?: string
     /** 슬라이드 하단 좌측(또는 중앙) 버튼 라벨. (링크 없음, 단순 버튼) */
@@ -208,6 +210,11 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                 <h2 className="heading-display mt-4 md:mt-5 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[56px] text-white">
                                     {renderEmphasis(s.headline)}
                                 </h2>
+                                {s.highlight && (
+                                    <p className="mt-5 md:mt-7 self-start bg-brand px-4 md:px-6 py-2.5 md:py-3 text-[16px] sm:text-[20px] lg:text-[26px] font-bold leading-[1.4] [text-wrap:balance] tracking-[-0.03em] text-white">
+                                        {s.highlight}
+                                    </p>
+                                )}
                                 {s.sub && (
                                     <p className="mt-4 md:mt-5 max-w-xl text-[14px] md:text-[17px] font-light leading-relaxed text-white/75">
                                         {s.sub}
