@@ -1,6 +1,7 @@
 // src/components/sections/FloorPlanTabs.tsx
 "use client";
 
+import { Reveal } from "@/components/common/Reveal"
 import { VIEWER_BAR, VIEWER_CONTENT, VIEWER_ICON_BTN } from "@/components/sections/viewerStyles"
 import { TAB_LIST, TAB_TRIGGER } from "@/components/sections/tabStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
@@ -15,7 +16,7 @@ import {
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Maximize2, X, ZoomIn, ZoomOut } from "lucide-react";
+import { Maximize2, X, ZoomIn, ZoomOut } from "@/components/common/icons";
 
 /* ======================== Types ======================== */
 export type FloorRow = {
@@ -68,7 +69,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
     return (
         <section
             className={cn(
-                "mx-auto w-full max-w-7xl section-padding",
+                "mx-auto w-full max-w-7xl section-padding pt-6 md:pt-14",
                 className
             )}
         >
@@ -102,7 +103,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                 {/* 컨텐츠 */}
                 {floors.map((f) => (
                     <TabsContent key={f.id} value={f.id} className="mt-7 md:mt-10">
-                        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-8 lg:gap-12">
+                        <Reveal className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-8 lg:gap-12">
                             {/* 이미지 카드 */}
                             <figure className="relative overflow-hidden bg-surface">
                                 <div
@@ -194,7 +195,7 @@ export const FloorPlanTabs: React.FC<FloorPlanTabsProps> = ({
                                     </table>
                                 </ScrollArea>
                             </div>
-                        </div>
+                        </Reveal>
                     </TabsContent>
                 ))}
 

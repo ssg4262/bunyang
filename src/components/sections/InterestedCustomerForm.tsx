@@ -1,6 +1,7 @@
 // src/components/sections/InterestedCustomerForm.tsx
 "use client";
 
+import { scrollToElement } from "@/lib/smoothScroll";
 import { smartDial } from "@/lib/smartDial";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -22,14 +23,8 @@ import {
     AccordionTrigger,
     AccordionContent,
 } from "@/components/ui/accordion";
-import {
-    User2,
-    Phone as PhoneIcon,
-    Check,
-    AlertTriangle,
-    X,
-    ArrowRight,
-} from "lucide-react";
+import { Check, AlertTriangle } from "lucide-react";
+import { X, ArrowRight } from "@/components/common/icons";
 
 /* ───────────────────────── 설정 ───────────────────────── */
 const GAS_ENDPOINT =
@@ -188,86 +183,6 @@ async function submitToGoogleSheet(payload: {
     });
 }
 
-/* ───────────────────────── 스크롤 유틸 (도중 멈춤 방지) ───────────────────────── */
-const prefersReducedMotion = () =>
-    typeof window !== "undefined" &&
-    !!window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-const isScrollable = (el: HTMLElement) => {
-    const style = window.getComputedStyle(el);
-    const oy = style.overflowY;
-    return (oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight;
-};
-
-const getScrollParent = (el: HTMLElement | null): HTMLElement | Window => {
-    let p = el?.parentElement ?? null;
-    while (p) {
-        if (isScrollable(p)) return p;
-        p = p.parentElement;
-    }
-    return window;
-};
-
-const getScrollTop = (scroller: HTMLElement | Window) =>
-    scroller === window
-        ? window.scrollY || window.pageYOffset || 0
-        : (scroller as HTMLElement).scrollTop;
-
-const setScrollTop = (scroller: HTMLElement | Window, top: number) => {
-    if (scroller === window) {
-        window.scrollTo({ top, behavior: "auto" });
-    } else {
-        (scroller as HTMLElement).scrollTop = top;
-    }
-};
-
-const calcTargetTop = (
-    scroller: HTMLElement | Window,
-    target: HTMLElement,
-    offset = 14
-) => {
-    if (scroller === window) {
-        return target.getBoundingClientRect().top + (window.scrollY || 0) - offset;
-    }
-    const s = scroller as HTMLElement;
-    const sRect = s.getBoundingClientRect();
-    const tRect = target.getBoundingClientRect();
-    return s.scrollTop + (tRect.top - sRect.top) - offset;
-};
-
-const smoothScrollTo = (
-    scroller: HTMLElement | Window,
-    top: number,
-    duration = 520
-) => {
-    if (prefersReducedMotion()) {
-        setScrollTop(scroller, top);
-        return;
-    }
-
-    const start = getScrollTop(scroller);
-    const delta = top - start;
-    const startTime = performance.now();
-
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const step = (now: number) => {
-        const p = Math.min(1, (now - startTime) / duration);
-        const next = start + delta * easeOutCubic(p);
-
-        if (scroller === window) {
-            window.scrollTo(0, next);
-        } else {
-            (scroller as HTMLElement).scrollTop = next;
-        }
-
-        if (p < 1) requestAnimationFrame(step);
-    };
-
-    requestAnimationFrame(step);
-};
-
 /* ───────────────────────── UI ─────────────────────────
    ✅ 모바일 깨짐 원인: 긴 텍스트/버튼 영역이 줄바꿈/넘침(Accordion row)
    해결: (1) min-w-0/overflow 처리 강화
@@ -291,13 +206,10 @@ const UI = {
         "focus-within:border-ink"
     ),
     input: cn(
-        "h-[52px] w-full rounded-none border-0 bg-transparent pl-11 pr-4 shadow-none",
+        "h-[52px] w-full rounded-none border-0 bg-transparent px-4 shadow-none",
         "text-[15px] text-ink placeholder:text-neutral-400",
         "focus-visible:ring-0 focus-visible:ring-offset-0"
     ),
-    icon:
-        "pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400",
-
     agreeBox: cn("bg-white", "border border-neutral-300 overflow-hidden"),
     divider: "h-px bg-line",
 
@@ -493,48 +405,13 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
     }, []);
 
     const scrollToSection = React.useCallback(() => {
-        const find = () =>
+        const el =
             (document.getElementById(SECTION_ID) as HTMLElement | null) ??
             (sectionRef.current as HTMLElement | null);
-        const el = find();
-        if (!el) return;
-
-        // 위에 고정된 헤더에 폼이 가리지 않도록 헤더 높이만큼 여유를 둠
+        // 위에 고정된 헤더에 가리지 않도록 헤더 높이만큼 여유
         const headerH =
             (document.querySelector("header.fixed") as HTMLElement | null)?.getBoundingClientRect().height ?? 64;
-        const offset = Math.round(headerH) + 12;
-
-        const scroller = getScrollParent(el);
-        smoothScrollTo(scroller, calcTargetTop(scroller, el, offset), 560);
-
-        // 내려가는 동안 아직 안 불러온 이미지들이 펼쳐지면 폼 위치가 계속 밀림
-        // → 몇 초 동안 위치를 다시 맞춤 (사용자가 직접 스크롤/터치하면 즉시 중단)
-        let tries = 0;
-        let cancelled = false;
-        const cleanup = () => {
-            window.removeEventListener("wheel", cancel);
-            window.removeEventListener("touchstart", cancel);
-            window.removeEventListener("keydown", cancel);
-        };
-        const cancel = () => {
-            cancelled = true;
-            cleanup();
-        };
-        window.addEventListener("wheel", cancel, { passive: true });
-        window.addEventListener("touchstart", cancel, { passive: true });
-        window.addEventListener("keydown", cancel);
-
-        const fix = () => {
-            if (cancelled) return;
-            const el2 = find();
-            if (!el2) return cleanup();
-            const sc = getScrollParent(el2);
-            const target = calcTargetTop(sc, el2, offset);
-            if (Math.abs(getScrollTop(sc) - target) > 2) setScrollTop(sc, target);
-            if (++tries < 12) window.setTimeout(fix, 350);
-            else cleanup();
-        };
-        window.setTimeout(fix, 700);
+        scrollToElement(el, Math.round(headerH) + 12);
     }, []);
 
     return (
@@ -562,7 +439,6 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                     이름 <span className="text-brand">*</span>
                                 </Label>
                                 <div className={UI.field}>
-                                    <User2 className={UI.icon} />
                                     <Input
                                         id="lead-name"
                                         placeholder="홍길동"
@@ -580,7 +456,6 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                     전화번호 <span className="text-brand">*</span>
                                 </Label>
                                 <div className={UI.field}>
-                                    <PhoneIcon className={UI.icon} />
                                     <Input
                                         id="lead-phone"
                                         inputMode="tel"
@@ -633,7 +508,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 </div>
                                             </label>
 
-                                            <AccordionTrigger className="p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
+                                            <AccordionTrigger className="flex-none p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
                         <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
@@ -673,7 +548,7 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                                                 </div>
                                             </label>
 
-                                            <AccordionTrigger className="p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
+                                            <AccordionTrigger className="flex-none p-0 hover:no-underline [&>svg]:hidden sm:[&>svg]:block">
                         <span className={UI.viewBtn}>보기</span>
                                             </AccordionTrigger>
                                         </div>
@@ -733,7 +608,6 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                     tabIndex={fabVisible ? 0 : -1}
                     className="flex h-14 flex-1 touch-manipulation items-center justify-center gap-2 bg-ink text-[14px] font-semibold tracking-[0.02em] text-white active:bg-black"
                 >
-                    <PhoneIcon className="h-4 w-4" strokeWidth={2} />
                     전화상담
                 </a>
                 <button
@@ -752,7 +626,8 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
             {/* 데스크톱: 우하단 세로 버튼 */}
             <div
                 className={cn(
-                    "fixed right-6 bottom-6 z-40 hidden md:flex flex-col gap-2 transition-all duration-300",
+                    // 바닥에서 80px 위: 윈도우 작업 표시줄이 브라우저 아래를 덮는 노트북에서도 가려지지 않게
+                    "fixed right-6 bottom-20 z-40 hidden md:flex flex-col gap-2 transition-all duration-300",
                     fabVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
                 )}
                 aria-hidden={!fabVisible}
@@ -761,9 +636,8 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                     href={CALL_HREF}
                     onClick={onCallClick}
                     tabIndex={fabVisible ? 0 : -1}
-                    className="flex h-12 cursor-pointer items-center gap-2 bg-ink px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-black"
+                    className="flex h-12 cursor-pointer items-center justify-center gap-2 bg-ink px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-black"
                 >
-                    <PhoneIcon className="h-3.5 w-3.5" strokeWidth={2} />
                     전화상담
                 </a>
                 <button
@@ -771,10 +645,10 @@ export const InterestedCustomerForm: React.FC<InterestedCustomerFormProps> = ({
                     onClick={scrollToSection}
                     tabIndex={fabVisible ? 0 : -1}
                     aria-label="관심 고객 등록 영역으로 이동"
-                    className="flex h-12 cursor-pointer items-center justify-between gap-2 bg-brand px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-brand-dark"
+                    className="group/reg flex h-12 cursor-pointer items-center justify-between gap-2 bg-brand px-6 text-[13px] font-semibold tracking-[0.04em] text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)] transition-colors hover:bg-brand-dark"
                 >
                     관심고객 등록
-                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/reg:translate-x-1" strokeWidth={1.75} />
                 </button>
             </div>
 

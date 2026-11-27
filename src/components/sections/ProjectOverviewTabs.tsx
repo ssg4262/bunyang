@@ -1,6 +1,8 @@
 // src/components/sections/ProjectOverviewTabs.tsx
 "use client"
 
+import { CountUp } from "@/components/common/CountUp"
+import { Reveal } from "@/components/common/Reveal"
 import { TAB_LIST, TAB_TRIGGER } from "@/components/sections/tabStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import * as React from "react"
@@ -18,7 +20,11 @@ export type UnitRow = {
 }
 export type SpecItem = { label: string; value: React.ReactNode }
 
+export type StatItem = { value: number; unit: string; label: string }
+
 export type ProjectOverviewTabsProps = {
+    /** 탭 위에 크게 보여 줄 핵심 숫자 (선택) */
+    stats?: StatItem[]
     overviewHero: string
     unitRows: UnitRow[]
     specList: SpecItem[]
@@ -35,6 +41,7 @@ const fmt = (n: number, d = 2) =>
 
 /* ───────── 컴포넌트 ───────── */
 export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
+                                                                            stats = [],
                                                                             overviewHero,
                                                                             unitRows,
                                                                             specList,
@@ -54,6 +61,24 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
             />
 
             {/* 탭 */}
+            {/* 핵심 숫자 */}
+            {stats.length > 0 && (
+                <div className="mb-12 md:mb-20 grid grid-cols-2 gap-px border-y border-line bg-line md:grid-cols-4">
+                    {stats.map((st, i) => (
+                        <Reveal key={st.label} delay={i * 0.08} className="bg-white px-4 py-8 md:py-11 text-center">
+                            <div className="heading-display text-[38px] md:text-[54px] text-ink">
+                                <CountUp to={st.value} />
+                                <span className="ml-1 text-[15px] md:text-[18px] font-bold tracking-[-0.02em]">{st.unit}</span>
+                            </div>
+                            <div className="mt-2 text-[12px] md:text-[13px] font-medium tracking-[0.04em] text-neutral-500">
+                                {st.label}
+                            </div>
+                        </Reveal>
+                    ))}
+                </div>
+            )}
+
+            <Reveal delay={0.08}>
             <Tabs defaultValue={defaultTab} className="w-full">
                 <TabsList className={TAB_LIST}>
                     <TabsTrigger value="overview" className={TAB_TRIGGER}>
@@ -68,7 +93,7 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                 </TabsList>
 
                 {/* ───────── 사업개요 ───────── */}
-                <TabsContent value="overview" className="mt-8 md:mt-12">
+                <TabsContent value="overview" className={cn("mt-8 md:mt-12", TAB_FADE)}>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
                         {/* 좌: 히어로 */}
                         <figure className="overflow-hidden bg-surface">
@@ -170,7 +195,7 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                 </TabsContent>
 
                 {/* ───────── 투시도 ───────── */}
-                <TabsContent value="perspective" className="mt-8 md:mt-12">
+                <TabsContent value="perspective" className={cn("mt-8 md:mt-12", TAB_FADE)}>
                     {perspectiveImages.length === 0 ? (
                         <EmptyState label="등록된 투시도가 없습니다." />
                     ) : (
@@ -179,7 +204,7 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                 </TabsContent>
 
                 {/* ───────── 브랜드 ───────── */}
-                <TabsContent value="brand" className="mt-8 md:mt-12">
+                <TabsContent value="brand" className={cn("mt-8 md:mt-12", TAB_FADE)}>
                     {brandImages.length === 0 ? (
                         <EmptyState label="등록된 브랜드 자료가 없습니다." />
                     ) : brandImages.length === 1 ? (
@@ -197,9 +222,13 @@ export const ProjectOverviewTabs: React.FC<ProjectOverviewTabsProps> = ({
                     )}
                 </TabsContent>
             </Tabs>
+            </Reveal>
         </section>
     )
 }
+
+// 탭을 바꿀 때 내용이 살짝 떠오르며 나타남
+const TAB_FADE = "animate-in fade-in-0 slide-in-from-bottom-2 duration-500"
 
 /* ───────── 보조 UI ───────── */
 const EmptyState: React.FC<{ label: string }> = ({ label }) => (

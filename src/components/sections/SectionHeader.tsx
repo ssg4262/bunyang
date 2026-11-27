@@ -1,5 +1,6 @@
 // src/components/sections/SectionHeader.tsx
 // 모든 섹션 제목을 같은 모양으로 맞추기 위한 공용 헤더
+import { Reveal } from "@/components/common/Reveal"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +28,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     if (size === "md") {
         // 하위 섹션: 얇은 윗선 + 작은 제목
         return (
-            <div className={cn("mb-5 md:mb-7 border-t pt-5 md:pt-6", dark ? "border-white/15" : "border-line", className)}>
+            <Reveal className={cn("mb-5 md:mb-7 border-t pt-5 md:pt-6", dark ? "border-white/15" : "border-line", className)}>
                 <h2
                     className={cn(
                         "text-[19px] md:text-[24px] font-bold tracking-[-0.03em]",
@@ -41,12 +42,12 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                         {description}
                     </p>
                 )}
-            </div>
+            </Reveal>
         )
     }
 
     return (
-        <div className={cn("mb-9 md:mb-14 w-full text-left", className)}>
+        <Reveal className={cn("mb-9 md:mb-14 w-full text-left", className)}>
             {eyebrow && (
                 <p className={cn("label-caps mb-3 md:mb-4", dark ? "text-white/50" : "text-neutral-500")}>
                     {eyebrow}
@@ -64,13 +65,13 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             {description && (
                 <p
                     className={cn(
-                        "mt-5 md:mt-6 max-w-2xl text-[14.5px] md:text-[17px] leading-relaxed",
+                        "mt-5 md:mt-6 max-w-2xl text-[15px] md:text-[17px] leading-relaxed",
                         dark ? "text-white/60" : "text-neutral-500"
                     )}
                 >
                     {description}
                 </p>
             )}
-        </div>
+        </Reveal>
     )
 }

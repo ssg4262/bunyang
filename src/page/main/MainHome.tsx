@@ -1,6 +1,7 @@
 // src/pages/MainHome.tsx
 "use client"
 
+import { Reveal } from "@/components/common/Reveal"
 import React from "react"
 import { PromoNavbar } from "@/components/nav/PromoNavbar.tsx"
 import { PromoCarousel } from "@/components/carousel/PromoCarousel.tsx"
@@ -37,6 +38,10 @@ import sanga4F from "@/assets/sanga/sanga4F.png"
 import brand from "@/assets/main/carousel/brand.png"
 import yeoksae from "@/assets/main/section/yeoksae.png"
 import { SectionHeader } from "@/components/sections/SectionHeader"
+import { Marquee } from "@/components/common/Marquee"
+import { DividerQuote } from "@/components/sections/DividerQuote"
+import { SideDots, type SideDotItem } from "@/components/nav/SideDots"
+import { scrollToElement } from "@/lib/smoothScroll"
 import { SalesIntroSection } from "@/components/sections/SalesIntroSection.tsx"
 import { PromoFooter } from "@/components/footer/PromoFooter.tsx"
 import { HouseTypeSelector } from "@/components/sections/HouseTypeSelector.tsx"
@@ -73,38 +78,21 @@ export const MainHome: React.FC = () => {
     const customerFormRef = React.useRef<HTMLDivElement>(null)
     // 스무스 스크롤 도우미(헤더 높이만큼 여유)
     const scrollToEl = React.useCallback(
-        (el: HTMLElement | null) => {
-            if (!el) return
-            const calc = () =>
-                el.getBoundingClientRect().top + window.scrollY - (navH || 64) - 12
-            window.scrollTo({ top: calc(), behavior: "smooth" })
-
-            // 내려가는 동안 아직 안 불러온 이미지가 펼쳐지면 목표 위치가 밀림
-            // → 몇 초 동안 위치를 다시 맞춤 (사용자가 직접 스크롤/터치하면 즉시 중단)
-            let tries = 0
-            let cancelled = false
-            const cleanup = () => {
-                window.removeEventListener("wheel", cancel)
-                window.removeEventListener("touchstart", cancel)
-                window.removeEventListener("keydown", cancel)
-            }
-            const cancel = () => {
-                cancelled = true
-                cleanup()
-            }
-            window.addEventListener("wheel", cancel, { passive: true })
-            window.addEventListener("touchstart", cancel, { passive: true })
-            window.addEventListener("keydown", cancel)
-            const fix = () => {
-                if (cancelled) return
-                const top = calc()
-                if (Math.abs(window.scrollY - top) > 2) window.scrollTo({ top, behavior: "auto" })
-                if (++tries < 10) window.setTimeout(fix, 350)
-                else cleanup()
-            }
-            window.setTimeout(fix, 1000)
-        },
+        (el: HTMLElement | null) => scrollToElement(el, (navH || 64) + 12),
         [navH]
+    )
+
+    // ── PC 오른쪽 점 내비게이션 항목
+    const sideItems = React.useMemo<SideDotItem[]>(
+        () => [
+            { label: "사업개요", getEl: () => overviewRef.current },
+            { label: "단지정보", getEl: () => complexInfoRef.current },
+            { label: "세대평면도", getEl: () => houseTypeRef.current },
+            { label: "상가분양안내", getEl: () => sangaRef.current },
+            { label: "프리미엄", getEl: () => premiumRef.current },
+            { label: "관심고객등록", getEl: () => customerFormRef.current },
+        ],
+        []
     )
 
     // ── 표 데이터
@@ -187,16 +175,15 @@ export const MainHome: React.FC = () => {
                         slides={[
                             {
                                 image: mainCarousel,
-                                headline:
-                                    "동대구역을 품은 센트럴 라이프\n동대구역, 신세계백화점\n바로 앞 신축아파트\n이편한세상 동대구역 센텀스퀘어",
+                                // *...* 로 감싼 부분은 주황색으로 강조됨
+                                headline: "125㎡ (구 49평형)\n마지막 잔여세대\n*특별 조건 분양*",
                                 sub: "지하5~지상24층, 4개동 총 322세대 — 84㎡ 중심, 대지면적 9,260.50㎡ 포함",
                                 badge: "분양중",
                                 ctaLabel: "분양문의 010-4539-8505",
                             },
                             {
                                 image: mainCarousel2,
-                                headline:
-                                    "3년 거주 후 매도시 분양가를 보장받는 대구 최초 안심보호단지",
+                                headline: "잔금 30%\n2년 무이자 유예",
                                 sub: "발코니 확장 및 화장대,냉장고장,가스쿡탑,현관팬트리 시스템선반 무상제공",
                                 badge: "분양중",
                                 ctaLabel: "분양문의 010-4539-8505",
@@ -208,6 +195,24 @@ export const MainHome: React.FC = () => {
                     />
                 </div>
             </header>
+
+            {/* 키워드 띠 (모두 이 페이지에 이미 있는 내용) */}
+            <div className="border-b border-line bg-white py-4 md:py-5">
+                <Marquee
+                    items={[
+                        "동대구역 더블 초역세권",
+                        "신세계백화점 바로 앞",
+                        "총 322세대",
+                        "지하 5층 ~ 지상 24층 · 4개동",
+                        "79 · 84 · 107 · 125㎡",
+                        "대구 최초 안심보호단지",
+                        "발코니 확장 무상제공",
+                        "상업시설 127실",
+                    ]}
+                    className="text-[12px] md:text-[13px] font-medium tracking-[0.04em] text-neutral-500"
+                    speed={48}
+                />
+            </div>
 
             <SalesIntroSection
                 heroImage={mainCarousel}
@@ -222,6 +227,12 @@ export const MainHome: React.FC = () => {
             {/* ✅ 스크롤 타깃: 사업개요(탭) */}
             <div ref={overviewRef}>
                 <ProjectOverviewTabs
+                    stats={[
+                        { value: 322, unit: "세대", label: "총 세대수" },
+                        { value: 24, unit: "층", label: "지상 최고층" },
+                        { value: 4, unit: "개동", label: "단지 규모" },
+                        { value: 127, unit: "실", label: "상업시설" },
+                    ]}
                     overviewHero={mainCarousel}
                     unitRows={rows}
                     specList={specs}
@@ -248,6 +259,11 @@ export const MainHome: React.FC = () => {
             <SitePlanSection title="조망경관" image={jomang} alt="조망경관" className="pt-0" />
             <SitePlanSection title="동호수표" image={dong} alt="동호수표" className="pt-0" />
             <SitePlanSection title="커뮤니티" image={comu} alt="커뮤니티" className="pt-0" />
+
+            <DividerQuote
+                quote="동대구역을 품은 센트럴 라이프"
+                author="e편한세상 동대구역 센텀스퀘어"
+            />
 
             {/* ✅ 스크롤 타깃: 세대안내 */}
             <div ref={houseTypeRef}>
@@ -435,6 +451,8 @@ export const MainHome: React.FC = () => {
 
                 ]} defaultTab="B1" className="pb-16 md:pb-24" />
             </div>
+            <DividerQuote quote="동대구 최중심을 누리는 특별한 삶" />
+
             {/* ✅ 스크롤 타깃: 프리미엄(PR 섹션으로 점프) */}
             <div ref={premiumRef}>
                 <SitePlanSection
@@ -493,7 +511,7 @@ export const MainHome: React.FC = () => {
                                     description="분양 소식과 상담을 가장 빠르게 받아보세요."
                                     className="mb-9 md:mb-12"
                                 />
-                                <div className="border-t border-white/15 pt-6">
+                                <Reveal delay={0.1} className="border-t border-white/15 pt-6">
                                     <p className="text-[12px] font-medium tracking-[0.04em] text-white/50">분양문의</p>
                                     <a
                                         href="tel:01045398505"
@@ -501,7 +519,7 @@ export const MainHome: React.FC = () => {
                                     >
                                         010-4539-8505
                                     </a>
-                                </div>
+                                </Reveal>
                             </div>
                             <InterestedCustomerForm
                                 title=""
@@ -519,6 +537,9 @@ export const MainHome: React.FC = () => {
 
 
             </div>
+
+            {/* PC 오른쪽 점 내비게이션 */}
+            <SideDots items={sideItems} onSelect={scrollToEl} />
 
             <PromoFooter
                 brand="e편한세상 동대구역 센텀스퀘어"

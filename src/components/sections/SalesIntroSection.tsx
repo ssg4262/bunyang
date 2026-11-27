@@ -1,6 +1,7 @@
 // src/components/sections/SalesIntroSection.tsx
 "use client"
 
+import { Reveal } from "@/components/common/Reveal"
 import React from "react"
 // import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -62,7 +63,7 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
             <div className="mx-auto max-w-7xl section-padding py-16 md:py-28">
                 <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
                     {/* ============== 왼쪽: 단지 소개 ============== */}
-                    <div>
+                    <Reveal>
                         <p className="text-[13px] md:text-[14px] font-medium tracking-[0.02em] text-neutral-500">{eyebrow}</p>
                         <h1 className="heading-display mt-3 md:mt-4 text-[30px] md:text-[44px] lg:text-[52px]">
                             {title}
@@ -101,9 +102,10 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                                 draggable={false}
                             />
                         </div>
-                    </div>
+                    </Reveal>
 
                     {/* ============== 오른쪽: 헤드라인 + 서브 + 이미지 ============== */}
+                    <Reveal delay={0.12}>
                     <div
                         className={cn(patternUrl ? "relative" : "")}
                         style={
@@ -122,7 +124,7 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                             {rightTitle}
                         </h2>
                         {rightSubtitle && (
-                            <p className="mt-4 text-[14.5px] md:text-[17px] leading-relaxed text-neutral-500">
+                            <p className="mt-4 text-[15px] md:text-[17px] leading-relaxed text-neutral-500">
                                 {rightSubtitle}
                             </p>
                         )}
@@ -138,6 +140,7 @@ export const SalesIntroSection: React.FC<SalesIntroSectionProps> = ({
                             </div>
                         )}
                     </div>
+                    </Reveal>
                 </div>
             </div>
         </section>

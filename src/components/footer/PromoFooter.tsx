@@ -3,7 +3,7 @@
 
 import React from "react"
 import { cn } from "@/lib/utils"
-import { Phone, MapPin, ArrowUp } from "lucide-react"
+import { ArrowUp } from "@/components/common/icons"
 import elifeCloud from "@/assets/logo/elife-cloud.png"
 import {smartDial} from "@/lib/smartDial.ts";
 
@@ -79,8 +79,7 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                             )}
                         </div>
 
-                        <div className="flex items-start gap-2 text-[13px] leading-relaxed text-white/60">
-                            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/40" strokeWidth={1.5} />
+                        <div className="text-[13px] leading-relaxed text-white/60">
                             <div className="space-y-0.5">
                                 {addressLines.map((line, i) => (
                                     <div key={i}>{line}</div>
@@ -120,7 +119,6 @@ export const PromoFooter: React.FC<PromoFooterProps> = ({
                                 })}
                         >
                             <span className="flex items-center gap-1.5 text-[12px] font-medium tracking-[0.04em] text-white/50 md:justify-end">
-                                <Phone className="h-3.5 w-3.5 text-brand" strokeWidth={2} />
                                 분양문의
                             </span>
                             <span className="mt-1 block text-[28px] md:text-[32px] font-extrabold leading-none tracking-[-0.03em] text-white transition-colors hover:text-brand">

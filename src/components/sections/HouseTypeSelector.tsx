@@ -1,11 +1,12 @@
 // src/components/sections/HouseTypeSelector.tsx
 "use client"
 
+import { Reveal } from "@/components/common/Reveal"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import React, { useRef } from "react"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "@/components/common/icons"
 import h79A from "@/assets/main/houseType/79A.png"
 import h79B from "@/assets/main/houseType/79B.png"
 
@@ -238,6 +239,7 @@ export const HouseTypeSelector: React.FC = () => {
                     description="동대구역 초역세권의 중심, e편한세상 동대구역 센텀스퀘어. 중·대형 평면으로 구성된 총 322세대 일반분양 공동주택"
                 />
 
+                <Reveal delay={0.08}>
                 {/* 탭 바: 밑줄형, 가로 스크롤 */}
                 <div className="relative w-full border-b border-line">
                     <button
@@ -285,9 +287,10 @@ export const HouseTypeSelector: React.FC = () => {
                     {/* 이미지 */}
                     <div className="order-2 lg:order-1 w-full">
                         <img
+                            key={active.label}
                             src={active.image}
                             alt={active.label}
-                            className="w-full"
+                            className="w-full animate-in fade-in-0 duration-500"
                             draggable={false}
                         />
                     </div>
@@ -309,7 +312,7 @@ export const HouseTypeSelector: React.FC = () => {
                         </div>
 
                         {/* 상세 면적 */}
-                        <dl className="mt-7 border-t-2 border-ink text-[14.5px] md:text-[15px]">
+                        <dl className="mt-7 border-t-2 border-ink text-[15px] md:text-[15px]">
                             {([
                                 ["주거 전용면적", active.details.전용],
                                 ["주거 공용면적", active.details.주거공용],
@@ -325,6 +328,7 @@ export const HouseTypeSelector: React.FC = () => {
                         </dl>
                     </div>
                 </div>
+                </Reveal>
 
                 {/* 유의사항 */}
                 <div className="mt-10 md:mt-14 w-full text-left text-neutral-400 text-[12px] md:text-[13px] leading-relaxed space-y-1 break-keep">

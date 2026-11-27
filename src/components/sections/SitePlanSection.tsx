@@ -1,6 +1,7 @@
 // src/components/sections/SitePlanSection.tsx
 "use client"
 
+import { Reveal } from "@/components/common/Reveal"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import {
@@ -9,7 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Download, Maximize2, X, ZoomIn, ZoomOut } from "lucide-react"
+import { Download, Maximize2, X, ZoomIn, ZoomOut } from "@/components/common/icons"
 import { VIEWER_BAR, VIEWER_CONTENT, VIEWER_ICON_BTN } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 
@@ -51,6 +52,7 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
 
                 {/* 이미지 카드 (클릭 시 상세보기) */}
                 <Dialog open={open} onOpenChange={setOpen}>
+                    <Reveal delay={0.08}>
                     <DialogTrigger asChild>
                         <button
                             type="button"
@@ -70,9 +72,9 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                                     draggable={false}
                                 />
                                 <div className="pointer-events-none absolute right-0 top-0 bg-ink px-3 py-2 text-[12px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="inline-flex items-center gap-1">
-                    <Maximize2 className="h-3.5 w-3.5" />
+                  <span className="inline-flex items-center gap-1.5">
                     크게 보기
+                    <Maximize2 className="h-3.5 w-3.5" />
                   </span>
                                 </div>
                             </div>
@@ -83,6 +85,7 @@ export const SitePlanSection: React.FC<SitePlanSectionProps> = ({
                             )}
                         </button>
                     </DialogTrigger>
+                    </Reveal>
 
                     {/* 상세보기: 전체 화면 뷰어 (이미지를 누르면 확대/축소) */}
                     <DialogContent showCloseButton={false} className={VIEWER_CONTENT}>

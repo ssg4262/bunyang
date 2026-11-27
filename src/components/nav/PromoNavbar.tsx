@@ -13,7 +13,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { Phone, ChevronDown, ChevronUp } from "lucide-react"
+import { ChevronDown, ChevronUp } from "@/components/common/icons"
 import { smartDial } from "@/lib/smartDial"
 import elifeCloud from "@/assets/logo/elife-cloud.png"
 
@@ -48,6 +48,18 @@ export type PromoNavbarProps = {
   onHeightChange?: (h: number) => void
   /** 모바일 패널 하단 퀵링크 */
   mobileFooterLinks?: { label: string; onClick?: () => void }[]
+}
+
+// "분양문의 010-0000-0000" → 앞 글자는 옅게, 번호는 굵게 (아이콘 없이 글자만)
+const PhoneLabel: React.FC<{ text: string }> = ({ text }) => {
+  const m = text.match(/^(.*?)\s*([0-9][0-9\-. ]+)$/)
+  if (!m) return <>{text}</>
+  return (
+      <>
+        {m[1] && <span className="text-[13px] font-medium opacity-70">{m[1]}</span>}
+        <span>{m[2]}</span>
+      </>
+  )
 }
 
 const NAV_LINK =
@@ -319,7 +331,7 @@ export const PromoNavbar: React.FC<PromoNavbarProps> = ({
                           })
                       }
                   >
-                    <Phone className="h-[15px] w-[15px] text-brand" strokeWidth={2.25} /> {contactLabel}
+                    <PhoneLabel text={contactLabel} />
                   </button>
               )}
 
@@ -540,7 +552,7 @@ const MobileMenu: React.FC<{
                             })
                         }
                     >
-                      <Phone className="mr-2 h-4 w-4" /> {contactLabel}
+                      {contactLabel}
                     </Button>
                   </SheetClose>
                 </div>

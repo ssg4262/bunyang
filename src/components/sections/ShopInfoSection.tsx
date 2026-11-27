@@ -9,6 +9,7 @@
 // - 좌우 화살표: 모바일/데스크탑 모두 항상 표시
 // - 스와이프: 손가락/포인터 이동 추적하여 자연스러운 드래그 이동
 
+import { Reveal } from "@/components/common/Reveal"
 import { VIEWER_ARROW, VIEWER_BAR, VIEWER_CONTENT, VIEWER_COUNT, VIEWER_ICON_BTN, pad2 } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react";
@@ -19,7 +20,7 @@ import {
     DialogClose,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X, Phone } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "@/components/common/icons";
 
 /* ------------------------------------ Types ----------------------------------- */
 export type ShopImage = {
@@ -90,13 +91,12 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     onClick={(e) => { if (onCallClick) { e.preventDefault(); handleCall(); } }}
                     className="inline-flex h-[52px] shrink-0 items-center justify-center gap-2 bg-ink px-7 text-[14px] font-semibold tracking-[0.02em] text-white transition-colors hover:bg-black"
                 >
-                    <Phone className="h-4 w-4" strokeWidth={2} />
                     상가분양문의 010-4539-8505
                 </a>
             </header>
 
             {/* 모바일 1-up 캐러셀 */}
-            <div className="md:hidden">
+            <Reveal delay={0.08} className="md:hidden">
                 <CarouselBase
                     items={items}
                     itemsPerView={1}
@@ -107,10 +107,10 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     showCaption={showCaption}
                     onCall={handleCall}
                 />
-            </div>
+            </Reveal>
 
             {/* 데스크탑도 1-up(항상 한 장씩) */}
-            <div className="hidden md:block">
+            <Reveal delay={0.08} className="hidden md:block">
                 <CarouselBase
                     items={items}
                     itemsPerView={1}
@@ -121,7 +121,7 @@ export const ShopInfoSection: React.FC<ShopInfoSectionProps> = ({
                     showCaption={showCaption}
                     onCall={handleCall}
                 />
-            </div>
+            </Reveal>
 
             {/* 라이트박스: 전체 화면 어두운 뷰어 (다른 팝업과 같은 모양) */}
             <Dialog open={open} onOpenChange={setOpen}>
@@ -273,7 +273,6 @@ const CarouselBase: React.FC<CarouselBaseProps> = ({
                             data-carousel-interactive="true"
                             aria-label="분양문의 전화걸기"
                         >
-                            <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
                             <span>분양문의 010-4539-8505</span>
                         </button>
 
@@ -568,7 +567,6 @@ const Lightbox: React.FC<LightboxProps> = ({
                         )}
                         aria-label="분양문의 전화걸기"
                     >
-                        <Phone className="h-4 w-4" />
                         <span>분양문의 010-4539-8505</span>
                     </button>
 

@@ -1,13 +1,14 @@
 // src/components/sections/HousePhotoRail.tsx
 "use client"
 
+import { Reveal } from "@/components/common/Reveal"
 import { VIEWER_ARROW, VIEWER_BAR, VIEWER_CONTENT, VIEWER_COUNT, VIEWER_ICON_BTN, pad2 } from "@/components/sections/viewerStyles"
 import { SectionHeader } from "@/components/sections/SectionHeader"
 import React from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Maximize2, X } from "@/components/common/icons"
 
 /* ======================== Types ======================== */
 export type RoomKind =
@@ -320,7 +321,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
 
             {/* ===== 가로 스냅 레일 ===== */}
             <div className="mx-auto max-w-7xl section-padding mt-6 md:mt-0">
-                <div className="relative">
+                <Reveal delay={0.08} className="relative">
                     {/* 좌/우 버튼: 항상 DOM에 두고 투명도만 토글 */}
                     <div
                         className={cn(
@@ -374,7 +375,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             <figure
                                 key={p.id}
                                 className={cn(
-                                    "snap-start shrink-0 overflow-hidden",
+                                    "group/card snap-start shrink-0 overflow-hidden",
                                     "bg-neutral-900",
                                     subtleBorder && ""
                                 )}
@@ -391,7 +392,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                                     <img
                                         src={p.src}
                                         alt={p.alt}
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.04]"
                                         draggable={false}
                                         onLoad={onImgLoad}
                                     />
@@ -411,7 +412,7 @@ export const HousePhotoGallery: React.FC<HousePhotoRailProps> = ({
                             </figure>
                         ))}
                     </div>
-                </div>
+                </Reveal>
             </div>
 
             {/* ===== Lightbox: 전체 화면 뷰어 ===== */}

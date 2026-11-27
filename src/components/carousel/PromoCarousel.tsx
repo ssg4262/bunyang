@@ -3,7 +3,7 @@
 
 import React from "react"
 import { cn } from "@/lib/utils"
-import { ArrowRight, ChevronLeft, ChevronRight, Phone } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight } from "@/components/common/icons"
 import {smartDial} from "@/lib/smartDial.ts";
 
 export type CarouselSlide = {
@@ -206,10 +206,10 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                 </div>
 
                                 <h2 className="heading-display mt-4 md:mt-5 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[56px] text-white">
-                                    {s.headline}
+                                    {renderEmphasis(s.headline)}
                                 </h2>
                                 {s.sub && (
-                                    <p className="mt-4 md:mt-5 max-w-xl text-[13.5px] md:text-[17px] font-light leading-relaxed text-white/75">
+                                    <p className="mt-4 md:mt-5 max-w-xl text-[14px] md:text-[17px] font-light leading-relaxed text-white/75">
                                         {s.sub}
                                     </p>
                                 )}
@@ -240,7 +240,6 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                                 }
                                                 className="inline-flex h-[52px] cursor-pointer items-center justify-center gap-2 bg-white px-7 text-[14px] font-bold tracking-[0.02em] text-ink transition-colors hover:bg-white/90"
                                             >
-                                                <Phone className="h-4 w-4" strokeWidth={2} />
                                                 {s.ctaLabel}
                                             </button>
                                         )}
@@ -321,4 +320,15 @@ function normalizeIndex(i: number, len: number) {
 function clampIndex(i: number, len: number) {
     if (len === 0) return 0
     return Math.max(0, Math.min(i, len - 1))
+}
+
+// "*강조*" 로 감싼 부분만 주황색으로 표시
+function renderEmphasis(text: string) {
+    return text.split(/(\*[^*]+\*)/g).map((part, i) =>
+        part.startsWith("*") && part.endsWith("*") ? (
+            <span key={i} className="text-brand">{part.slice(1, -1)}</span>
+        ) : (
+            <React.Fragment key={i}>{part}</React.Fragment>
+        )
+    )
 }
