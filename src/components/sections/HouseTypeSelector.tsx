@@ -253,7 +253,7 @@ export const HouseTypeSelector: React.FC = () => {
                     <div
                         ref={scrollRef}
                         className={cn(
-                            "flex gap-6 md:gap-8 overflow-x-auto scroll-smooth mx-7 md:mx-0",
+                            "flex gap-6 md:gap-x-7 md:gap-y-4 md:flex-wrap md:overflow-visible overflow-x-auto scroll-smooth mx-7 md:mx-0",
                             "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         )}
                     >

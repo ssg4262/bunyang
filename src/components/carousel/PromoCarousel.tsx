@@ -207,13 +207,13 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({
                                     )}
                                 </div>
 
-                                <h2 className="heading-display mt-4 md:mt-5 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[48px] 2xl:text-[56px] text-white">
+                                <h2 className="heading-display mt-4 md:mt-5 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[36px] lg:text-[44px] 2xl:text-[52px] text-white">
                                     {renderEmphasis(s.headline)}
                                 </h2>
                                 {s.highlight && (
                                     <>
                                         <span aria-hidden className="mt-5 md:mt-7 block h-px w-14 bg-white/45" />
-                                        <p className="heading-display mt-5 md:mt-7 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[40px] lg:text-[48px] 2xl:text-[56px] text-white">
+                                        <p className="heading-display mt-5 md:mt-7 whitespace-pre-line text-[clamp(21px,6.1vw,30px)] sm:text-[36px] lg:text-[44px] 2xl:text-[52px] text-white">
                                             {renderEmphasis(s.highlight)}
                                         </p>
                                     </>
